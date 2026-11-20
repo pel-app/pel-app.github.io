@@ -189,6 +189,30 @@ function carregar(src) {
 
 const comTempo = (pr, ms) => Promise.race([pr, new Promise((_, er) => setTimeout(() => er(new Error('tempo esgotado')), ms))]);
 
+/* ---------- desbloqueio com digital / rosto (fica só neste celular) ---------- */
+const b64u = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const deB64u = t => Uint8Array.from(atob(t.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((t.length + 3) % 4)), c => c.charCodeAt(0));
+const aleat = n => crypto.getRandomValues(new Uint8Array(n));
+const BIO = {
+  async disponivel() { try { return !!(window.PublicKeyCredential && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()); } catch (e) { return false; } },
+  ativo() { const b = ls.get('qaj_bio', null); return !!(b && S.eu && b.numero === S.eu.numero); },
+  async ativar() {
+    const cred = await navigator.credentials.create({ publicKey: {
+      challenge: aleat(32), rp: { name: 'PEL', id: location.hostname },
+      user: { id: aleat(16), name: 'PEL' + S.eu.pelotao + '-' + S.eu.numero, displayName: S.eu.nome || S.eu.numero },
+      pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+      authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'discouraged' }, timeout: 60000 } });
+    ls.set('qaj_bio', { id: b64u(cred.rawId), numero: S.eu.numero });
+  },
+  async conferir() {
+    const b = ls.get('qaj_bio', null);
+    await navigator.credentials.get({ publicKey: { challenge: aleat(32), rpId: location.hostname, userVerification: 'required', timeout: 60000,
+      allowCredentials: [{ type: 'public-key', id: deB64u(b.id), transports: ['internal'] }] } });
+  },
+  desativar() { ls.set('qaj_bio', null); }
+};
+let bioPode = false; BIO.disponivel().then(v => { bioPode = v; if (v && S.eu) render(); });
+
 /* ---------- Pix copia-e-cola (BR Code estático) ---------- */
 const campo = (id, v) => id + pad(v.length) + v;
 function crc16(s) {
@@ -632,6 +656,14 @@ const feito = p => p && p.status && p.status !== 'pendente';
 const seloPub = p => feito(p) ? '<span class="selo s-pago">✓ Pedido feito</span>' : SELO.pendente;
 const vazioSVG = '<svg viewBox="0 0 120 90" aria-hidden="true"><ellipse cx="60" cy="80" rx="44" ry="6" fill="currentColor" opacity=".1"/><path d="M14 40h92a46 34 0 0 1-92 0z" fill="#1f3a5f"/><path d="M14 40h92" stroke="#e2522b" stroke-width="5" stroke-linecap="round"/><path d="M44 30c0-8 8-8 8-16M64 30c0-8 8-8 8-16" stroke="currentColor" opacity=".35" stroke-width="3" fill="none" stroke-linecap="round"/></svg>';
 
+function telaBloqueio() {
+  return `<div class="card vazio"><div class="ok" style="width:72px;height:72px;border-radius:50%;background:var(--pebg);display:grid;place-items:center;margin:0 auto 12px;font-size:34px">🔒</div>
+    <h2>PEL${esc(S.eu.pelotao)} · ${esc(S.eu.numero)}</h2><p class="sub">App protegido. Desbloqueie para continuar.</p>
+    <button class="btn azul" data-act="desbloquear">Desbloquear com digital / rosto</button>
+    <details style="margin-top:12px;text-align:left"><summary class="sub" style="cursor:pointer">Usar o PIN</summary>
+      <input id="pinTrava" type="password" inputmode="numeric" maxlength="4" placeholder="Seu PIN" style="margin-top:8px">
+      <button class="btn sec peq" data-act="desbloquearPin">Desbloquear com PIN</button></details></div>`;
+}
 function telaCadastro() {
   return `${S.aviso ? `<div class="aviso">${esc(S.aviso)}</div>` : ''}<div class="card"><h2>Entrar</h2><p class="sub">Só entra quem é do pelotão. Peça o código ao responsável do seu pelotão.</p>
   <label class="fl" for="cNum">Seu número (ex.: 2116)</label><input id="cNum" inputmode="numeric" maxlength="6" autocomplete="username" value="${esc(S.eu?.numero || S.ultNum || '')}">
@@ -689,7 +721,7 @@ function telaPedir() {
   }
   return h + rodape();
 }
-const rodape = () => `<p class="rodape">Você: <b>${esc(S.eu.numero)}</b> – ${esc(S.eu.nome)} · ${esc(pelDe(S.eu.numero))}º Pel. <button data-act="trocar">trocar</button>${REMOTO ? '' : '<br>Modo teste: os dados ficam só neste aparelho.'}</p>`;
+const rodape = () => `<p class="rodape">Você: <b>${esc(S.eu.numero)}</b> – ${esc(S.eu.nome)} · ${esc(pelDe(S.eu.numero))}º Pel. <button data-act="trocar">trocar</button>${bioPode ? (BIO.ativo() ? '<br>🔒 Desbloqueio com digital/rosto ativo · <button data-act="bioDesativar">desativar</button>' : '<br><button data-act="bioAtivar">🔒 Proteger com digital / rosto</button>') : ''}${REMOTO ? '' : '<br>Modo teste: os dados ficam só neste aparelho.'}</p>`;
 
 function resumo() {
   const ps = visiveis(), cont = {};
@@ -925,9 +957,9 @@ function htmlModal() {
 }
 function render() {
   if (S.aba === 'pedir' && S.eu && !S.adm) { const eu = meu(); if (eu && !feito(eu)) setTimeout(prepararOCR, 1500); }
-  const md = $('#modal'); if (md) md.innerHTML = htmlModal();
+  const md = $('#modal'); if (md) md.innerHTML = S.travado ? '' : htmlModal();
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === S.aba));
-  $('#app').innerHTML = S.aba === 'pedir' ? telaPedir() : S.aba === 'lista' ? telaLista() : telaAdmin();
+  $('#app').innerHTML = S.travado && S.eu ? telaBloqueio() : S.aba === 'pedir' ? telaPedir() : S.aba === 'lista' ? telaLista() : telaAdmin();
   ligaArquivos();
   const n = $('#net'), on = navigator.onLine;
   n.textContent = !REMOTO ? 'modo teste' : on ? 'online' : 'offline'; n.classList.toggle('off', !REMOTO || !on);
@@ -1021,7 +1053,7 @@ async function checaCompartilhado() {
   S.compart = v.file; S.aba = 'pedir'; usaCompartilhado();
 }
 function usaCompartilhado() {
-  if (!S.compart) return render();
+  if (!S.compart || S.travado) return render();
   const eu = meu();
   if (eu && !feito(eu)) { const f = S.compart; S.compart = null; lerComprovante(f); }
   else if (feito(eu)) { S.compart = null; toast('Seu pedido já tem comprovante'); render(); }
@@ -1052,7 +1084,11 @@ document.addEventListener('click', async ev => {
       if (r.erro) return toast(msgErro(r.erro));
       S.eu = { numero, nome: r.nome, pelotao: pel, codigo, pin }; S.aviso = null; ls.set('qaj_eu', S.eu); abrePel(pel); render(); atualizar(true);
     }
-    else if (a === 'trocar') { S.ultNum = S.eu && S.eu.numero; S.eu = null; S.adm = null; S.fila = []; ls.set('qaj_eu', null); ls.set('qaj_fila', []); S.aba = 'pedir'; abrePel(null); render(); }
+    else if (a === 'bioAtivar') { try { await BIO.ativar(); toast('Pronto! O app vai pedir sua digital/rosto ao abrir'); } catch (e) { toast('Não foi possível ativar neste celular'); } render(); }
+    else if (a === 'bioDesativar') { BIO.desativar(); toast('Desbloqueio desativado'); render(); }
+    else if (a === 'desbloquear') { try { await BIO.conferir(); S.travado = false; render(); await atualizar(true); usaCompartilhado(); } catch (e) { toast('Não reconhecido. Tente de novo ou use o PIN'); } }
+    else if (a === 'desbloquearPin') { if ($('#pinTrava').value === S.eu.pin) { S.travado = false; render(); await atualizar(true); usaCompartilhado(); } else toast('PIN incorreto'); }
+    else if (a === 'trocar') { BIO.desativar(); S.ultNum = S.eu && S.eu.numero; S.eu = null; S.adm = null; S.fila = []; ls.set('qaj_eu', null); ls.set('qaj_fila', []); S.aba = 'pedir'; abrePel(null); render(); }
     else if (a === 'mais' || a === 'menos') { const i = c.itens[+b.dataset.k]; S.rasc[kk(i)] = Math.max(0, (S.rasc[kk(i)] || 0) + (a === 'mais' ? 1 : -1)); render(); }
     else if (a === 'pedir') {
       if (encerrado()) return toast('Pedidos encerrados');
@@ -1228,13 +1264,19 @@ function ligaArquivos() { document.querySelectorAll('input[type=file]').forEach(
 window.addEventListener('online', () => atualizar(true));
 window.addEventListener('offline', () => render());
 window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); S.instalar = e; render(); });
-document.addEventListener('visibilitychange', () => { if (!document.hidden) atualizar(); });
+let saiuEm = 0;
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { saiuEm = Date.now(); return; }
+  if (BIO.ativo() && saiuEm && Date.now() - saiuEm > 10 * 60000 && !S.escolhendo) { S.travado = true; S.modal = null; render(); return; }
+  atualizar();
+});
 let ultAt = 0; // responsável: a cada 5 s; aluno: a cada 15 s
 setInterval(() => { if (document.hidden) return; const t = S.adm ? 5000 : 15000; if (Date.now() - ultAt >= t - 500) { ultAt = Date.now(); atualizar(); } }, 5000);
 try { if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
 
 window.__qaj = { gerarPix, crc16, lerCardapio, analisar, temNome, normChave, tipoChave };
 if (S.eu && (!pelDe(S.eu.numero) || !S.eu.pin || !S.eu.codigo)) S.eu = null;
+S.travado = BIO.ativo();
 abrePel(S.eu ? pelDe(S.eu.numero) : null); render(); atualizar(true).then(checaCompartilhado);
 }
 </script>

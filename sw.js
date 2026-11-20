@@ -1,5 +1,5 @@
 // Service worker: guarda o app e as bibliotecas para funcionar offline.
-const VERSAO = 'pel-v14';
+const VERSAO = 'pel-v15';
 const BASE = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './pdf.min.js', './pdf.worker.min.js'];
 
 self.addEventListener('install', e => {
