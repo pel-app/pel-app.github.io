@@ -691,12 +691,20 @@ function textoLista() {
   // só entram os pedidos com pagamento confirmado
   return 'Marmitas para ' + diaNome(c.data) + '\n\n' + r.pagos.map(p => p.numero + ' - ' + itensTxt(p) + ' ✅').join('\n');
 }
+// nome do prato; o preço só aparece quando o mesmo prato existe em dois preços (ex.: Frango guisado de 10 e de 15)
+function nomeItem(i) {
+  const precos = new Set(((S.cardapio && S.cardapio.itens) || []).filter(x => x.nome === i.nome).map(x => x.preco));
+  return i.nome + (precos.size > 1 ? ' (' + curto(i.preco) + ')' : '');
+}
 function textoResumo() {
   const c = S.cardapio, r = resumo(), cont = {}; // só pedidos pagos
   r.pagos.forEach(p => (p.itens || []).forEach(i => { const n = i.nome + ' (' + curto(i.preco) + ')'; cont[n] = (cont[n] || 0) + i.qtd; }));
   const tot = r.pagos.reduce((s, p) => s + Number(p.total || 0), 0);
-  return 'Pedido ' + P + 'º Pelotão' + (c.fornecedor ? ' – ' + c.fornecedor : '') + ' – ' + diaBR(c.data) + '\n\n' + Object.entries(cont).map(([n, q]) => q + 'x ' + n).join('\n') +
-    '\n\nTotal: ' + brl(tot) + ' (' + r.pagos.length + (r.pagos.length === 1 ? ' pedido pago)' : ' pedidos pagos)');
+  const linhas = r.pagos.map(p => p.numero + ' - ' + (p.itens || []).map(i => (i.qtd > 1 ? i.qtd + 'x ' : '') + nomeItem(i)).join(' + ') + ' - ' + brl(p.total));
+  return 'Pedido PEL' + P + (c.fornecedor ? ' – ' + c.fornecedor : '') + ' – ' + diaBR(c.data) + '\n\n' +
+    linhas.join('\n') +
+    '\n\nQuantidade de cada:\n' + Object.entries(cont).map(([n, q]) => q + 'x ' + n).join('\n') +
+    '\n\nTotal: ' + brl(tot) + '\nPedidos: ' + r.pagos.length;
 }
 function telaLista() {
   if (!P) return telaCadastro();
