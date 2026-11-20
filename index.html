@@ -400,14 +400,26 @@ function analisar(texto, ped, c) {
       e2e = 'E' + dig + m[0].slice(21); dataE2E = a + '-' + dig.slice(12, 14) + '-' + dig.slice(14, 16); break;
     }
   }
-  // data (só informativa)
+  // data
   const datas = [];
   if (dataE2E) datas.push(dataE2E);
   for (const m of T.matchAll(/(\d{2})\/(\d{2})\/(\d{4})/g)) datas.push(m[3] + '-' + m[2] + '-' + m[1]);
-  // NOME DO ALUNO: é o que confirma quem pagou (aceita pequenos erros de leitura)
+  for (const m of low.matchAll(/(\d{1,2})\s*(?:de\s*)?(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)[a-z]*\.?\s*(?:de\s*)?(\d{4})/g))
+    datas.push(m[3] + '-' + pad(MESES[m[2]]) + '-' + pad(m[1]));
+  const hoje = isoDia(), inicio = c && c.criado_em ? isoDia(new Date(c.criado_em)) : somaDias(hoje, -1);
+  const dataOk = datas.some(d => d >= somaDias(inicio, -1) && d <= somaDias(hoje, 1));
   const nomeOk = temNome(low, ped.nome);
-  if (!nomeOk) motivos.unshift('Nome do aluno não encontrado no comprovante (pode ter pago por outra conta)');
-  return { ok: !motivos.length, nomeOk, e2e, valor: valorOk ? ped.total : (vals[0] ?? null), data: datas[0] || null, motivos };
+  // Aprova se:  A) o NOME do aluno aparece (e o valor, se lido, bate)
+  //         ou  B) VALOR certo + DATA do período + ID do Pix (código E…) que nunca foi usado em outro pedido
+  const viaNome = nomeOk && (!vals.length || valorOk), viaPix = valorOk && !!e2e && dataOk;
+  const ok = !motivos.some(m => m.startsWith('Valor')) && (viaNome || viaPix);
+  if (!ok) {
+    if (!nomeOk) motivos.push('Nome do aluno não encontrado');
+    if (!vals.length) motivos.push('Valor não encontrado');
+    if (!e2e) motivos.push('ID do Pix (código E…) não encontrado');
+    if (!dataOk) motivos.push(datas.length ? 'Data fora do período do pedido' : 'Data não encontrada');
+  }
+  return { ok, nomeOk, via: viaNome ? 'nome' : viaPix ? 'pix' : '', e2e, valor: valorOk ? ped.total : (vals[0] ?? null), data: datas[0] || null, motivos: ok ? [] : [...new Set(motivos)] };
 }
 
 /* ---------- dados: Supabase ou modo teste ---------- */
