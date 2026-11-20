@@ -328,14 +328,14 @@ async function extrairTexto(file, prog = () => {}) {
 }
 // Leitor de imagem: é preparado em segundo plano assim que o aluno faz o pedido,
 // e fica pronto (e guardado no celular) quando o comprovante chega.
-let ocrW = null, ocrIndisp = false;
+let ocrW = null, ocrIndisp = false, ocrErro = '';
 function prepararOCR() {
   if (ocrW || ocrIndisp) return ocrW;
   ocrW = (async () => {
     await carregar('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js');
     return Tesseract.createWorker('por', 1);
   })();
-  comTempo(ocrW, 60000).catch(() => { ocrIndisp = true; ocrW = null; });
+  comTempo(ocrW, 60000).catch(e => { ocrErro = String(e && e.message || e); ocrIndisp = true; ocrW = null; });
   return ocrW;
 }
 // deixa a imagem menor e em tons de cinza: leitura mais rápida e mais certa
@@ -812,7 +812,13 @@ function adminAjustes() {
     <label class="fl" for="aPin">Senha do responsável ${S.seg.tem_admin ? '<span class="selo s-pago">definida</span>' : '<span class="selo s-conferir">não definida</span>'}</label>
     <input id="aPin" data-a="pin" type="password" autocomplete="new-password" placeholder="${S.seg.tem_admin ? 'Nova senha (vazio = manter)' : 'Mínimo 4 caracteres'}" value="${esc(a.pin)}">
     <p class="sub" style="margin-top:6px">Para passar a função a outro aluno, troque a senha e entregue a nova a ele.</p></div>
-  <button class="btn" data-act="salvarAjustes">Salvar ajustes</button>`;
+  <button class="btn" data-act="salvarAjustes">Salvar ajustes</button>
+  <div class="card" style="margin-top:14px"><h2>Testar leitura de comprovante</h2>
+    <p class="sub">Escolha um comprovante para ver, passo a passo, o que o app consegue ler. Serve para descobrir problemas.</p>
+    <div class="linha2"><div><label class="fl" for="diagNome">Nome a procurar</label><input id="diagNome" placeholder="Ex.: Samuel Sousa"></div>
+    <div><label class="fl" for="diagValor">Valor (R$)</label><input id="diagValor" inputmode="decimal" placeholder="15,00"></div></div>
+    <label class="btn azul peq">Escolher comprovante<input type="file" id="diagArq" accept="image/*,application/pdf" hidden></label>
+    <pre id="diagOut" class="pix" style="white-space:pre-wrap;max-height:420px;overflow:auto;font-size:12px">${esc(S.diag || '')}</pre></div>`;
 }
 function telaAdmin() {
   if (!S.adm) { const sel = S.pelSel || (S.eu && pelDe(S.eu.numero)) || P || String(PMIN);
@@ -1115,9 +1121,34 @@ document.addEventListener('input', ev => {
     i[t.dataset.pk] = t.dataset.pk === 'preco' ? (parseFloat(t.value.replace(',', '.')) || 0) : t.value;
   }
 });
+// ferramenta de diagnóstico: mostra cada etapa da leitura e o tempo de cada uma
+async function diagLeitura(file) {
+  const t0 = performance.now(), linhas = [];
+  const log = m => { linhas.push(((performance.now() - t0) / 1000).toFixed(1) + ' s · ' + m); S.diag = linhas.join('\n'); const o = $('#diagOut'); if (o) o.textContent = S.diag; };
+  const nome = ($('#diagNome') || {}).value || '', valor = parseFloat((($('#diagValor') || {}).value || '').replace(',', '.')) || 0;
+  try {
+    log('Arquivo: ' + file.name + ' · ' + Math.round(file.size / 1024) + ' KB · ' + (file.type || 'tipo desconhecido') + ' · internet: ' + (navigator.onLine ? 'sim' : 'não'));
+    let texto;
+    if (file.type === 'application/pdf' || /\.pdf$/i.test(file.name)) { log('É PDF: lendo o texto do PDF…'); texto = await extrairTexto(file); log('PDF lido.'); }
+    else {
+      if (ocrIndisp) { log('O leitor tinha falhado antes (' + (ocrErro || 'sem detalhe') + '). Tentando de novo…'); ocrIndisp = false; ocrW = null; }
+      log('Carregando o leitor de imagem (1ª vez baixa alguns MB)…');
+      const w = await comTempo(prepararOCR() || Promise.reject(new Error(ocrErro || 'leitor indisponível')), 90000);
+      log('Leitor pronto.');
+      const cv = await prepImagem(file); log('Imagem preparada: ' + cv.width + ' × ' + cv.height + ' px. Lendo a imagem inteira…');
+      texto = (await w.recognize(cv)).data.text; log('Leitura terminada.');
+    }
+    log('—— TEXTO LIDO ——\n' + (String(texto).trim().slice(0, 1500) || '(nada)'));
+    const r = analisar(texto, { nome, total: valor }, pixDe(S.cardapio || {}));
+    log('—— RESULTADO ——\nNome "' + (nome || '—') + '": ' + (nome ? (r.nomeOk ? 'ENCONTRADO' : 'não encontrado') : 'não informado') +
+      '\nValor lido: ' + (r.valor != null ? brl(r.valor) : 'não encontrado') + '\nData lida: ' + (r.data ? diaBR(r.data) : 'não encontrada') +
+      '\nID do Pix: ' + (r.e2e || 'não encontrado') + '\nAprovaria: ' + (r.ok ? 'SIM (via ' + r.via + ')' : 'NÃO'));
+  } catch (e) { log('ERRO: ' + String(e && e.message || e) + (ocrErro ? ' | leitor: ' + ocrErro : '')); }
+}
 async function aoEscolher(t) {
   S.escolhendo = 0; const f = t.files && t.files[0]; if (!f) return;
   if (t.id === 'comp') { lerComprovante(f); t.value = ''; }
+  else if (t.id === 'diagArq') { t.value = ''; diagLeitura(f); }
   else if (t.id === 'foto' && f) { try { S.aj.foto = await processaFoto(f); render(); toast('Foto escolhida. Toque em Salvar ajustes'); } catch (e) { toast('Não consegui abrir essa imagem'); } t.value = ''; }
   else if ((t.id === 'alArq' || t.id === 'cdArq') && f) {
     const alvo = t.id === 'alArq' ? 'alunos' : 'cardapio'; t.value = '';
