@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f3a5f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="PEL">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<title>PEL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Configuração fica em config.js (preencha uma vez; nas atualizações, não substitua esse arquivo) -->
+<script src="config.js"></script>
+<script>window.QAJ_CONFIG = window.QAJ_CONFIG || {};</script>
+
+<style>
+/*
+VOICE: prático, de quartel — direto, sem enfeite, cada toque resolve algo.
+IDEA: a ficha de rancho / lista de chamada do pelotão, agora viva.
+PICTURE: o próprio cardápio com contadores e o valor grande; a lista com selos de pago.
+COLOUR and TYPE: azul-farda #1f3a5f, branco, tomate #e2522b como ação; Barlow Condensed nos títulos e números.
+LAYOUT: uma coluna de 560px, faixa azul no topo, barra de abas fixa embaixo.
+*/
+:root{color-scheme:light dark;
+--bg:light-dark(#f4f5f7,#0f141b);--card:light-dark(#fff,#18202b);--ink:light-dark(#14181f,#eef1f5);
+--mute:light-dark(#5b6472,#9aa5b4);--line:light-dark(#e1e4e9,#2a3442);--farda:#1f3a5f;
+--acao:#e2522b;--acao2:light-dark(#c4421e,#ff6a42);--ok:light-dark(#17703f,#4cc283);--okbg:light-dark(#e3f4ea,#13301f);
+--av:light-dark(#9a5b00,#f2b54a);--avbg:light-dark(#fff1d9,#3a2a10);--pe:light-dark(#5b6472,#9aa5b4);--pebg:light-dark(#eceef2,#232c38)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Barlow,system-ui,sans-serif;overflow-x:clip;-webkit-tap-highlight-color:transparent}
+h1,h2,h3,.num{font-family:"Barlow Condensed",Barlow,sans-serif;font-weight:700;line-height:1.05;margin:0}
+header{position:relative;background:var(--farda);color:#fff;padding:calc(env(safe-area-inset-top) + 14px) max(5vw,16px) 18px}
+header .wrap{display:flex;align-items:center;gap:12px;justify-content:space-between}
+header h1{font-size:clamp(24px,7vw,32px);letter-spacing:.3px}
+header small{display:block;font-size:14px;opacity:.85;font-weight:500}
+.net{font-size:13px;padding:4px 10px;border-radius:99px;background:rgba(255,255,255,.14);white-space:nowrap}
+.net::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#4cc283;margin-right:6px;vertical-align:1px}
+.net.off::before{background:#f2b54a}
+main{max-width:560px;margin:0 auto;padding:16px 14px calc(96px + env(safe-area-inset-bottom))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.card h2{font-size:24px;margin-bottom:4px}
+.sub{color:var(--mute);font-size:14px}
+.aviso{background:var(--avbg);color:var(--av);border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:14px}
+.item{display:flex;align-items:center;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+.item:first-of-type{border-top:0}
+.item .n{flex:1;font-weight:600}
+.item .p{color:var(--mute);font-size:14px;white-space:nowrap}
+.step{display:flex;align-items:center;gap:4px}
+.step button{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:22px;font-weight:600;cursor:pointer}
+.step button.mais{background:var(--farda);border-color:var(--farda);color:#fff}
+.step .q{width:28px;text-align:center;font:700 22px "Barlow Condensed",sans-serif}
+.total{display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 4px}
+.total .num{font-size:44px;color:var(--acao2);white-space:nowrap}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;border:0;border-radius:12px;background:var(--acao);color:#fff;font:700 18px Barlow,sans-serif;cursor:pointer;margin-top:10px;text-decoration:none}
+.btn:disabled{opacity:.45}
+.btn.sec{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.azul{background:var(--farda)}
+.btn.peq{min-height:44px;font-size:16px}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,label:focus-within{outline:3px solid var(--acao);outline-offset:2px}
+label.fl{display:block;font-size:14px;font-weight:600;margin:12px 0 4px}
+input,textarea,select{width:100%;font:16px Barlow,sans-serif;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+textarea{min-height:130px;resize:vertical}
+.linha2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.selo{display:inline-block;font-size:13px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap}
+.s-pago{background:var(--okbg);color:var(--ok)}.s-conferir{background:var(--avbg);color:var(--av)}.s-pendente{background:var(--pebg);color:var(--pe)}
+.pix{font:13px ui-monospace,monospace;word-break:break-all;background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:10px;margin-top:8px;color:var(--mute)}
+.motivos{margin:8px 0 0;padding-left:18px;font-size:14px;color:var(--av)}
+.barra{height:8px;background:var(--pebg);border-radius:99px;overflow:hidden;margin-top:10px}
+.barra i{display:block;height:100%;background:var(--farda);width:0;transition:width .3s}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0 4px}
+.stats div{background:var(--bg);border-radius:10px;padding:8px;text-align:center}
+.stats .num{font-size:26px;display:block}
+.stats span{font-size:12px;color:var(--mute)}
+.ped{display:flex;gap:10px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
+.ped .nr{font:700 22px "Barlow Condensed",sans-serif;width:52px;flex:none}
+.ped .tx{flex:1;font-size:15px}
+.ped .tx small{display:block;color:var(--mute)}
+.ped.eu{background:linear-gradient(90deg,transparent,var(--pebg),transparent)}
+.acoes{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.acoes button{min-height:36px;padding:0 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 14px Barlow,sans-serif;cursor:pointer}
+.prev{display:grid;grid-template-columns:minmax(0,1fr) 84px 44px;gap:6px;margin-top:6px}
+.prev button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;font-size:18px;cursor:pointer}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav button{flex:1;max-width:186px;background:none;border:0;color:var(--mute);font:600 13px Barlow,sans-serif;padding:8px 0 10px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+nav button svg{width:24px;height:24px}
+nav button.on{color:var(--farda)}
+:root[data-theme=dark] nav button.on{color:#8fb4e6}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) nav button.on{color:#8fb4e6}}
+.menu{width:44px;height:44px;border:0;border-radius:12px;background:rgba(255,255,255,.12);color:#fff;cursor:pointer;display:grid;place-items:center}
+.menu svg{width:22px;height:22px}
+.drop{position:absolute;right:max(5vw,16px);top:calc(100% - 8px);background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.18);z-index:8;min-width:220px;overflow:hidden}
+.drop button{display:block;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);color:var(--ink);font:600 16px Barlow,sans-serif;padding:14px 16px;cursor:pointer}
+.drop button:first-child{border-top:0}
+nav button{max-width:240px}
+.marca{display:flex;gap:10px;align-items:center}
+#logo{width:46px;height:46px;border-radius:12px;object-fit:cover;border:2px solid rgba(255,255,255,.55);flex:none}
+.seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--pebg);padding:4px;border-radius:12px;margin-bottom:14px}
+.seg button{min-height:42px;border:0;border-radius:9px;background:none;color:var(--mute);font:600 14px Barlow,sans-serif;cursor:pointer}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.fotoPrev{width:96px;height:96px;border-radius:22px;object-fit:cover;display:block;background:var(--farda)}
+.alunos{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;max-height:220px;overflow:auto}
+.alunos span{font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:3px 8px}
+.grp{margin:16px 0 2px;padding-top:12px;border-top:2px solid var(--farda)}.grp:first-of-type{margin-top:8px}
+.grp b{font:700 20px "Barlow Condensed",sans-serif;display:block}.grp span{font-size:14px;color:var(--mute)}
+.feito{text-align:center;padding:24px 16px}.feito .ok{width:64px;height:64px;border-radius:50%;background:var(--okbg);color:var(--ok);font:700 36px/64px Barlow,sans-serif;margin:0 auto 10px}
+#modal .fundo{position:fixed;inset:0;background:rgba(10,14,20,.62);z-index:20;display:flex;align-items:flex-end;justify-content:center;padding:12px 10px calc(10px + env(safe-area-inset-bottom))}
+#modal .caixa{background:var(--card);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:16px;padding:16px}
+#modal .x{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:24px;cursor:pointer;flex:none}
+.bancos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+.bancos a{text-decoration:none;min-height:56px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 16px Barlow,sans-serif;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.bancos a.ult{border:2px solid var(--farda);grid-column:1/-1}.bancos small{font-size:12px;color:var(--mute);font-weight:500}
+button.link{background:none;border:0;padding:4px 2px;color:var(--acao2);font:600 14px Barlow,sans-serif;cursor:pointer;text-decoration:underline}
+img.comp{display:block;width:100%;border-radius:10px;border:1px solid var(--line);background:#fff}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#14181f;color:#fff;padding:12px 18px;border-radius:12px;font-weight:600;opacity:0;transition:.25s;z-index:9;max-width:90vw;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.vazio{text-align:center;padding:30px 10px}
+.vazio svg{width:120px;height:90px}
+.rodape{text-align:center;font-size:14px;color:var(--mute);margin-top:6px}
+.rodape button{background:none;border:0;color:var(--acao2);font:600 14px Barlow,sans-serif;cursor:pointer;padding:8px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="marca"><img id="logo" hidden alt=""><div><h1><span id="tit">PEL</span></h1><small id="hsub">Pedido de almoço</small></div></div>
+  <div style="display:flex;align-items:center;gap:6px"><span class="net" id="net">online</span>
+  <button class="menu" data-act="menu" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="19" r="2.2"/></svg></button></div>
+</div>
+<div class="drop" id="drop" hidden>
+  <button data-act="aba" data-v="admin">Área do responsável</button>
+  <button data-act="trocar">Trocar meu número</button>
+</div></header>
+<main id="app"></main>
+<nav id="nav">
+  <button data-act="aba" data-v="pedir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 11h18a9 9 0 0 1-18 0z"/><path d="M8 7c0-2 2-2 2-4M13 7c0-2 2-2 2-4"/></svg>Pedir</button>
+  <button data-act="aba" data-v="lista"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>Lista</button>
+</nav>
+<div id="modal"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+{
+const CONFIG = window.QAJ_CONFIG, PMIN = +CONFIG.PRIMEIRO_PELOTAO || 6, PMAX = +CONFIG.ULTIMO_PELOTAO || 30;
+// pelotão = número do aluno sem os 2 últimos dígitos (2116 → 21, 612 → 6, 3005 → 30)
+const pelDe = n => { n = String(n || '').replace(/\D/g, ''); if (n.length < 3) return null; const v = parseInt(n.slice(0, -2), 10); return v >= PMIN && v <= PMAX ? String(v) : null; };
+let P = null; // pelotão que está aberto na tela
+const REMOTO = !!(CONFIG.SUPABASE_URL && CONFIG.SUPABASE_KEY);
+const KEY = String(CONFIG.SUPABASE_KEY || ''), URLDB = String(CONFIG.SUPABASE_URL || '').replace(/\/$/, '');
+
+/* ---------- utilidades ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const brl = v => 'R$ ' + Number(v || 0).toFixed(2).replace('.', ',');
+const pad = n => String(n).padStart(2, '0');
+const isoDia = (d = new Date()) => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const somaDias = (iso, n) => { const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n); return isoDia(d); };
+const diaBR = iso => iso ? iso.slice(8, 10) + '/' + iso.slice(5, 7) : '';
+const SEMANA = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+const diaNome = iso => { if (!iso) return ''; const h = isoDia(); if (iso === h) return 'hoje'; if (iso === somaDias(h, 1)) return 'amanhã'; return SEMANA[new Date(iso + 'T12:00:00').getDay()] + ', ' + diaBR(iso); };
+const semAcento = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '');
+const ls = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 2600); }
+async function copiar(txt) {
+  try { await navigator.clipboard.writeText(txt); return true; }
+  catch (e) {
+    const ta = document.createElement('textarea'); ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (e2) {}
+    ta.remove(); return ok;
+  }
+}
+function carregar(src) {
+  return new Promise((ok, erro) => {
+    if (document.querySelector('script[src="' + src + '"]')) return ok();
+    const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => erro(new Error('não carregou ' + src));
+    document.head.appendChild(s);
+  });
+}
+
+const comTempo = (pr, ms) => Promise.race([pr, new Promise((_, er) => setTimeout(() => er(new Error('tempo esgotado')), ms))]);
+
+/* ---------- Pix copia-e-cola (BR Code estático) ---------- */
+const campo = (id, v) => id + pad(v.length) + v;
+function crc16(s) {
+  let c = 0xFFFF;
+  for (let i = 0; i < s.length; i++) { c ^= s.charCodeAt(i) << 8; for (let j = 0; j < 8; j++) c = (c & 0x8000) ? ((c << 1) ^ 0x1021) : (c << 1); c &= 0xFFFF; }
+  return c.toString(16).toUpperCase().padStart(4, '0');
+}
+const limpa = (s, n) => semAcento(s).toUpperCase().replace(/[^A-Z0-9 ]/g, '').trim().slice(0, n);
+const cpfValido = d => {
+  if (!/^\d{11}$/.test(d) || /^(\d)\1{10}$/.test(d)) return false;
+  const dv = n => { let t = 0; for (let i = 0; i < n; i++) t += +d[i] * (n + 1 - i); const r = (t * 10) % 11; return r === 10 ? 0 : r; };
+  return dv(9) === +d[9] && dv(10) === +d[10];
+};
+// descobre o tipo da chave pelo formato (o tipo escolhido só desempata)
+function tipoChave(chave, escolhido) {
+  const c = String(chave || '').trim(), d = c.replace(/\D/g, '');
+  if (c.includes('@')) return 'email';
+  if (/^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$/i.test(c)) return 'aleatoria';
+  if (c.startsWith('+')) return 'celular';
+  if (d.length === 14) return 'cnpj';
+  if (d.length === 13 && d.startsWith('55')) return 'celular';
+  if (d.length === 11) {
+    if (/^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(c)) return 'cpf';          // 529.982.247-25
+    if (/^\(?\d{2}\)?[\s-]/.test(c) || /\d{4,5}-\d{4}$/.test(c)) return 'celular'; // (91) 98888-7777
+    if (cpfValido(d)) return 'cpf';      // número que fecha o dígito do CPF quase sempre é CPF
+    if (d[2] === '9') return 'celular';
+    return escolhido === 'cpf' ? 'cpf' : 'celular';
+  }
+  if (d.length === 10) return 'celular';
+  return escolhido || 'aleatoria';
+}
+function normChave(tipo, chave) {
+  chave = String(chave || '').trim(); tipo = tipoChave(chave, tipo);
+  if (tipo === 'cpf' || tipo === 'cnpj') return chave.replace(/\D/g, '');
+  if (tipo === 'celular') { const d = chave.replace(/\D/g, ''); return '+' + (d.startsWith('55') && d.length > 11 ? d : '55' + d); }
+  if (tipo === 'email') return chave.toLowerCase();
+  if (tipo === 'aleatoria') { const h = chave.toLowerCase().replace(/[^0-9a-f]/g, ''); return h.length === 32 ? h.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, '$1-$2-$3-$4-$5') : chave; }
+  return chave;
+}
+const NOME_TIPO = { celular: 'celular', cpf: 'CPF', cnpj: 'CNPJ', email: 'e-mail', aleatoria: 'chave aleatória' };
+const infoChave = (chave, tipo) => String(chave || '').trim() ? 'No Pix vai: ' + normChave(tipo, chave) + ' (' + NOME_TIPO[tipoChave(chave, tipo)] + ')' : '';
+// o Pix sempre segue o que está salvo em Ajustes agora (não precisa republicar o cardápio)
+// identificador único por pedido: cada pedido gera um Pix diferente, então o banco não acusa "Pix repetido" de um dia para o outro
+const txidDe = p => ('P' + p.pelotao + 'N' + p.numero + 'T' + (Date.parse(p.atualizado_em || p.criado_em || '') || Date.now()).toString(36)).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 25);
+const pixDe = c => (S.cfg.pix && S.cfg.pix.chave) ? { ...c, ...S.cfg.pix } : c;
+function gerarPix(c, valor, txid) {
+  c = pixDe(c);
+  const conta = campo('00', 'br.gov.bcb.pix') + campo('01', normChave(c.tipo_chave, c.chave));
+  let p = campo('00', '01') + campo('26', conta) + campo('52', '0000') + campo('53', '986') +
+    (valor > 0 ? campo('54', valor.toFixed(2)) : '') + campo('58', 'BR') +
+    campo('59', limpa(c.recebedor, 25) || 'RECEBEDOR') + campo('60', limpa(c.cidade, 15) || 'BELEM') +
+    campo('62', campo('05', txid.replace(/[^A-Za-z0-9]/g, '').slice(0, 25) || '***')) + '6304';
+  return p + crc16(p);
+}
+
+/* ---------- leitura do cardápio colado ---------- */
+// Entende os dois formatos:
+//  a) "Carne de panela - 15" (preço na linha)
+//  b) cabeçalho com preço ("Cardápio valor 10 reais", "Cardápio R$15,00 Acompanha (...)") e os pratos embaixo
+const limpaLinha = l => String(l).replace(/[\p{Extended_Pictographic}\u{FE0F}\u{200D}\u{20E3}]/gu, ' ').replace(/[*_~•·]/g, ' ').replace(/\s+/g, ' ').trim();
+const arrumaNome = n => { n = n.replace(/^[\s\-–—>)\d.º°]+/, '').replace(/[\s\-–—:;,.=]+$/, '').replace(/\s*\/\s*/g, '/').trim(); return n ? n[0].toUpperCase() + n.slice(1) : ''; };
+const numBR = t => parseFloat(String(t).replace(',', '.'));
+function lerCardapio(txt) {
+  const itens = []; let preco = null, grupo = '', fornecedor = '', data = null;
+  for (const bruta of String(txt).split(/\n/)) {
+    const l = limpaLinha(bruta); if (!l || /^pix\b|chave/i.test(l)) continue;
+    const cab = /card[aá]pio|valor|acompanha|marmitas? de|pre[cç]o/i.test(l);
+    const mp = l.match(/R\s?\$\s*(\d{1,3}(?:[.,]\d{1,2})?)/i) || l.match(/(\d{1,3}(?:[.,]\d{1,2})?)\s*(?:reais|real)\b/i) || l.match(/valor\s*(?:de\s*)?(\d{1,3}(?:[.,]\d{1,2})?)/i);
+    const fim = l.match(/^(.*?[a-zà-ú].*?)[\s\-–—:=]+(?:R\s?\$\s*)?(\d{1,3}(?:[.,]\d{1,2})?)\s*(?:reais)?$/i);
+    if (cab && mp) { // cabeçalho de um grupo de preço
+      preco = numBR(mp[1]);
+      const ac = l.match(/acompanha\w*\s*:?\s*\(?([^)]*)\)?/i);
+      grupo = ac && ac[1].trim() ? 'Acompanha ' + ac[1].trim().toLowerCase() : ''; continue;
+    }
+    if (/^acompanha/i.test(l)) { grupo = 'Acompanha ' + l.replace(/^acompanha\w*\s*:?\s*/i, '').replace(/[()]/g, '').trim().toLowerCase(); continue; }
+    if (fim || (mp && !cab)) { // item com o preço na mesma linha
+      const nome = arrumaNome(fim ? fim[1] : l.replace(mp[0], '')), v = numBR(fim ? fim[2] : mp[1]);
+      if (nome && v > 0 && v < 500) itens.push({ nome, preco: v }); continue;
+    }
+    if (preco == null) { // antes do primeiro preço: nome do fornecedor e data
+      const d = l.match(/(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?/);
+      if (d && !data) {
+        const hoje = new Date(); let ano = d[3] ? +(d[3].length === 2 ? '20' + d[3] : d[3]) : hoje.getFullYear();
+        if (!d[3] && +d[2] < hoje.getMonth() + 1 - 6) ano++;
+        data = ano + '-' + pad(d[2]) + '-' + pad(d[1]);
+      }
+      const nome = arrumaNome(l.replace(/\d{1,2}\/\d{1,2}(\/\d{2,4})?/, ''));
+      if (!fornecedor && /[a-zà-ú]{3}/i.test(nome)) fornecedor = nome.toLowerCase().replace(/(^|\s)\S/g, x => x.toUpperCase());
+      continue;
+    }
+    const nome = arrumaNome(l); if (nome && /[a-zà-ú]{3}/i.test(nome)) itens.push({ nome, preco, grupo });
+  }
+  lerCardapio.info = { fornecedor, data }; return itens;
+}
+
+/* ---------- leitura do comprovante (tudo no aparelho) ---------- */
+async function pdfLib() {
+  if (pdfLib.m) return pdfLib.m;
+  try { // leitor de PDF que vem junto com o app (funciona offline)
+    const m = await import(new URL('pdf.min.js', location.href).href);
+    m.GlobalWorkerOptions.workerSrc = new URL('pdf.worker.min.js', location.href).href;
+    return pdfLib.m = m;
+  } catch (e) { // reserva: versão da internet
+    await carregar('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    return pdfLib.m = pdfjsLib;
+  }
+}
+async function extrairTexto(file, prog = () => {}) {
+  if (file.type === 'application/pdf' || /\.pdf$/i.test(file.name)) {
+    const pdfjs = await pdfLib();
+    const doc = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+    let t = '';
+    for (let i = 1; i <= doc.numPages; i++) {
+      // junta os pedaços de texto por linha (mesma altura na página), da esquerda para a direita
+      const its = (await (await doc.getPage(i)).getTextContent()).items.filter(x => x.str.trim());
+      const linhas = [];
+      for (const x of its) {
+        const y = x.transform[5], l = linhas.find(z => Math.abs(z.y - y) < 3);
+        (l ? l.its : (linhas.push({ y, its: [] }), linhas[linhas.length - 1].its)).push(x);
+      }
+      linhas.sort((m, n) => n.y - m.y);
+      t += linhas.map(l => l.its.sort((m, n) => m.transform[4] - n.transform[4]).map(x => x.str.trim()).join(' ')).join('\n') + '\n';
+      prog(i / doc.numPages);
+    }
+    if (t.replace(/\s/g, '').length > 40) return t;
+    // PDF escaneado (só imagem): lê com OCR página por página
+    let o = '';
+    for (let i = 1; i <= Math.min(doc.numPages, 5); i++) {
+      const pg = await doc.getPage(i), vp = pg.getViewport({ scale: 2 }), cv = document.createElement('canvas');
+      cv.width = vp.width; cv.height = vp.height;
+      await pg.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise;
+      o += await ocr(cv) + '\n';
+    }
+    return o;
+  }
+  if (/^text\//.test(file.type) || /\.(txt|csv)$/i.test(file.name)) return file.text();
+  return ocr(file);
+}
+// Leitor de imagem: é preparado em segundo plano assim que o aluno faz o pedido,
+// e fica pronto (e guardado no celular) quando o comprovante chega.
+let ocrW = null, ocrIndisp = false;
+function prepararOCR() {
+  if (ocrW || ocrIndisp) return ocrW;
+  ocrW = (async () => {
+    await carregar('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js');
+    return Tesseract.createWorker('por', 1);
+  })();
+  comTempo(ocrW, 40000).catch(() => { ocrIndisp = true; ocrW = null; });
+  return ocrW;
+}
+// deixa a imagem menor e em tons de cinza: leitura mais rápida e mais certa
+async function prepImagem(img) {
+  let src = img;
+  if (img instanceof Blob) { const u = URL.createObjectURL(img); src = new Image(); await new Promise((ok, er) => { src.onload = ok; src.onerror = er; src.src = u; }); }
+  const w = src.naturalWidth || src.width, h = src.naturalHeight || src.height, k = Math.min(1, 800 / w);
+  const cv = document.createElement('canvas'); cv.width = Math.round(w * k); cv.height = Math.round(h * k);
+  const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height); cx.drawImage(src, 0, 0, cv.width, cv.height);
+  const d = cx.getImageData(0, 0, cv.width, cv.height), px = d.data;
+  for (let i = 0; i < px.length; i += 4) { let g = 0.299 * px[i] + 0.587 * px[i + 1] + 0.114 * px[i + 2]; g = Math.max(0, Math.min(255, (g - 128) * 1.4 + 128)); px[i] = px[i + 1] = px[i + 2] = g; }
+  cx.putImageData(d, 0, 0); return cv;
+}
+// Lê o print por FAIXAS, começando pelo meio/baixo (onde costuma ficar "Origem/Pagador"),
+// e PARA assim que acha o nome do aluno. Não precisa ler o comprovante inteiro.
+async function ocrFoco(file, nome) {
+  if (ocrIndisp) throw new Error('leitor de imagem indisponível');
+  const w = await comTempo(prepararOCR(), 9500);
+  const cv = await prepImagem(file), W = cv.width, H = cv.height;
+  const faixas = [[0.45, 0.80], [0.70, 1], [0.20, 0.52], [0, 0.25]];
+  let txt = '';
+  for (const [a, b] of faixas) {
+    const top = Math.floor(H * a), alt = Math.min(Math.ceil(H * (b - a)), H - top);
+    txt += (await w.recognize(cv, { rectangle: { left: 0, top, width: W, height: alt } })).data.text + '\n';
+    if (nome && temNome(semAcento(txt).toLowerCase(), nome)) break;
+  }
+  return txt;
+}
+async function ocr(img) {
+  if (ocrIndisp) throw new Error('leitor de imagem indisponível');
+  const w = await comTempo(prepararOCR(), 9500);
+  return (await w.recognize(await prepImagem(img))).data.text;
+}
+const MESES = { jan:1, fev:2, mar:3, abr:4, mai:5, jun:6, jul:7, ago:8, set:9, out:10, nov:11, dez:12 };
+const distancia = (a, b) => { // quantas letras diferentes (Levenshtein)
+  const m = a.length, n = b.length; if (Math.abs(m - n) > 2) return 9;
+  let ant = Array.from({ length: n + 1 }, (_, j) => j);
+  for (let i = 1; i <= m; i++) { const at = [i]; for (let j = 1; j <= n; j++) at[j] = Math.min(ant[j] + 1, at[j - 1] + 1, ant[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); ant = at; }
+  return ant[n];
+};
+function temNome(textoBaixo, nome) {
+  const nos = [...new Set(semAcento(nome).toLowerCase().split(/[^a-z]+/).filter(w => w.length > 2 && !['dos', 'das', 'des', 'del'].includes(w)))];
+  if (!nos.length) return false;
+  const pal = new Set(textoBaixo.split(/[^a-z]+/).filter(w => w.length > 2));
+  const acha = w => pal.has(w) || [...pal].some(x => distancia(w, x) <= (w.length >= 6 ? 2 : 1));
+  return nos.filter(acha).length >= Math.min(2, nos.length);
+}
+function analisar(texto, ped, c) {
+  const motivos = [], T = semAcento(texto), low = T.toLowerCase();
+  // valor
+  const vals = [...T.matchAll(/(?:R\s?\$|valor)\s*:?\s*(?:R\s?\$)?\s*(\d{1,3}(?:\.\d{3})*,\d{2})/gi)]
+    .map(m => +m[1].replace(/\./g, '').replace(',', '.'));
+  const valorOk = vals.some(v => Math.abs(v - ped.total) < 0.005);
+  if (vals.length && !valorOk) motivos.push('Valor ' + brl(vals[0]) + ' diferente do pedido (' + brl(ped.total) + ')');
+  // ID da transação (E2E): E + ISPB(8) + AAAAMMDDHHMM(12) + 11 caracteres
+  const flat = T.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  let e2e = null, dataE2E = null;
+  for (const m of flat.matchAll(/E[0-9OIL]{20}[A-Z0-9]{11}/g)) {
+    const dig = m[0].slice(1, 21).replace(/O/g, '0').replace(/[IL]/g, '1');
+    const a = dig.slice(8, 12), me = +dig.slice(12, 14), d = +dig.slice(14, 16);
+    if (a >= '2020' && a <= '2099' && me >= 1 && me <= 12 && d >= 1 && d <= 31) {
+      e2e = 'E' + dig + m[0].slice(21); dataE2E = a + '-' + dig.slice(12, 14) + '-' + dig.slice(14, 16); break;
+    }
+  }
+  // data (só informativa)
+  const datas = [];
+  if (dataE2E) datas.push(dataE2E);
+  for (const m of T.matchAll(/(\d{2})\/(\d{2})\/(\d{4})/g)) datas.push(m[3] + '-' + m[2] + '-' + m[1]);
+  // NOME DO ALUNO: é o que confirma quem pagou (aceita pequenos erros de leitura)
+  const nomeOk = temNome(low, ped.nome);
+  if (!nomeOk) motivos.unshift('Nome do aluno não encontrado no comprovante (pode ter pago por outra conta)');
+  return { ok: !motivos.length, nomeOk, e2e, valor: valorOk ? ped.total : (vals[0] ?? null), data: datas[0] || null, motivos };
+}
+
+/* ---------- dados: Supabase ou modo teste ---------- */
+const ERROS = {
+  codigo: 'Código do pelotão incorreto', pin: 'PIN incorreto', bloqueado: 'Muitas tentativas erradas. Aguarde 15 minutos',
+  sem_codigo: 'O responsável deste pelotão ainda não liberou o app', fora_da_lista: 'Seu número não está na lista do pelotão',
+  numero: 'Número inválido para este pelotão', pin_formato: 'O PIN precisa ter 4 números',
+  sem_responsavel: 'Este pelotão ainda não foi liberado pelo desenvolvedor', senha: 'Senha incorreta',
+  travado: 'Pedido já pago: para mudar, fale com o responsável', sem_cardapio: 'O cardápio mudou. Atualize a tela',
+  dup: 'Comprovante já usado em outro pedido', codigo_curto: 'O código precisa ter pelo menos 6 caracteres',
+  senha_curta: 'A senha precisa ter pelo menos 4 caracteres', grande: 'Imagem muito grande', status: 'Situação inválida'
+};
+const msgErro = e => ERROS[e] || ('Erro: ' + e);
+const a4 = cr => ({ p_pel: cr.pelotao, p_codigo: cr.codigo, p_numero: cr.numero, p_pin: cr.pin });
+const a2 = ad => ({ p_pel: ad.pel, p_senha: ad.senha });
+const API = {
+  async rpc(fn, args) {
+    const h = { apikey: KEY, 'Content-Type': 'application/json' };
+    if (!KEY.startsWith('sb_')) h.Authorization = 'Bearer ' + KEY;
+    const r = await fetch(URLDB + '/rest/v1/rpc/' + fn, { method: 'POST', headers: h, body: JSON.stringify(args) });
+    if (!r.ok) { const e = new Error(await r.text()); e.status = r.status; throw e; }
+    return r.json();
+  },
+  // ----- modo teste: imita o banco, guardando tudo neste aparelho -----
+  db() { return ls.get('qaj_db2', { cfg: {}, seg: {}, pins: {}, cardapios: [], pedidos: [], imgs: {} }); },
+  grava(db) { ls.set('qaj_db2', db); },
+  ultimo(db, pel) { return db.cardapios.filter(x => x.pelotao === pel).sort((a, b) => b.data.localeCompare(a.data))[0] || null; },
+  alunoOk(db, cr) { const sg = db.seg[cr.pelotao] || {}; return !!sg.codigo && sg.codigo === cr.codigo && db.pins[cr.pelotao + '|' + cr.numero] === cr.pin; },
+  admOk(db, ad) { const sg = db.seg[ad.pel] || {}; return !!sg.admin && sg.admin === ad.senha; },
+
+  // ----- aluno -----
+  async alunoEntrar(pel, codigo, numero, pin, nome) {
+    if (REMOTO) return this.rpc('aluno_entrar', { p_pel: pel, p_codigo: codigo, p_numero: numero, p_pin: pin, p_nome: nome });
+    const db = this.db(), sg = db.seg[pel] || {};
+    if (pelDe(numero) !== pel) return { erro: 'numero' };
+    if (!sg.codigo) return { erro: 'sem_codigo' };
+    if (codigo !== sg.codigo) return { erro: 'codigo' };
+    const lista = (db.cfg[pel] || {}).alunos || [], x = lista.find(a => a.numero === numero);
+    if (lista.length && !x) return { erro: 'fora_da_lista' };
+    if (!/^\d{4}$/.test(pin)) return { erro: 'pin_formato' };
+    const k = pel + '|' + numero; if (db.pins[k] && db.pins[k] !== pin) return { erro: 'pin' };
+    db.pins[k] = pin; this.grava(db); return { ok: true, nome: (x && x.nome) || nome || numero };
+  },
+  async alunoDados(cr) {
+    if (REMOTO) return this.rpc('aluno_dados', a4(cr));
+    const db = this.db(); if (!this.alunoOk(db, cr)) return { erro: 'pin' };
+    const c = this.ultimo(db, cr.pelotao);
+    const ps = c ? db.pedidos.filter(p => p.pelotao === cr.pelotao && p.data === c.data).map(p => p.numero === cr.numero ? p :
+      { pelotao: p.pelotao, data: p.data, numero: p.numero, nome: p.nome, itens: p.itens, total: p.total, status: p.status === 'pendente' ? 'pendente' : 'feito' }) : [];
+    return { cfg: db.cfg[cr.pelotao] || {}, cardapio: c, pedidos: ps };
+  },
+  async alunoSalvar(cr, p) {
+    if (REMOTO) return this.rpc('aluno_salvar_pedido', { ...a4(cr), p_ped: p });
+    const db = this.db(); if (!this.alunoOk(db, cr)) return { erro: 'pin' };
+    if (!db.cardapios.some(x => x.pelotao === cr.pelotao && x.data === p.data)) return { erro: 'sem_cardapio' };
+    const i = db.pedidos.findIndex(x => x.pelotao === cr.pelotao && x.data === p.data && x.numero === cr.numero);
+    if (i >= 0 && db.pedidos[i].status === 'pago') return { erro: 'travado' };
+    if (p.e2e && db.pedidos.some((x, j) => j !== i && x.e2e === p.e2e)) return { erro: 'dup' };
+    const novo = { ...p, pelotao: cr.pelotao, numero: cr.numero };
+    if (i >= 0) db.pedidos[i] = novo; else db.pedidos.push(novo); this.grava(db); return { ok: true };
+  },
+  async alunoCancelar(cr, data) {
+    if (REMOTO) return this.rpc('aluno_cancelar', { ...a4(cr), p_data: data });
+    const db = this.db(); if (!this.alunoOk(db, cr)) return { erro: 'pin' };
+    db.pedidos = db.pedidos.filter(x => !(x.pelotao === cr.pelotao && x.data === data && x.numero === cr.numero && x.status === 'pendente'));
+    this.grava(db); return { ok: true };
+  },
+  async alunoImg(cr, data, img) {
+    if (REMOTO) return this.rpc('aluno_salvar_img', { ...a4(cr), p_data: data, p_img: img });
+    const db = this.db(); if (!this.alunoOk(db, cr)) return { erro: 'pin' };
+    db.imgs[cr.pelotao + '|' + data + '|' + cr.numero] = img; this.grava(db); return { ok: true };
+  },
+
+  // ----- responsável (ou desenvolvedor com a senha mestra) -----
+  async adminEntrar(pel, senha) {
+    if (REMOTO) return this.rpc('admin_entrar', { p_pel: pel, p_senha: senha });
+    const db = this.db(), sg = db.seg[pel] = db.seg[pel] || {};
+    if (!sg.admin) { if (String(senha).length < 4) return { erro: 'senha_curta' }; sg.admin = senha; this.grava(db); } // modo teste: 1º acesso cria a senha
+    else if (sg.admin !== senha) return { erro: 'senha' };
+    return { ok: true, mestre: false, tem_codigo: !!sg.codigo, tem_admin: true };
+  },
+  async adminDados(ad) {
+    if (REMOTO) return this.rpc('admin_dados', a2(ad));
+    const db = this.db(); if (!this.admOk(db, ad)) return { erro: 'senha' };
+    const c = this.ultimo(db, ad.pel), sg = db.seg[ad.pel] || {};
+    return { cfg: db.cfg[ad.pel] || {}, cardapio: c, pedidos: c ? db.pedidos.filter(p => p.pelotao === ad.pel && p.data === c.data) : [], tem_codigo: !!sg.codigo, tem_admin: !!sg.admin };
+  },
+  async adminSalvarCfg(ad, dados, codigo, nova) {
+    if (REMOTO) return this.rpc('admin_salvar_cfg', { ...a2(ad), p_dados: dados, p_codigo: codigo || null, p_nova_senha: nova || null });
+    const db = this.db(); if (!this.admOk(db, ad)) return { erro: 'senha' };
+    if (codigo && codigo.length < 6) return { erro: 'codigo_curto' };
+    if (nova && nova.length < 4) return { erro: 'senha_curta' };
+    if (dados) db.cfg[ad.pel] = dados; const sg = db.seg[ad.pel] = db.seg[ad.pel] || {};
+    if (codigo) sg.codigo = codigo; if (nova) sg.admin = nova; this.grava(db); return { ok: true };
+  },
+  async adminPublicar(ad, c) {
+    if (REMOTO) return this.rpc('admin_publicar', { ...a2(ad), p_c: c });
+    const db = this.db(); if (!this.admOk(db, ad)) return { erro: 'senha' };
+    const old = db.cardapios.find(x => x.pelotao === ad.pel && x.data === c.data);
+    db.cardapios = db.cardapios.filter(x => x !== old); db.cardapios.push({ ...c, pelotao: ad.pel, criado_em: old?.criado_em || new Date().toISOString() });
+    this.grava(db); return { ok: true };
+  },
+  async adminStatus(ad, data, numero, status) {
+    if (REMOTO) return this.rpc('admin_status', { ...a2(ad), p_data: data, p_numero: numero, p_status: status });
+    const db = this.db(); if (!this.admOk(db, ad)) return { erro: 'senha' };
+    const x = db.pedidos.find(q => q.pelotao === ad.pel && q.data === data && q.numero === numero); if (x) x.status = status; this.grava(db); return { ok: true };
+  },
+  async adminApagar(ad, data, numero) {
+    if (REMOTO) return this.rpc('admin_apagar', { ...a2(ad), p_data: data, p_numero: numero });
+    const db = this.db(); if (!this.admOk(db, ad)) return { erro: 'senha' };
+    db.pedidos = db.pedidos.filter(q => !(q.pelotao === ad.pel && q.data === data && q.numero === numero)); delete db.imgs[ad.pel + '|' + data + '|' + numero];
+    this.grava(db); return { ok: true };
+  },
+  async adminImg(ad, data, numero) {
+    if (REMOTO) return this.rpc('admin_img', { ...a2(ad), p_data: data, p_numero: numero });
+    const db = this.db(); if (!this.admOk(db, ad)) return { erro: 'senha' };
+    return { img: db.imgs[ad.pel + '|' + data + '|' + numero] || null };
+  },
+  async adminZerarPin(ad, numero) {
+    if (REMOTO) return this.rpc('admin_zerar_pin', { ...a2(ad), p_numero: numero });
+    const db = this.db(); if (!this.admOk(db, ad)) return { erro: 'senha' };
+    delete db.pins[ad.pel + '|' + numero]; this.grava(db); return { ok: true };
+  }
+};
+const limpaPed = p => { const { id, criado_em, ...r } = p; delete r._fila; return r; };
+
+/* ---------- estado ---------- */
+const S = {
+  aba: 'pedir', eu: ls.get('qaj_eu', null), cardapio: null, pedidos: [], cfgs: {},
+  fila: ls.get('qaj_fila', []), rasc: {}, rascDe: null, admin: false, analise: null, erro: null, form: null, aj: null, sub: 'pedidos', cfg: {}, adm: null, seg: {}, banco: ls.get('qaj_banco', ''), compart: null, instalar: null
+};
+function abrePel(pel) {
+  P = pel; S.cardapio = P ? ls.get('qaj_c_' + P, null) : null; S.pedidos = P ? ls.get('qaj_p_' + P, []) : []; S.cfg = P ? ls.get('qaj_cfg_' + P, {}) : {};
+  S.form = null; S.aj = null; S.rascDe = null; aplicaMarca();
+}
+const visiveis = () => {
+  const m = new Map(S.pedidos.map(p => [p.numero, p]));
+  for (const f of S.fila) if (S.cardapio && f.pelotao === P && f.data === S.cardapio.data) m.set(f.numero, { ...(m.get(f.numero) || {}), ...f, _fila: true });
+  return [...m.values()].sort((a, b) => String(a.numero).localeCompare(String(b.numero), 'pt', { numeric: true }));
+};
+const meu = () => S.eu && visiveis().find(p => p.numero === S.eu.numero);
+const encerrado = () => { const c = S.cardapio; return !c || c.data < isoDia() || (c.prazo && Date.now() > new Date(c.prazo).getTime()); };
+const curto = v => 'R$ ' + (Number(v) % 1 ? Number(v).toFixed(2).replace('.', ',') : Number(v));
+const kk = i => i.nome + '|' + i.preco;
+const itensTxt = p => (p.itens || []).map(i => (i.qtd > 1 ? i.qtd + 'x ' : '') + i.nome + ' (' + curto(i.preco) + ')').join(' + ');
+
+/* ---------- envio com fila offline ---------- */
+async function enviar(p) {
+  p = limpaPed(p); p.atualizado_em = new Date().toISOString();
+  let r;
+  try { r = await API.alunoSalvar(S.eu, p); }
+  catch (e) {
+    if (!e.status) { S.fila = S.fila.filter(x => !(x.numero === p.numero && x.data === p.data)); S.fila.push(p); ls.set('qaj_fila', S.fila); return 'fila'; }
+    throw e;
+  }
+  if (r && r.erro === 'dup') {
+    const motivos = [...(p.comprovante?.motivos || []), 'Este comprovante já foi usado em outro pedido'];
+    await API.alunoSalvar(S.eu, { ...p, e2e: null, status: 'conferir', comprovante: { ...(p.comprovante || {}), motivos } }); return 'dup';
+  }
+  if (r && r.erro) { if (['pin', 'codigo'].includes(r.erro)) sessaoInvalida(r.erro); const e = new Error(msgErro(r.erro)); e.status = 400; throw e; }
+  return 'ok';
+}
+function sessaoInvalida(erro) { // PIN zerado pelo responsável ou código do pelotão trocado: entra de novo
+  S.ultNum = S.eu && S.eu.numero; S.eu = null; S.fila = []; ls.set('qaj_eu', null); ls.set('qaj_fila', []);
+  S.aviso = erro === 'codigo' ? 'O código do pelotão mudou. Entre de novo com o código novo.' : 'Entre de novo com o seu PIN.'; render();
+}
+async function descarregar() {
+  for (const p of [...S.fila]) {
+    try { await enviar(p); S.fila = S.fila.filter(x => x !== p); }
+    catch (e) { if (!e.status) break; S.fila = S.fila.filter(x => x !== p); toast('Erro ao enviar pedido ' + p.numero); }
+    ls.set('qaj_fila', S.fila);
+  }
+}
+async function atualizar(forcar) {
+  if (P && (!REMOTO || navigator.onLine)) {
+    try {
+      const pel = P; let r = null;
+      if (S.adm && S.adm.pel === P) {
+        r = await API.adminDados(S.adm);
+        if (r.erro) { S.adm = null; S.aviso = msgErro(r.erro); abrePel(S.eu ? pelDe(S.eu.numero) : null); render(); return; }
+        S.seg = { tem_codigo: r.tem_codigo, tem_admin: r.tem_admin };
+      } else if (S.eu && pelDe(S.eu.numero) === P) {
+        if (REMOTO) await descarregar();
+        if (!S.eu) return;
+        r = await API.alunoDados(S.eu);
+        if (r.erro) { if (r.erro === 'bloqueado') S.erro = msgErro(r.erro); else return sessaoInvalida(r.erro); r = null; }
+      }
+      if (r && pel === P) {
+        S.cfg = r.cfg || {}; S.cardapio = r.cardapio || null; S.pedidos = r.pedidos || []; S.erro = null;
+        ls.set('qaj_cfg_' + P, S.cfg); ls.set('qaj_c_' + P, S.cardapio); ls.set('qaj_p_' + P, S.pedidos); aplicaMarca();
+      }
+    } catch (e) { S.erro = e.status ? 'Erro do servidor: ' + String(e.message).slice(0, 140) : 'Sem conexão. Mostrando os dados salvos.'; }
+  }
+  const a = document.activeElement;
+  retomarVerificacao();
+  if (S.escolhendo && Date.now() - S.escolhendo < 120000 && !forcar) return;
+  if (forcar || !a || !/INPUT|TEXTAREA|SELECT/.test(a.tagName)) render();
+}
+
+/* ---------- telas ---------- */
+const SELO = { pago: '<span class="selo s-pago">✓ Pago</span>', conferir: '<span class="selo s-conferir">Conferir</span>', enviado: '<span class="selo s-pendente">Verificando</span>', pendente: '<span class="selo s-pendente">Aguardando pagamento</span>' };
+const feito = p => p && p.status && p.status !== 'pendente';
+const seloPub = p => feito(p) ? '<span class="selo s-pago">✓ Pedido feito</span>' : SELO.pendente;
+const vazioSVG = '<svg viewBox="0 0 120 90" aria-hidden="true"><ellipse cx="60" cy="80" rx="44" ry="6" fill="currentColor" opacity=".1"/><path d="M14 40h92a46 34 0 0 1-92 0z" fill="#1f3a5f"/><path d="M14 40h92" stroke="#e2522b" stroke-width="5" stroke-linecap="round"/><path d="M44 30c0-8 8-8 8-16M64 30c0-8 8-8 8-16" stroke="currentColor" opacity=".35" stroke-width="3" fill="none" stroke-linecap="round"/></svg>';
+
+function telaCadastro() {
+  return `${S.aviso ? `<div class="aviso">${esc(S.aviso)}</div>` : ''}<div class="card"><h2>Entrar</h2><p class="sub">Só entra quem é do pelotão. Peça o código ao responsável do seu pelotão.</p>
+  <label class="fl" for="cNum">Seu número (ex.: 2116)</label><input id="cNum" inputmode="numeric" maxlength="6" autocomplete="username" value="${esc(S.eu?.numero || S.ultNum || '')}">
+  <p class="sub" id="quem" style="margin-top:6px">O pelotão é identificado pelo número.</p>
+  <label class="fl" for="cCod">Código do pelotão</label><input id="cCod" autocomplete="off" autocapitalize="off">
+  <label class="fl" for="cPin">Seu PIN (4 números)</label><input id="cPin" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password">
+  <p class="sub" style="margin-top:6px">No primeiro acesso, você cria o PIN. Nos próximos, use o mesmo. Não conte a ninguém.</p>
+  <label class="fl" for="cNome">Nome de guerra (só se não estiver na lista)</label><input id="cNome" maxlength="40">
+  <button class="btn azul" data-act="salvarEu">Entrar</button>${REMOTO ? '' : '<p class="sub" style="margin-top:10px">Modo teste: o código é o que o responsável definir em Ajustes.</p>'}</div>`;
+}
+function telaPedir() {
+  if (!S.eu) return telaCadastro();
+  if (pelDe(S.eu.numero) !== P) return `<div class="card"><h2>Você está no ${esc(P)}º Pelotão</h2><p class="sub">Está aberta a área do responsável de outro pelotão. Para fazer o seu pedido, saia dela.</p><button class="btn azul" data-act="sairAdmin">Voltar para o ${esc(pelDe(S.eu.numero))}º Pelotão</button></div>`;
+  const c = S.cardapio, eu = meu(), fim = encerrado();
+  let h = S.compart ? '<div class="aviso" style="background:var(--okbg);color:var(--ok)"><b>Comprovante recebido.</b> Escolha o prato e toque em Fazer pedido: ele vai junto.</div>' : '';
+  h += S.erro ? `<div class="aviso">${esc(S.erro)}</div>` : '';
+  if (S.instalar || (/iphone|ipad/i.test(navigator.userAgent) && !navigator.standalone))
+    h += `<div class="aviso" style="background:var(--pebg);color:var(--ink)">${S.instalar ? '<b>Instale o app</b> para abrir mesmo sem internet. <button class="btn peq azul" data-act="instalar">Instalar</button>' : '<b>Instale no iPhone:</b> toque em Compartilhar e depois em “Adicionar à Tela de Início”.'}</div>`;
+  if (!c) return h + `<div class="card vazio">${vazioSVG}<h2>Sem cardápio ainda</h2><p class="sub">Quando o responsável publicar, ele aparece aqui.</p></div>` + rodape();
+  if (S.rascDe !== c.data + (eu?.atualizado_em || '')) { S.rasc = {}; (eu?.itens || []).forEach(i => S.rasc[kk(i)] = i.qtd); S.rascDe = c.data + (eu?.atualizado_em || ''); }
+  const total = c.itens.reduce((s, i) => s + (S.rasc[kk(i)] || 0) * i.preco, 0);
+  const prazo = c.prazo ? new Date(c.prazo) : null;
+  h += `<div class="card"><h2>Cardápio de ${esc(diaNome(c.data))}</h2>
+    <p class="sub">${c.fornecedor ? esc(c.fornecedor) + ' · ' : ''}${prazo ? (fim ? 'Pedidos encerrados' : 'Pedidos até ' + pad(prazo.getHours()) + ':' + pad(prazo.getMinutes())) : (fim ? 'Pedidos encerrados' : 'Pedidos abertos')}</p>`;
+  if (feito(eu)) {
+    h += `</div><div class="card feito"><div class="ok">✓</div><h2>Pedido feito!</h2>
+      <p style="margin:10px 0 4px;font-size:18px"><b>${esc(itensTxt(eu))}</b></p><p class="sub">${brl(eu.total)} · comprovante enviado${eu._fila ? ' (será enviado quando houver internet)' : ''}</p>
+      <p class="sub" style="margin-top:10px">Pode fechar o app. Para mudar o pedido, fale com o responsável.</p></div>`;
+    return h + rodape();
+  }
+  const grupos = c.itens.some(i => 'grupo' in i); let ult = null;
+  h += c.itens.map((i, k) => (grupos && (i.preco + '|' + i.grupo) !== ult ? (ult = i.preco + '|' + i.grupo, `<div class="grp"><b>Marmitas de ${curto(i.preco)}</b>${i.grupo ? `<span>${esc(i.grupo)}</span>` : ''}</div>`) : '') +
+    `<div class="item"><div class="n">${esc(i.nome)}${grupos ? '' : `<div class="p">${brl(i.preco)}</div>`}</div>
+    <div class="step"><button data-act="menos" data-k="${k}" ${fim ? 'disabled' : ''} aria-label="Menos ${esc(i.nome)}">−</button><span class="q">${S.rasc[kk(i)] || 0}</span>
+    <button class="mais" data-act="mais" data-k="${k}" ${fim ? 'disabled' : ''} aria-label="Mais ${esc(i.nome)}">+</button></div></div>`).join('');
+  h += `<div class="total"><span class="sub">Total</span><span class="num">${brl(total)}</span></div>`;
+  if (!fim) h += `<button class="btn" data-act="pedir" ${total ? '' : 'disabled'}>${eu ? 'Atualizar meu pedido' : 'Fazer pedido'}</button>`;
+  h += `</div>`;
+  if (eu) {
+    const pix = gerarPix(c, eu.total, txidDe(eu));
+    h += `<div class="card"><h2>Pagamento</h2>
+      <p style="margin:6px 0">${SELO[eu.status] || SELO.pendente} ${eu._fila ? '<span class="selo s-pendente">Será enviado quando houver internet</span>' : ''}</p>
+      <p class="sub">Seu pedido: <b>${esc(itensTxt(eu))}</b> · ${brl(eu.total)}</p>
+      ${eu.status === 'conferir' && eu.comprovante?.motivos?.length ? '<ul class="motivos">' + eu.comprovante.motivos.map(m => '<li>' + esc(m) + '</li>').join('') + '</ul><p class="sub">O responsável vai conferir. Se quiser, envie outro comprovante.</p>' : ''}
+      <button class="btn azul" data-act="copiarPix">1. Copiar Pix de ${brl(eu.total)}</button>
+      <p class="sub" style="margin-top:6px">O código é copiado e o celular abre a escolha de app: toque no seu banco. Lá, use Pix Copia e Cola.</p>
+      <div class="pix">${esc(pix)}</div>
+      <p class="sub" style="margin-top:6px">Recebedor: ${esc(pixDe(c).recebedor)} · chave ${esc(normChave(pixDe(c).tipo_chave, pixDe(c).chave))}</p>
+      <label class="btn" style="margin-top:14px">2. Enviar comprovante<input type="file" id="comp" accept="image/*,application/pdf" hidden></label>
+      <p class="sub" style="margin-top:8px">Print ou PDF do comprovante. Assim que enviar, seu pedido está feito.</p>
+      ${!fim ? '<button class="btn sec peq" data-act="cancelar">Cancelar pedido</button>' : ''}</div>`;
+  }
+  return h + rodape();
+}
+const rodape = () => `<p class="rodape">Você: <b>${esc(S.eu.numero)}</b> – ${esc(S.eu.nome)} · ${esc(pelDe(S.eu.numero))}º Pel. <button data-act="trocar">trocar</button>${REMOTO ? '' : '<br>Modo teste: os dados ficam só neste aparelho.'}</p>`;
+
+function resumo() {
+  const ps = visiveis(), cont = {};
+  ps.forEach(p => (p.itens || []).forEach(i => { const n = i.nome + ' (' + curto(i.preco) + ')'; cont[n] = (cont[n] || 0) + i.qtd; }));
+  return { ps, cont, total: ps.reduce((s, p) => s + Number(p.total || 0), 0), pagos: ps.filter(p => p.status === 'pago'), conf: ps.filter(p => p.status === 'conferir') };
+}
+function textoLista() {
+  const c = S.cardapio, r = resumo();
+  // só entram os pedidos com pagamento confirmado
+  return 'Marmitas para ' + diaNome(c.data) + '\n\n' + r.pagos.map(p => p.numero + ' - ' + itensTxt(p) + ' ✅').join('\n');
+}
+function textoResumo() {
+  const c = S.cardapio, r = resumo(), cont = {}; // só pedidos pagos
+  r.pagos.forEach(p => (p.itens || []).forEach(i => { const n = i.nome + ' (' + curto(i.preco) + ')'; cont[n] = (cont[n] || 0) + i.qtd; }));
+  const tot = r.pagos.reduce((s, p) => s + Number(p.total || 0), 0);
+  return 'Pedido ' + P + 'º Pelotão' + (c.fornecedor ? ' – ' + c.fornecedor : '') + ' – ' + diaBR(c.data) + '\n\n' + Object.entries(cont).map(([n, q]) => q + 'x ' + n).join('\n') +
+    '\n\nTotal: ' + brl(tot) + ' (' + r.pagos.length + (r.pagos.length === 1 ? ' pedido pago)' : ' pedidos pagos)');
+}
+function telaLista() {
+  if (!P) return telaCadastro();
+  const c = S.cardapio;
+  if (!c) return `<div class="card vazio">${vazioSVG}<h2>Nenhuma lista ainda</h2><p class="sub">A lista aparece quando houver cardápio publicado.</p></div>`;
+  const r = resumo();
+  return `${S.erro ? `<div class="aviso">${esc(S.erro)}</div>` : ''}<div class="card"><h2>Marmitas para ${esc(diaNome(c.data))}</h2>
+    <div class="stats" style="grid-template-columns:repeat(3,minmax(0,1fr))"><div><b class="num">${r.ps.length}</b><span>pedidos</span></div><div><b class="num" style="color:var(--ok)">${r.ps.filter(feito).length}</b><span>feitos</span></div>
+    <div><b class="num">${r.ps.filter(p => !feito(p)).length}</b><span>sem comprovante</span></div></div>
+    ${r.ps.length ? r.ps.map(p => `<div class="ped ${S.eu && p.numero === S.eu.numero ? 'eu' : ''}"><span class="nr">${esc(p.numero)}</span><span class="tx">${esc(itensTxt(p))}</span>${seloPub(p)}</div>`).join('') : '<p class="sub">Ninguém pediu ainda.</p>'}
+    ${faltam().length ? `<p class="sub" style="margin-top:12px">Ainda não pediram (${faltam().length}): ${faltam().map(a => esc(a.numero)).join(' · ')}</p>` : ''}</div>`;
+}
+const pixCfg = () => S.cfg.pix || {};
+const alunos = () => S.cfg.alunos || [];
+function lerAlunos(txt) {
+  const m = new Map();
+  for (const l of String(txt).split(/\n/)) {
+    const r = l.replace(/[*_~]/g, '').match(/(?<!\d)(\d{3,6})(?!\d)\s*[-–—:.)|;,]*\s*(.*)$/);
+    if (r && !m.has(r[1])) m.set(r[1], { numero: r[1], nome: r[2].replace(/[^\p{L}\s.'-]/gu, ' ').replace(/\s+/g, ' ').trim() });
+  }
+  let v = [...m.values()];
+  const doPel = v.filter(a => pelDe(a.numero) === P);
+  lerAlunos.fora = v.length - doPel.length;
+  return doPel.sort((a, b) => a.numero.localeCompare(b.numero, 'pt', { numeric: true }));
+}
+const faltam = () => { const ped = new Set(visiveis().map(p => p.numero)); return alunos().filter(a => !ped.has(a.numero)); };
+function iniciaForm() {
+  const c = S.cardapio, novo = !c || c.data < isoDia();
+  const pr = c?.prazo && !novo ? new Date(c.prazo) : null;
+  S.form = { data: novo ? somaDias(isoDia(), 1) : c.data, texto: '', fornecedor: novo ? '' : (c.fornecedor || ''), previa: novo ? [] : c.itens.map(i => ({ ...i })),
+    prazo: pr ? pad(pr.getHours()) + ':' + pad(pr.getMinutes()) : (S.cfg.prazo || '') };
+}
+function iniciaAjustes() {
+  const p = pixCfg();
+  S.aj = { titulo: S.cfg.titulo || '', tipo_chave: p.tipo_chave || 'celular', chave: p.chave || '', recebedor: p.recebedor || '',
+    cidade: p.cidade || 'Belem', prazo: S.cfg.prazo || '', pin: '', foto: S.cfg.foto || null,
+    alunosTxt: alunos().map(a => a.numero + (a.nome ? ' - ' + a.nome : '')).join('\n') };
+}
+function aplicaInfo() {
+  const inf = lerCardapio.info || {};
+  if (inf.data && inf.data >= isoDia()) { S.form.data = inf.data; const e = $('#fData'); if (e) e.value = inf.data; }
+  if (inf.fornecedor) { S.form.fornecedor = inf.fornecedor; const e = $('#fForn'); if (e) e.value = inf.fornecedor; }
+}
+const htmlPrevia = () => S.form.previa.length ? S.form.previa.map((i, k) => `<div class="prev"><input data-pi="${k}" data-pk="nome" value="${esc(i.nome)}" aria-label="Prato"><input data-pi="${k}" data-pk="preco" inputmode="decimal" value="${String(i.preco).replace('.', ',')}" aria-label="Preço"><button data-act="rmItem" data-k="${k}" aria-label="Remover">×</button></div>`).join('') + `<p class="sub" style="margin-top:6px">${S.form.previa.length} itens</p>` : '<p class="sub">Cole o cardápio acima. Cada linha com um preço vira um item.</p>';
+const htmlAlunos = () => { const l = lerAlunos(S.aj.alunosTxt); return `${lerAlunos.fora ? `<div class="aviso" style="margin:10px 0 0">${lerAlunos.fora} número${lerAlunos.fora === 1 ? '' : 's'} de outro pelotão ${lerAlunos.fora === 1 ? 'foi ignorado' : 'foram ignorados'}.</div>` : ''}<p class="sub" style="margin-top:8px"><b>${l.length}</b> aluno${l.length === 1 ? '' : 's'} reconhecido${l.length === 1 ? '' : 's'}</p><div class="alunos">${l.map(a => `<span><b>${esc(a.numero)}</b> ${esc(a.nome)}</span>`).join('')}</div>`; };
+const htmlFoto = () => S.aj.foto ? `<img class="fotoPrev" src="${S.aj.foto}" alt="Foto do app">` : `<img class="fotoPrev" src="icon-192.png" alt="Ícone padrão">`;
+const msgArq = alvo => S.arq && S.arq.alvo === alvo ? `<div class="aviso" style="margin:12px 0 0;${S.arq.ok ? 'background:var(--okbg);color:var(--ok)' : ''}">${esc(S.arq.msg)}${S.arq.lendo ? '<div class="barra"><i id="barraArq"></i></div>' : ''}</div>` : '';
+const SUBS = [['pedidos', 'Pedidos'], ['cardapio', 'Cardápio'], ['pelotao', 'Pelotão'], ['ajustes', 'Ajustes']];
+
+
+function adminPedidos() {
+  const c = S.cardapio;
+  if (!c) return `<div class="card vazio">${vazioSVG}<h2>Sem cardápio</h2><p class="sub">Publique o cardápio na aba Cardápio.</p></div>`;
+  const r = resumo(), fl = faltam();
+  return `<div class="card"><h2>Pedidos de ${esc(diaNome(c.data))}</h2><p class="sub">${r.ps.length} pedido${r.ps.length === 1 ? '' : 's'} · ${r.pagos.length} pago${r.pagos.length === 1 ? '' : 's'} · ${brl(r.total)} no total</p>
+    <div class="pix" style="white-space:pre-wrap;font-family:Barlow,sans-serif;font-size:15px;color:var(--ink)">${esc(textoResumo())}</div>
+    <p class="sub" style="margin-top:6px">O resumo e a lista contam só os pedidos pagos.${r.ps.length > r.pagos.length ? ' Fora: ' + (r.ps.length - r.pagos.length) + ' (sem comprovante, verificando ou a conferir).' : ''}</p>
+    <button class="btn azul" data-act="copiarResumo" ${r.pagos.length ? '' : 'disabled'}>Copiar resumo para o fornecedor</button>
+    <button class="btn sec peq" data-act="copiarLista" ${r.pagos.length ? '' : 'disabled'}>Copiar lista para o grupo</button>
+    ${fl.length ? `<p class="sub" style="margin-top:12px">Ainda não pediram (${fl.length}): ${fl.map(a => esc(a.numero)).join(' · ')}</p>` : ''}
+    ${r.ps.map(p => `<div class="ped" style="flex-wrap:wrap"><span class="nr">${esc(p.numero)}</span><span class="tx">${esc(itensTxt(p))}<small>${esc(p.nome || '')} · ${brl(p.total)}${p.comprovante?.e2e ? ' · ID ' + esc(p.comprovante.e2e.slice(-8)) : ''}</small>
+      ${p.status === 'enviado' ? '<small>Comprovante recebido. A leitura termina no celular do aluno.</small>' : ''}
+      ${p.comprovante?.motivos?.length && p.status !== 'pago' ? '<ul class="motivos">' + p.comprovante.motivos.map(m => '<li>' + esc(m) + '</li>').join('') + '</ul>' : ''}</span>${SELO[p.status] || SELO.pendente}
+      <div class="acoes" style="width:100%">${p.comprovante ? `<button data-act="verComp" data-n="${esc(p.numero)}">Ver comprovante</button>` : ''}${p.status !== 'pago' ? `<button data-act="status" data-n="${esc(p.numero)}" data-v="pago">Marcar pago</button>` : `<button data-act="status" data-n="${esc(p.numero)}" data-v="pendente">Desmarcar pago</button>`}
+      <button data-act="apagar" data-n="${esc(p.numero)}">Excluir</button></div></div>`).join('')}</div>`;
+}
+function adminCardapio() {
+  const f = S.form, c = S.cardapio, px = pixCfg();
+  return `${!px.chave ? '<div class="aviso">Antes de publicar, preencha a chave Pix na aba <b>Ajustes</b>.</div>' : ''}
+  <div class="card"><h2>${c && c.data >= isoDia() ? 'Editar cardápio' : 'Publicar cardápio'}</h2>
+    <div class="linha2"><div><label class="fl" for="fData">Marmitas para o dia</label><input type="date" id="fData" data-f="data" value="${esc(f.data)}"></div>
+    <div><label class="fl" for="fPrazo">Pedidos até (hoje)</label><input type="time" id="fPrazo" data-f="prazo" value="${esc(f.prazo)}"></div></div>
+    <label class="fl" for="fForn">Fornecedor</label><input id="fForn" data-f="fornecedor" placeholder="Ex.: Paladar Nutry" value="${esc(f.fornecedor || '')}">
+    <label class="fl" for="fTexto">Cole o cardápio como ele chega no WhatsApp</label><textarea id="fTexto" data-f="texto" placeholder="PALADAR NUTRY 21/11&#10;Cardápio valor 10 reais&#10;Fit de frango&#10;Fígado acebolado&#10;Cardápio R$15,00 Acompanha (batata frita, salada)&#10;Carne assada a cavalo">${esc(f.texto)}</textarea>
+    <label class="btn sec peq">Carregar PDF ou foto do cardápio<input type="file" id="cdArq" accept="application/pdf,.pdf,image/*" hidden></label>
+    ${msgArq('cardapio')}<label class="fl">Itens reconhecidos (dá para corrigir)</label><div id="previa">${htmlPrevia()}</div>
+    <button class="btn sec peq" data-act="addItem">+ Adicionar item</button>
+    ${px.chave ? `<p class="sub" style="margin-top:12px">Pix: ${esc(px.chave)} · ${esc(px.recebedor)}</p>` : ''}
+    <button class="btn" data-act="publicar">Publicar para o pelotão</button></div>`;
+}
+function adminPelotao() {
+  return `<div class="card"><h2>Lista do pelotão</h2>
+    <p class="sub">Cole a lista de frequência do ${esc(P)}º Pelotão ou carregue o PDF dela. A lista salva continua valendo até você salvar uma nova, que substitui a anterior. Com a lista salva, só quem está nela consegue entrar, e o nome aparece sozinho. Também dá para ver quem ainda não pediu.</p>
+    <textarea id="alTxt" data-a="alunosTxt" style="min-height:200px" placeholder="2101 - Fulano&#10;2102 - Beltrano&#10;2103 - Sicrano">${esc(S.aj.alunosTxt)}</textarea>
+    <label class="btn sec peq">Carregar PDF, foto ou arquivo de texto<input type="file" id="alArq" accept="application/pdf,.pdf,image/*,.txt,.csv,text/plain,text/csv" hidden></label>
+    ${msgArq('alunos')}<div id="alPrev">${htmlAlunos()}</div>
+    <button class="btn" data-act="salvarPelotao">Salvar lista do pelotão</button></div>
+  <div class="card"><h2>Aluno esqueceu o PIN</h2><p class="sub">Zere o PIN e ele cria um novo no próximo acesso.</p>
+    <label class="fl" for="zpNum">Número do aluno</label><input id="zpNum" inputmode="numeric" maxlength="6">
+    <button class="btn sec peq" data-act="zerarPin">Zerar PIN</button></div>`;
+}
+function adminAjustes() {
+  const a = S.aj;
+  return `<div class="card"><h2>Foto do app</h2><p class="sub">Aparece no topo do app para todo o pelotão.</p>
+    <div style="display:flex;gap:14px;align-items:center;margin-top:10px"><span id="fotoPrev">${htmlFoto()}</span>
+    <div style="flex:1"><label class="btn azul peq" style="margin-top:0">Escolher foto<input type="file" id="foto" accept="image/*" hidden></label>
+    ${a.foto ? '<button class="btn sec peq" data-act="rmFoto">Remover foto</button>' : ''}</div></div>
+    <p class="sub" style="margin-top:10px">O ícone na tela inicial do celular é definido na instalação. Para ele mudar, quem já instalou precisa remover e instalar o app de novo.</p></div>
+  <div class="card"><h2>Geral</h2>
+    <label class="fl" for="aTit">Nome no topo do app</label><input id="aTit" data-a="titulo" placeholder="PEL${esc(P)}" value="${esc(a.titulo)}">
+    <label class="fl" for="aPrazo">Horário limite padrão dos pedidos</label><input type="time" id="aPrazo" data-a="prazo" value="${esc(a.prazo)}"></div>
+  <div class="card"><h2>Pix do responsável</h2>
+    <label class="fl" for="aTipo">Tipo da chave</label><select id="aTipo" data-a="tipo_chave">${[['celular', 'Celular'], ['cpf', 'CPF'], ['email', 'E-mail'], ['aleatoria', 'Aleatória'], ['cnpj', 'CNPJ']].map(([v, l]) => `<option value="${v}" ${a.tipo_chave === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
+    <label class="fl" for="aChave">Chave Pix</label><input id="aChave" data-a="chave" value="${esc(a.chave)}">
+    <p class="sub" id="chaveInfo" style="margin-top:6px;font-weight:600">${esc(infoChave(a.chave, a.tipo_chave))}</p>
+    <p class="sub">O tipo é detectado sozinho. Confira se a chave acima é igual à cadastrada no banco do responsável.</p>
+    <label class="fl" for="aRec">Nome do recebedor (como aparece no banco)</label><input id="aRec" data-a="recebedor" value="${esc(a.recebedor)}">
+    <label class="fl" for="aCid">Cidade</label><input id="aCid" data-a="cidade" value="${esc(a.cidade)}"></div>
+  <div class="card"><h2>Acesso ao PEL${esc(P)}</h2>
+    <label class="fl" for="aCod">Código de acesso dos alunos ${S.seg.tem_codigo ? '<span class="selo s-pago">definido</span>' : '<span class="selo s-conferir">não definido</span>'}</label>
+    <input id="aCod" data-a="codigo" autocomplete="off" autocapitalize="off" placeholder="${S.seg.tem_codigo ? 'Deixe vazio para manter' : 'Mínimo 6 caracteres, ex.: pel21qaj'}" value="${esc(a.codigo || '')}">
+    <p class="sub" style="margin-top:6px">Passe só no grupo do pelotão. Se trocar, todos precisam entrar de novo com o código novo.</p>
+    <label class="fl" for="aPin">Senha do responsável ${S.seg.tem_admin ? '<span class="selo s-pago">definida</span>' : '<span class="selo s-conferir">não definida</span>'}</label>
+    <input id="aPin" data-a="pin" type="password" autocomplete="new-password" placeholder="${S.seg.tem_admin ? 'Nova senha (vazio = manter)' : 'Mínimo 4 caracteres'}" value="${esc(a.pin)}">
+    <p class="sub" style="margin-top:6px">Para passar a função a outro aluno, troque a senha e entregue a nova a ele.</p></div>
+  <button class="btn" data-act="salvarAjustes">Salvar ajustes</button>`;
+}
+function telaAdmin() {
+  if (!S.adm) { const sel = S.pelSel || (S.eu && pelDe(S.eu.numero)) || P || String(PMIN);
+    return `${S.aviso ? `<div class="aviso">${esc(S.aviso)}</div>` : ''}<div class="card"><h2>Área do responsável</h2><p class="sub">Escolha o seu pelotão e digite a senha de responsável. Cada pelotão é liberado pelo desenvolvedor.${REMOTO ? '' : ' (Modo teste: no 1º acesso, a senha digitada vira a senha do pelotão.)'}</p>
+    <label class="fl" for="pelSel">Pelotão</label><select id="pelSel">${Array.from({ length: PMAX - PMIN + 1 }, (_, i) => String(PMIN + i)).map(v => `<option value="${v}" ${v === sel ? 'selected' : ''}>${v}º Pelotão</option>`).join('')}</select>
+    <label class="fl" for="pin">Senha</label><input id="pin" type="password" autocomplete="current-password"><button class="btn azul" data-act="entrarAdmin">Entrar</button></div>`; }
+  if (!S.form) iniciaForm(); if (!S.aj) iniciaAjustes();
+  const sub = S.sub || 'pedidos';
+  return `<p class="sub" style="margin:0 0 8px"><span class="selo s-pago">${S.adm.mestre ? 'Desenvolvedor' : 'Responsável'} · PEL${esc(P)}</span></p>${!S.seg.tem_admin ? '<div class="aviso">Este pelotão ainda não tem senha de responsável. Defina em <b>Ajustes</b> e entregue ao responsável.</div>' : ''}${!S.seg.tem_codigo ? '<div class="aviso">Sem <b>código de acesso</b>, nenhum aluno entra. Defina em <b>Ajustes</b>.</div>' : ''}<div class="seg">${SUBS.map(([v, l]) => `<button data-act="sub" data-v="${v}" class="${sub === v ? 'on' : ''}">${l}</button>`).join('')}</div>` +
+    (sub === 'pedidos' ? adminPedidos() : sub === 'cardapio' ? adminCardapio() : sub === 'pelotao' ? adminPelotao() : adminAjustes()) +
+    `<p class="rodape"><button data-act="sairAdmin">Sair da área do responsável</button></p>`;
+}
+async function processaFoto(file) {
+  const url = URL.createObjectURL(file), img = new Image();
+  await new Promise((ok, er) => { img.onload = ok; img.onerror = () => er(new Error('imagem inválida')); img.src = url; });
+  const s = Math.min(img.naturalWidth, img.naturalHeight), cv = document.createElement('canvas'); cv.width = cv.height = 256;
+  cv.getContext('2d').drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, 0, 0, 256, 256);
+  URL.revokeObjectURL(url); return cv.toDataURL('image/jpeg', 0.85);
+}
+function aplicaMarca() {
+  const t = S.cfg.titulo || (P ? 'PEL' + P : 'PEL'), f = S.cfg.foto;
+  if ($('#tit')) $('#tit').textContent = t; document.title = t;
+  const im = $('#logo'); if (!im) return; if (f) { im.src = f; im.hidden = false; } else im.hidden = true;
+  document.querySelectorAll('link[rel=icon],link[rel=apple-touch-icon]').forEach(l => l.href = f || 'icon-192.png');
+}
+async function salvarCfg(patch, codigo, nova) {
+  const novo = { ...S.cfg, ...patch };
+  if (REMOTO && !navigator.onLine) { toast('Precisa de internet para salvar'); return false; }
+  const r = await API.adminSalvarCfg(S.adm, novo, codigo, nova);
+  if (r.erro) { toast(msgErro(r.erro)); return false; }
+  S.cfg = novo; ls.set('qaj_cfg_' + P, novo); aplicaMarca();
+  if (codigo) S.seg.tem_codigo = true;
+  if (nova) { S.seg.tem_admin = true; if (!S.adm.mestre) S.adm.senha = nova; }
+  return true;
+}
+function htmlModal() {
+  const m = S.modal; if (!m) return '';
+  if (m.tipo === 'bancos') {
+    const ord = [...BANCOS].sort((x, y) => (y[0] === S.banco) - (x[0] === S.banco));
+    return `<div class="fundo" data-act="fecharModal"><div class="caixa" role="dialog" aria-label="Escolha o banco">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>Qual é o seu banco?</h2><button class="x" data-act="fecharModal" aria-label="Fechar">×</button></div>
+      <p class="sub">✓ O código Pix já foi copiado. Escolha seu banco <b>uma vez só</b>: das próximas vezes, "Copiar Pix" já abre direto nele.</p>
+      <div class="bancos">${ord.map(b => `<a data-act="abrirBanco" data-v="${b[0]}" href="${urlBanco(b)}" class="${b[0] === S.banco ? 'ult' : ''}">${esc(b[1])}${b[0] === S.banco ? '<small>último usado</small>' : ''}</a>`).join('')}</div>
+      ${navigator.share ? `<button class="btn sec peq" data-act="compartilharPix" data-pix="${esc(m.pix || '')}">Enviar o código para outro app…</button>` : ''}
+      <button class="btn sec peq" data-act="fecharModal">Só copiar, eu abro depois</button></div></div>`;
+  }
+  const p = visiveis().find(x => x.numero === m.numero); if (!p) return '';
+  const cp = p.comprovante || {};
+  return `<div class="fundo" data-act="fecharModal"><div class="caixa" role="dialog" aria-label="Comprovante">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>${esc(p.numero)} · ${esc(p.nome || '')}</h2><button class="x" data-act="fecharModal" aria-label="Fechar">×</button></div>
+    <p class="sub">${esc(itensTxt(p))} · <b>${brl(p.total)}</b></p><p style="margin:8px 0">${SELO[p.status] || SELO.pendente}</p>
+    ${cp.lido_em ? `<p class="sub">Nome do aluno no comprovante: <b>${cp.nomeOk ? 'encontrado ✓' : 'não encontrado'}</b> · valor ${cp.valor != null ? brl(cp.valor) : '—'} · data ${cp.data ? diaBR(cp.data) : '—'} · ID ${cp.e2e ? esc(cp.e2e.slice(-10)) : '—'}</p>` : '<p class="sub">A leitura automática ainda não terminou.</p>'}
+    ${cp.motivos?.length && p.status !== 'pago' ? '<ul class="motivos">' + cp.motivos.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>' : ''}
+    <div style="margin-top:12px">${m.carregando ? '<p class="sub">Carregando imagem…</p>' : m.img ? `<img class="comp" src="${m.img}" alt="Comprovante de ${esc(p.numero)}">` : '<div class="aviso">A imagem ainda não chegou (o aluno pode estar sem internet) ou já foi apagada (guardamos por 3 dias).</div>'}</div>
+    ${p.status !== 'pago' ? `<button class="btn" data-act="status" data-n="${esc(p.numero)}" data-v="pago">Confirmar pagamento</button>` : `<button class="btn sec peq" data-act="status" data-n="${esc(p.numero)}" data-v="pendente">Desmarcar pago</button>`}
+    <button class="btn sec peq" data-act="fecharModal">Fechar</button></div></div>`;
+}
+function render() {
+  if (S.aba === 'pedir' && S.eu && !S.adm) { const eu = meu(); if (eu && !feito(eu)) setTimeout(prepararOCR, 1500); }
+  const md = $('#modal'); if (md) md.innerHTML = htmlModal();
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === S.aba));
+  $('#app').innerHTML = S.aba === 'pedir' ? telaPedir() : S.aba === 'lista' ? telaLista() : telaAdmin();
+  ligaArquivos();
+  const n = $('#net'), on = navigator.onLine;
+  n.textContent = !REMOTO ? 'modo teste' : on ? 'online' : 'offline'; n.classList.toggle('off', !REMOTO || !on);
+  $('#hsub').textContent = S.cardapio ? 'Cardápio de ' + diaNome(S.cardapio.data) : 'Pedido de almoço';
+}
+
+/* ---------- ações ---------- */
+// guarda o arquivo no aparelho até a verificação terminar (se o aluno fechar o app, ela continua quando ele abrir de novo)
+const idb = {
+  abre() { return new Promise((ok, er) => { const r = indexedDB.open('qaj', 1); r.onupgradeneeded = () => r.result.createObjectStore('arq'); r.onsuccess = () => ok(r.result); r.onerror = () => er(r.error); }); },
+  async faz(modo, fn) { try { const db = await this.abre(); return await new Promise((ok, er) => { const t = db.transaction('arq', modo), q = fn(t.objectStore('arq')); t.oncomplete = () => ok(q && q.result); t.onerror = () => er(t.error); }); } catch (e) { return null; } },
+  put(k, v) { return this.faz('readwrite', st => st.put(v, k)); },
+  get(k) { return this.faz('readonly', st => st.get(k)); },
+  del(k) { return this.faz('readwrite', st => st.delete(k)); }
+};
+// apps de banco (Android): copia o Pix e abre o app escolhido
+const BANCOS = [['nubank','Nubank','com.nu.production'],['inter','Inter','br.com.intermedium'],['caixa','Caixa','br.com.gabba.Caixa'],['caixatem','Caixa Tem','br.gov.caixa.tem'],
+  ['bb','Banco do Brasil','br.com.bb.android'],['itau','Itaú','com.itau'],['bradesco','Bradesco','com.bradesco'],['santander','Santander','com.santander.app'],
+  ['picpay','PicPay','com.picpay'],['mercadopago','Mercado Pago','com.mercadopago.wallet'],['c6','C6 Bank','com.c6bank.app'],['pagbank','PagBank','br.com.uol.ps.myaccount'],
+  ['next','Next','br.com.bradesco.next'],['neon','Neon','br.com.neon'],['banpara','Banpará','br.com.banpara']];
+const ANDROID = /android/i.test(navigator.userAgent);
+const bancoEu = () => BANCOS.find(b => b[0] === S.banco);
+// Encaminha para o app do banco: o Android entrega o pedido à Play Store ("market://launch"),
+// que abre o app do banco já instalado. Se não der, cai na página do banco na loja, com o botão "Abrir".
+const urlBanco = b => 'intent://launch?id=' + b[2] + '#Intent;scheme=market;package=com.android.vending;S.browser_fallback_url=' +
+  encodeURIComponent('https://play.google.com/store/apps/details?id=' + b[2]) + ';end';
+function abreBanco() { const b = bancoEu(); if (ANDROID && b) try { window.location.href = urlBanco(b); } catch (e) {} }
+const chaveArq = p => p.pelotao + '|' + p.data + '|' + p.numero;
+// cópia leve do comprovante (imagem JPEG) para o responsável ver
+async function miniatura(file) {
+  let src;
+  if (file.type === 'application/pdf' || /\.pdf$/i.test(file.name)) {
+    const doc = await (await pdfLib()).getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+    const pg = await doc.getPage(1), v0 = pg.getViewport({ scale: 1 }), vp = pg.getViewport({ scale: Math.min(2, 700 / v0.width) });
+    src = document.createElement('canvas'); src.width = vp.width; src.height = vp.height;
+    const cx = src.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, src.width, src.height);
+    await pg.render({ canvasContext: cx, viewport: vp }).promise;
+  } else {
+    const url = URL.createObjectURL(file); src = new Image();
+    await new Promise((ok, er) => { src.onload = ok; src.onerror = er; src.src = url; });
+  }
+  const w = src.naturalWidth || src.width, h = src.naturalHeight || src.height, k = Math.min(1, 700 / w, 1600 / h);
+  const cv = document.createElement('canvas'); cv.width = Math.round(w * k); cv.height = Math.round(h * k);
+  const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height); cx.drawImage(src, 0, 0, cv.width, cv.height);
+  return cv.toDataURL('image/jpeg', 0.6);
+}
+async function lerComprovante(file) {
+  const eu = meu(); if (!eu || !file) return;
+  const ped = { ...eu, status: 'enviado', e2e: null, comprovante: { arquivo: file.name, enviado_em: new Date().toISOString() } };
+  const res = await enviar(ped);
+  let img = null; try { img = await comTempo(miniatura(file), 20000); } catch (e) {}
+  await idb.put(chaveArq(ped), { file, ped, img });
+  S.rascDe = null; toast(res === 'fila' ? 'Pedido feito! ✓ (será enviado quando houver internet)' : 'Pedido feito! ✓');
+  await atualizar(true);
+  verificar(ped, file, img); // continua sozinho, fora da vista do aluno
+}
+async function verificar(ped, file, img) {
+  const k = chaveArq(ped); if (S.verificando === k) return; S.verificando = k;
+  let r, imgOk = !img;
+  if (img) try { const ri = await API.alunoImg(S.eu, ped.data, img); imgOk = !!(ri && ri.ok); } catch (e) {}
+  try {
+    const ehPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name || '');
+    const texto = await comTempo(ehPdf ? extrairTexto(file) : ocrFoco(file, ped.nome), 10000); // no máximo 10 s; depois disso vai para conferência manual
+    r = analisar(texto, ped, pixDe(S.cardapio && S.cardapio.data === ped.data ? S.cardapio : ped));
+    if (r.e2e && visiveis().some(x => x.numero !== ped.numero && x.e2e === r.e2e)) { r.ok = false; r.motivos.push('Este comprovante já foi usado em outro pedido'); }
+  } catch (e) { console.warn('QAJ leitura:', e && e.message || e); r = { ok: false, nomeOk: false, e2e: null, valor: null, data: null, motivos: ['O app não conseguiu ler este comprovante. Confira a imagem.'] }; }
+  const p = { ...ped, status: r.ok ? 'pago' : 'conferir', e2e: r.motivos.some(m => m.includes('já foi usado')) ? null : r.e2e,
+    comprovante: { ...ped.comprovante, nomeOk: !!r.nomeOk, e2e: r.e2e, valor: r.valor, data: r.data, motivos: r.motivos, lido_em: new Date().toISOString() } };
+  try { const res = await enviar(p); if (res !== 'fila' && imgOk) await idb.del(k); } catch (e) {}
+  S.verificando = null; atualizar();
+}
+async function checaCompartilhado() {
+  const v = await idb.get('compartilhado'); if (!v || !v.file) return;
+  await idb.del('compartilhado');
+  try { history.replaceState(null, '', location.pathname); } catch (e) {}
+  S.compart = v.file; S.aba = 'pedir'; usaCompartilhado();
+}
+function usaCompartilhado() {
+  if (!S.compart) return render();
+  const eu = meu();
+  if (eu && !feito(eu)) { const f = S.compart; S.compart = null; lerComprovante(f); }
+  else if (feito(eu)) { S.compart = null; toast('Seu pedido já tem comprovante'); render(); }
+  else render(); // ainda sem pedido: o comprovante vai junto quando ele pedir
+}
+async function retomarVerificacao() {
+  const eu = meu(); if (!eu || eu.status !== 'enviado' || S.verificando) return;
+  const v = await idb.get(chaveArq(eu)); if (v && v.file) verificar(v.ped || eu, v.file, v.img);
+}
+document.addEventListener('click', async ev => {
+  if (ev.target.closest('label') && ev.target.closest('label').querySelector('input[type=file]')) S.escolhendo = Date.now();
+  const b = ev.target.closest('[data-act]');
+  if (!b) { if (!ev.target.closest('#drop')) $('#drop').hidden = true; return; }
+  if (b.disabled) return;
+  const a = b.dataset.act, c = S.cardapio;
+  const drop = $('#drop'), mb = $('[data-act=menu]');
+  if (a === 'menu') { drop.hidden = !drop.hidden; mb.setAttribute('aria-expanded', String(!drop.hidden)); return; }
+  drop.hidden = true; mb.setAttribute('aria-expanded', 'false');
+  try {
+    if (a === 'aba') { S.aba = b.dataset.v; window.scrollTo(0, 0); render(); }
+    else if (a === 'salvarEu') {
+      const numero = $('#cNum').value.replace(/\D/g, ''), pel = pelDe(numero), codigo = $('#cCod').value.trim(), pin = $('#cPin').value.trim();
+      if (!pel) return toast('Número inválido. Use o número completo (pelotões do ' + PMIN + 'º ao ' + PMAX + 'º), ex.: 2116');
+      if (!codigo) return toast('Digite o código do pelotão');
+      if (!/^\d{4}$/.test(pin)) return toast('O PIN precisa ter 4 números');
+      if (REMOTO && !navigator.onLine) return toast('Precisa de internet no primeiro acesso');
+      const r = await API.alunoEntrar(pel, codigo, numero, pin, $('#cNome').value.trim());
+      if (r.erro) return toast(msgErro(r.erro));
+      S.eu = { numero, nome: r.nome, pelotao: pel, codigo, pin }; S.aviso = null; ls.set('qaj_eu', S.eu); abrePel(pel); render(); atualizar(true);
+    }
+    else if (a === 'trocar') { S.ultNum = S.eu && S.eu.numero; S.eu = null; S.adm = null; S.fila = []; ls.set('qaj_eu', null); ls.set('qaj_fila', []); S.aba = 'pedir'; abrePel(null); render(); }
+    else if (a === 'mais' || a === 'menos') { const i = c.itens[+b.dataset.k]; S.rasc[kk(i)] = Math.max(0, (S.rasc[kk(i)] || 0) + (a === 'mais' ? 1 : -1)); render(); }
+    else if (a === 'pedir') {
+      if (encerrado()) return toast('Pedidos encerrados');
+      if (pelDe(S.eu.numero) !== P || c.pelotao !== P) return toast('Este cardápio é de outro pelotão');
+      const itens = c.itens.filter(i => S.rasc[kk(i)] > 0).map(i => ({ nome: i.nome, preco: i.preco, qtd: S.rasc[kk(i)] }));
+      const total = Math.round(itens.reduce((s, i) => s + i.qtd * i.preco, 0) * 100) / 100;
+      const ant = meu();
+      const p = { pelotao: pelDe(S.eu.numero), data: c.data, numero: S.eu.numero, nome: S.eu.nome, itens, total, status: 'pendente', e2e: null, comprovante: null };
+      if (ant && ant.status === 'conferir' && Math.abs(ant.total - total) < 0.005) { p.status = ant.status; p.e2e = ant.e2e; p.comprovante = ant.comprovante; }
+      const r = await enviar(p); S.rascDe = null;
+      toast(r === 'fila' ? 'Sem internet: pedido salvo, será enviado depois' : ant ? 'Pedido atualizado' : 'Pedido feito! Agora pague o Pix'); await atualizar(true);
+      if (S.compart) usaCompartilhado();
+    }
+    else if (a === 'cancelar') {
+      if (b.dataset.ok !== '1') { b.dataset.ok = '1'; b.textContent = 'Toque de novo para confirmar'; return; }
+      const eu = meu(); S.fila = S.fila.filter(x => !(x.numero === eu.numero && x.data === eu.data)); ls.set('qaj_fila', S.fila);
+      if (!eu._fila || S.pedidos.some(x => x.numero === eu.numero)) { const r = await API.alunoCancelar(S.eu, eu.data); if (r.erro) return toast(msgErro(r.erro)); }
+      toast('Pedido cancelado'); await atualizar(true);
+    }
+    else if (a === 'copiarPix') {
+      // copia e, na mesma hora, abre a janela do próprio celular para escolher o app (Android e iPhone)
+      prepararOCR(); const eu = meu(), cod = gerarPix(c, eu.total, txidDe(eu)), cp = copiar(cod);
+      if (navigator.share) { toast('Pix copiado! Escolha o app do seu banco'); navigator.share({ text: cod }).catch(() => {}); }
+      else toast(await cp ? 'Pix copiado! Abra o app do banco e cole' : 'Não deu para copiar. Segure o código e copie');
+    }
+    else if (a === 'copiarLista') toast(await copiar(textoLista()) ? 'Lista copiada' : 'Não deu para copiar');
+    else if (a === 'copiarResumo') toast(await copiar(textoResumo()) ? 'Resumo copiado' : 'Não deu para copiar');
+    else if (a === 'instalar') { S.instalar.prompt(); S.instalar = null; render(); }
+    else if (a === 'entrarAdmin') {
+      const pel = $('#pelSel').value, senha = $('#pin').value; S.pelSel = pel;
+      if (REMOTO && !navigator.onLine) return toast('Precisa de internet para entrar');
+      const r = await API.adminEntrar(pel, senha);
+      if (r.erro) return toast(msgErro(r.erro));
+      S.adm = { pel, senha, mestre: !!r.mestre }; S.seg = { tem_codigo: r.tem_codigo, tem_admin: r.tem_admin }; S.aviso = null;
+      S.sub = r.tem_codigo && r.tem_admin ? 'pedidos' : 'ajustes'; abrePel(pel); render(); await atualizar(true);
+    }
+    else if (a === 'sairAdmin') { S.adm = null; S.aba = 'pedir'; abrePel(S.eu ? pelDe(S.eu.numero) : null); render(); atualizar(true); }
+    else if (a === 'verComp') {
+      const p = visiveis().find(x => x.numero === b.dataset.n); if (!p) return;
+      S.modal = { numero: p.numero, carregando: true }; render();
+      let img = null; try { const ri = await API.adminImg(S.adm, p.data, p.numero); img = ri && ri.img; } catch (e) {}
+      if (S.modal && S.modal.numero === p.numero) { S.modal = { numero: p.numero, img }; render(); }
+    }
+    else if (a === 'trocarBanco') { const eu = meu(); S.modal = { tipo: 'bancos', pix: gerarPix(c, eu.total, txidDe(eu)) }; render(); }
+    else if (a === 'compartilharPix') { S.modal = null; render(); try { await navigator.share({ text: b.dataset.pix || '' }); } catch (e) {} }
+    else if (a === 'abrirBanco') {
+      S.banco = b.dataset.v; ls.set('qaj_banco', S.banco); S.modal = null; render();
+      toast('Abrindo ' + bancoEu()[1] + '… Vá em Pix Copia e Cola e cole'); // o link encaminha para o banco
+    }
+    else if (a === 'fecharModal') { if (ev.target.closest('.caixa') && !b.classList.contains('x') && b.tagName !== 'BUTTON') return; S.modal = null; render(); }
+    else if (a === 'sub') { S.arq = null; S.sub = b.dataset.v; window.scrollTo(0, 0); render(); }
+    else if (a === 'rmFoto') { S.aj.foto = null; render(); }
+    else if (a === 'salvarPelotao') {
+      const l = lerAlunos(S.aj.alunosTxt);
+      if (!l.length) return toast('Nenhum aluno do ' + P + 'º Pelotão na lista');
+      if (await salvarCfg({ alunos: l })) { S.aj.alunosTxt = l.map(x => x.numero + (x.nome ? ' - ' + x.nome : '')).join('\n'); toast(l.length + ' alunos salvos'); render(); }
+    }
+    else if (a === 'salvarAjustes') {
+      const j = S.aj;
+      if (j.chave.trim() && !j.recebedor.trim()) return toast('Preencha o nome do recebedor');
+      if (j.codigo && j.codigo.trim().length < 6) return toast('O código precisa ter pelo menos 6 caracteres');
+      if (j.pin && j.pin.length < 4) return toast('A senha precisa ter pelo menos 4 caracteres');
+      const ok = await salvarCfg({ titulo: j.titulo.trim(), prazo: j.prazo, foto: j.foto,
+        pix: { tipo_chave: tipoChave(j.chave, j.tipo_chave), chave: j.chave.trim(), recebedor: j.recebedor.trim(), cidade: j.cidade.trim() || 'Belem' } },
+        (j.codigo || '').trim() || null, j.pin || null);
+      if (ok) { j.pin = ''; j.codigo = ''; toast('Ajustes salvos'); render(); }
+    }
+    else if (a === 'zerarPin') {
+      const n = $('#zpNum').value.replace(/\D/g, ''); if (pelDe(n) !== P) return toast('Número não é do PEL' + P);
+      const r = await API.adminZerarPin(S.adm, n); toast(r.erro ? msgErro(r.erro) : 'PIN do ' + n + ' zerado'); $('#zpNum').value = '';
+    }
+    else if (a === 'rmItem') { S.form.previa.splice(+b.dataset.k, 1); $('#previa').innerHTML = htmlPrevia(); }
+    else if (a === 'addItem') { S.form.previa.push({ nome: '', preco: 0 }); $('#previa').innerHTML = htmlPrevia(); }
+    else if (a === 'publicar') {
+      const f = S.form, itens = f.previa.filter(i => i.nome.trim() && i.preco > 0).map(i => ({ nome: i.nome.trim(), preco: Math.round(i.preco * 100) / 100, ...('grupo' in i ? { grupo: i.grupo || '' } : {}) }))
+        .sort((x, y) => ('grupo' in x ? x.preco : 1e9) - ('grupo' in y ? y.preco : 1e9));
+      if (!itens.length) return toast('Nenhum item com preço');
+      const px = pixCfg();
+      if (!px.chave || !px.recebedor) { S.sub = 'ajustes'; render(); return toast('Preencha o Pix em Ajustes'); }
+      if (REMOTO && !navigator.onLine) return toast('Precisa de internet para publicar');
+      const prazo = f.prazo ? new Date(isoDia() + 'T' + f.prazo + ':00').toISOString() : null;
+      const rp = await API.adminPublicar(S.adm, { pelotao: P, data: f.data, fornecedor: (f.fornecedor || '').trim(), itens, chave: px.chave, tipo_chave: px.tipo_chave, recebedor: px.recebedor, cidade: px.cidade, prazo });
+      if (rp.erro) return toast(msgErro(rp.erro));
+      toast('Cardápio publicado'); S.form = null; await atualizar(true);
+    }
+    else if (a === 'status' || a === 'apagar') {
+      const p = visiveis().find(x => x.numero === b.dataset.n); if (!p) return;
+      if (a === 'apagar') { if (b.dataset.ok !== '1') { b.dataset.ok = '1'; b.textContent = 'Confirmar exclusão'; return; } { const rr = await API.adminApagar(S.adm, p.data, p.numero); if (rr.erro) return toast(msgErro(rr.erro)); } toast('Pedido ' + p.numero + ' excluído'); }
+      else { const rs = await API.adminStatus(S.adm, p.data, p.numero, b.dataset.v); if (rs.erro) return toast(msgErro(rs.erro)); S.modal = null; toast(b.dataset.v === 'pago' ? p.numero + ' marcado como pago' : 'Pagamento desmarcado'); }
+      await atualizar(true);
+    }
+  } catch (e) { toast(e.status ? 'Erro do servidor' : 'Sem conexão'); console.error(e); }
+});
+document.addEventListener('input', ev => {
+  const t = ev.target;
+  if (t.dataset.f && S.form) {
+    S.form[t.dataset.f] = t.value;
+    if (t.dataset.f === 'texto') { const it = lerCardapio(t.value); if (it.length) { S.form.previa = it; aplicaInfo(); $('#previa').innerHTML = htmlPrevia(); } }
+  } else if (t.id === 'banco') {
+    S.banco = t.value; ls.set('qaj_banco', S.banco); render();
+  } else if (t.dataset.a && S.aj) {
+    S.aj[t.dataset.a] = t.value;
+    if (t.dataset.a === 'alunosTxt') $('#alPrev').innerHTML = htmlAlunos();
+    if (t.dataset.a === 'chave' || t.dataset.a === 'tipo_chave') {
+      if (t.dataset.a === 'chave') { const tp = tipoChave(t.value, S.aj.tipo_chave); S.aj.tipo_chave = tp; const sel = $('#aTipo'); if (sel) sel.value = tp; }
+      $('#chaveInfo').textContent = infoChave(S.aj.chave, S.aj.tipo_chave);
+    }
+  } else if (t.id === 'cNum' && $('#quem')) {
+    const n = t.value.replace(/\D/g, ''), pel = pelDe(n);
+    $('#quem').textContent = pel ? 'PEL' + pel + ' · ' + pel + 'º Pelotão' : (n.length >= 3 ? 'Número inválido' : 'O pelotão é identificado pelo número.');
+  } else if (t.dataset.pi != null && S.form) {
+    const i = S.form.previa[+t.dataset.pi]; if (!i) return;
+    i[t.dataset.pk] = t.dataset.pk === 'preco' ? (parseFloat(t.value.replace(',', '.')) || 0) : t.value;
+  }
+});
+async function aoEscolher(t) {
+  S.escolhendo = 0; const f = t.files && t.files[0]; if (!f) return;
+  if (t.id === 'comp') { lerComprovante(f); t.value = ''; }
+  else if (t.id === 'foto' && f) { try { S.aj.foto = await processaFoto(f); render(); toast('Foto escolhida. Toque em Salvar ajustes'); } catch (e) { toast('Não consegui abrir essa imagem'); } t.value = ''; }
+  else if ((t.id === 'alArq' || t.id === 'cdArq') && f) {
+    const alvo = t.id === 'alArq' ? 'alunos' : 'cardapio'; t.value = '';
+    S.arq = { alvo, lendo: true, msg: 'Lendo ' + f.name + '…' }; render();
+    try {
+      const txt = (await extrairTexto(f, p => { const b = $('#barraArq'); if (b) b.style.width = Math.round(p * 100) + '%'; })).trim();
+      if (!txt) S.arq = { alvo, msg: 'Não encontrei texto nesse arquivo. Tente outro PDF ou uma foto nítida.' };
+      else if (alvo === 'alunos') {
+        const l = lerAlunos(txt);
+        if (l.length) { S.aj.alunosTxt = l.map(x => x.numero + (x.nome ? ' - ' + x.nome : '')).join('\n'); S.arq = { alvo, ok: true, msg: l.length + ' alunos encontrados. Confira e toque em Salvar lista do pelotão.' }; }
+        else { S.aj.alunosTxt = txt; S.arq = { alvo, msg: 'Li o arquivo, mas não achei números de aluno (ex.: 2101). O texto lido está na caixa acima para você ajustar.' }; }
+      } else {
+        S.form.texto = txt; S.form.previa = lerCardapio(txt); aplicaInfo();
+        S.arq = S.form.previa.length ? { alvo, ok: true, msg: S.form.previa.length + ' itens encontrados. Confira os preços.' } : { alvo, msg: 'Li o arquivo, mas não achei pratos com preço. O texto lido está na caixa acima.' };
+      }
+    } catch (e) { S.arq = { alvo, msg: 'Não consegui ler o arquivo: ' + String(e && e.message || e).slice(0, 120) }; }
+    render();
+  }
+}
+// o seletor de arquivos fica preso ao próprio campo, mesmo se a tela for redesenhada enquanto ele está aberto
+function ligaArquivos() { document.querySelectorAll('input[type=file]').forEach(i => { if (!i.__ok) { i.__ok = 1; i.addEventListener('change', () => aoEscolher(i)); } }); }
+window.addEventListener('online', () => atualizar(true));
+window.addEventListener('offline', () => render());
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); S.instalar = e; render(); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) atualizar(); });
+let ultAt = 0; // responsável: a cada 5 s; aluno: a cada 15 s
+setInterval(() => { if (document.hidden) return; const t = S.adm ? 5000 : 15000; if (Date.now() - ultAt >= t - 500) { ultAt = Date.now(); atualizar(); } }, 5000);
+try { if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
+
+window.__qaj = { gerarPix, crc16, lerCardapio, analisar, temNome, normChave, tipoChave };
+if (S.eu && (!pelDe(S.eu.numero) || !S.eu.pin || !S.eu.codigo)) S.eu = null;
+abrePel(S.eu ? pelDe(S.eu.numero) : null); render(); atualizar(true).then(checaCompartilhado);
+}
+</script>
+</body>
+</html>
