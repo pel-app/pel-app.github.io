@@ -943,7 +943,8 @@ async function verificar(ped, file, img) {
   let imgOk = !img;
   if (img) try { const ri = await API.alunoImg(S.eu, ped.data, img); imgOk = !!(ri && ri.ok); } catch (e) {}
   const ehPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name || '');
-  const leitura = ehPdf ? extrairTexto(file) : ocrFoco(file, ped.nome); leitura.catch(() => {});
+  // lê a imagem inteira, do mesmo jeito que a ferramenta "Testar leitura" (que funcionou no celular)
+  const leitura = ehPdf ? extrairTexto(file) : ocr(file); leitura.catch(() => {});
   const avalia = texto => {
     const r = analisar(texto, ped, pixDe(S.cardapio && S.cardapio.data === ped.data ? S.cardapio : ped));
     if (r.e2e && visiveis().some(x => x.numero !== ped.numero && x.e2e === r.e2e)) { r.ok = false; r.motivos.push('Este comprovante já foi usado em outro pedido'); }
