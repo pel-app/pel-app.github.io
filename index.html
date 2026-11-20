@@ -117,6 +117,8 @@ nav button{max-width:240px}
 .bancos a.ult{border:2px solid var(--farda);grid-column:1/-1}.bancos small{font-size:12px;color:var(--mute);font-weight:500}
 button.link{background:none;border:0;padding:4px 2px;color:var(--acao2);font:600 14px Barlow,sans-serif;cursor:pointer;text-decoration:underline}
 img.comp{display:block;width:100%;border-radius:10px;border:1px solid var(--line);background:#fff}
+.chamada.urgente{border:2px solid var(--acao);box-shadow:0 0 0 4px rgba(226,82,43,.12)}
+.aviso.urg{background:var(--acao);color:#fff;font-weight:600}
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#14181f;color:#fff;padding:12px 18px;border-radius:12px;font-weight:600;opacity:0;transition:.25s;z-index:9;max-width:90vw;text-align:center}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 .vazio{text-align:center;padding:30px 10px}
@@ -487,6 +489,11 @@ const API = {
     db.pedidos = db.pedidos.filter(x => !(x.pelotao === cr.pelotao && x.data === data && x.numero === cr.numero && x.status === 'pendente'));
     this.grava(db); return { ok: true };
   },
+  async alunoVerImg(cr, data) {
+    if (REMOTO) return this.rpc('aluno_ver_img', { ...a4(cr), p_data: data });
+    const db = this.db(); if (!this.alunoOk(db, cr)) return { erro: 'pin' };
+    return { img: db.imgs[cr.pelotao + '|' + data + '|' + cr.numero] || null };
+  },
   async alunoImg(cr, data, img) {
     if (REMOTO) return this.rpc('aluno_salvar_img', { ...a4(cr), p_data: data, p_img: img });
     const db = this.db(); if (!this.alunoOk(db, cr)) return { erro: 'pin' };
@@ -647,12 +654,15 @@ function telaPedir() {
   if (S.rascDe !== c.data + (eu?.atualizado_em || '')) { S.rasc = {}; (eu?.itens || []).forEach(i => S.rasc[kk(i)] = i.qtd); S.rascDe = c.data + (eu?.atualizado_em || ''); }
   const total = c.itens.reduce((s, i) => s + (S.rasc[kk(i)] || 0) * i.preco, 0);
   const prazo = c.prazo ? new Date(c.prazo) : null;
+  const minA = minutosAte(c);
+  if (!feito(eu) && minA != null && minA > 0 && minA <= 30) h += `<div class="aviso urg">⏰ Faltam <b>${minA} min</b> para encerrar os pedidos (até ${horaDe(c.prazo)}).${eu ? ' Falta enviar o seu comprovante.' : ''}</div>`;
   h += `<div class="card"><h2>Cardápio de ${esc(diaNome(c.data))}</h2>
     <p class="sub">${c.fornecedor ? esc(c.fornecedor) + ' · ' : ''}${prazo ? (fim ? 'Pedidos encerrados' : 'Pedidos até ' + pad(prazo.getHours()) + ':' + pad(prazo.getMinutes())) : (fim ? 'Pedidos encerrados' : 'Pedidos abertos')}</p>`;
   if (feito(eu)) {
     h += `</div><div class="card feito"><div class="ok">✓</div><h2>Pedido feito!</h2>
       <p style="margin:10px 0 4px;font-size:18px"><b>${esc(itensTxt(eu))}</b></p><p class="sub">${brl(eu.total)} · comprovante enviado${eu._fila ? ' (será enviado quando houver internet)' : ''}</p>
-      <p class="sub" style="margin-top:10px">Pode fechar o app. Para mudar o pedido, fale com o responsável.</p></div>`;
+      <p class="sub" style="margin-top:10px">Pode fechar o app. Para mudar o pedido, fale com o responsável.</p>
+      <button class="btn sec peq" data-act="verMeuComp">Ver meu comprovante</button></div>`;
     return h + rodape();
   }
   const grupos = c.itens.some(i => 'grupo' in i); let ult = null;
@@ -695,6 +705,19 @@ function textoLista() {
 function nomeItem(i) {
   const precos = new Set(((S.cardapio && S.cardapio.itens) || []).filter(x => x.nome === i.nome).map(x => x.preco));
   return i.nome + (precos.size > 1 ? ' (' + curto(i.preco) + ')' : '');
+}
+// minutos até o fim dos pedidos (null se não houver horário)
+const minutosAte = c => c && c.prazo ? Math.round((new Date(c.prazo).getTime() - Date.now()) / 60000) : null;
+const horaDe = iso => { const d = new Date(iso); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+function textoChamada() {
+  const c = S.cardapio, r = resumo(), fl = faltam(), semComp = r.ps.filter(p => p.status === 'pendente'), min = minutosAte(c);
+  let t = '⏰ *PEL' + P + ' – Pedido do almoço (' + diaNome(c.data) + ')*\n';
+  t += min == null ? 'Lembrete de pedido' : min > 0 ? 'Faltam *' + min + ' min* para encerrar (pedidos até ' + horaDe(c.prazo) + ')' : 'Pedidos encerrados às ' + horaDe(c.prazo);
+  t += '\n';
+  if (fl.length) t += '\n❌ *Ainda não pediram (' + fl.length + '):*\n' + fl.map(a => a.numero).join(', ') + '\n';
+  if (semComp.length) t += '\n💸 *Pediram, mas falta pagar/enviar o comprovante (' + semComp.length + '):*\n' + semComp.map(p => p.numero).join(', ') + '\n';
+  if (!fl.length && !semComp.length) t += '\n✅ Todos já pediram e enviaram o comprovante.\n';
+  return t + '\nPeça pelo app: ' + (location.origin + location.pathname).replace(/index\.html$/, '');
 }
 function textoResumo() {
   const c = S.cardapio, r = resumo(), cont = {}; // só pedidos pagos
@@ -758,8 +781,15 @@ const SUBS = [['pedidos', 'Pedidos'], ['cardapio', 'Cardápio'], ['pelotao', 'Pe
 function adminPedidos() {
   const c = S.cardapio;
   if (!c) return `<div class="card vazio">${vazioSVG}<h2>Sem cardápio</h2><p class="sub">Publique o cardápio na aba Cardápio.</p></div>`;
-  const r = resumo(), fl = faltam();
-  return `<div class="card"><h2>Pedidos de ${esc(diaNome(c.data))}</h2><p class="sub">${r.ps.length} pedido${r.ps.length === 1 ? '' : 's'} · ${r.pagos.length} pago${r.pagos.length === 1 ? '' : 's'} · ${brl(r.total)} no total</p>
+  const r = resumo(), fl = faltam(), min = minutosAte(c), semComp = r.ps.filter(p => p.status === 'pendente').length;
+  const urgente = min != null && min > 0 && min <= 30, chamada = textoChamada();
+  return `<div class="card chamada ${urgente ? 'urgente' : ''}"><h2>${urgente ? '⏰ Hora da chamada' : 'Chamada'}</h2>
+    <p class="sub">${min == null ? 'Sem horário limite definido.' : min > 0 ? 'Pedidos encerram às <b>' + horaDe(c.prazo) + '</b> · faltam <b>' + min + ' min</b>' : 'Pedidos encerrados às ' + horaDe(c.prazo)}
+    · ${fl.length} sem pedido${alunos().length ? '' : ' (carregue a lista do pelotão)'} · ${semComp} sem comprovante</p>
+    <div class="pix" style="white-space:pre-wrap;font-family:Barlow,sans-serif;font-size:14px;color:var(--ink)">${esc(chamada)}</div>
+    <a class="btn" href="https://wa.me/?text=${encodeURIComponent(chamada)}" target="_blank" rel="noopener">Enviar chamada no WhatsApp</a>
+    <button class="btn sec peq" data-act="copiarChamada">Copiar chamada</button></div>
+  <div class="card"><h2>Pedidos de ${esc(diaNome(c.data))}</h2><p class="sub">${r.ps.length} pedido${r.ps.length === 1 ? '' : 's'} · ${r.pagos.length} pago${r.pagos.length === 1 ? '' : 's'} · ${brl(r.total)} no total</p>
     <div class="pix" style="white-space:pre-wrap;font-family:Barlow,sans-serif;font-size:15px;color:var(--ink)">${esc(textoResumo())}</div>
     <p class="sub" style="margin-top:6px">O resumo e a lista contam só os pedidos pagos.${r.ps.length > r.pagos.length ? ' Fora: ' + (r.ps.length - r.pagos.length) + ' (sem comprovante, verificando ou a conferir).' : ''}</p>
     <button class="btn azul" data-act="copiarResumo" ${r.pagos.length ? '' : 'disabled'}>Copiar resumo para o fornecedor</button>
@@ -768,7 +798,7 @@ function adminPedidos() {
     ${r.ps.map(p => `<div class="ped" style="flex-wrap:wrap"><span class="nr">${esc(p.numero)}</span><span class="tx">${esc(itensTxt(p))}<small>${esc(p.nome || '')} · ${brl(p.total)}${p.comprovante?.e2e ? ' · ID ' + esc(p.comprovante.e2e.slice(-8)) : ''}</small>
       ${p.status === 'enviado' ? '<small>Comprovante recebido. A leitura termina no celular do aluno.</small>' : ''}
       ${p.comprovante?.motivos?.length && p.status !== 'pago' ? '<ul class="motivos">' + p.comprovante.motivos.map(m => '<li>' + esc(m) + '</li>').join('') + '</ul>' : ''}</span>${SELO[p.status] || SELO.pendente}
-      <div class="acoes" style="width:100%">${p.comprovante ? `<button data-act="verComp" data-n="${esc(p.numero)}">Ver comprovante</button>` : ''}${p.status !== 'pago' ? `<button data-act="status" data-n="${esc(p.numero)}" data-v="pago">Marcar pago</button>` : `<button data-act="status" data-n="${esc(p.numero)}" data-v="pendente">Desmarcar pago</button>`}
+      <div class="acoes" style="width:100%">${feito(p) || p.comprovante ? `<button data-act="verComp" data-n="${esc(p.numero)}">Ver comprovante</button>` : '<button disabled style="opacity:.5">Sem comprovante</button>'}${p.status !== 'pago' ? `<button data-act="status" data-n="${esc(p.numero)}" data-v="pago">Marcar pago</button>` : `<button data-act="status" data-n="${esc(p.numero)}" data-v="pendente">Desmarcar pago</button>`}
       <button data-act="apagar" data-n="${esc(p.numero)}">Excluir</button></div></div>`).join('')}</div>`;
 }
 function adminCardapio() {
@@ -864,6 +894,14 @@ async function salvarCfg(patch, codigo, nova) {
 }
 function htmlModal() {
   const m = S.modal; if (!m) return '';
+  if (m.tipo === 'meu') {
+    const eu = meu();
+    return `<div class="fundo" data-act="fecharModal"><div class="caixa" role="dialog" aria-label="Meu comprovante">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>Meu comprovante</h2><button class="x" data-act="fecharModal" aria-label="Fechar">×</button></div>
+      ${eu ? `<p class="sub">${esc(itensTxt(eu))} · <b>${brl(eu.total)}</b></p>` : ''}
+      <div style="margin-top:12px">${m.carregando ? '<p class="sub">Carregando…</p>' : m.img ? `<img class="comp" src="${m.img}" alt="Meu comprovante">` : '<div class="aviso">A imagem ainda não chegou ao servidor ou já foi apagada (guardamos por 3 dias).</div>'}</div>
+      <button class="btn sec peq" data-act="fecharModal">Fechar</button></div></div>`;
+  }
   if (m.tipo === 'bancos') {
     const ord = [...BANCOS].sort((x, y) => (y[0] === S.banco) - (x[0] === S.banco));
     return `<div class="fundo" data-act="fecharModal"><div class="caixa" role="dialog" aria-label="Escolha o banco">
@@ -1041,6 +1079,7 @@ document.addEventListener('click', async ev => {
       else toast(await cp ? 'Pix copiado! Abra o app do banco e cole' : 'Não deu para copiar. Segure o código e copie');
     }
     else if (a === 'copiarLista') toast(await copiar(textoLista()) ? 'Lista copiada' : 'Não deu para copiar');
+    else if (a === 'copiarChamada') toast(await copiar(textoChamada()) ? 'Chamada copiada' : 'Não deu para copiar');
     else if (a === 'copiarResumo') toast(await copiar(textoResumo()) ? 'Resumo copiado' : 'Não deu para copiar');
     else if (a === 'instalar') { S.instalar.prompt(); S.instalar = null; render(); }
     else if (a === 'entrarAdmin') {
@@ -1052,6 +1091,13 @@ document.addEventListener('click', async ev => {
       S.sub = r.tem_codigo && r.tem_admin ? 'pedidos' : 'ajustes'; abrePel(pel); render(); await atualizar(true);
     }
     else if (a === 'sairAdmin') { S.adm = null; S.aba = 'pedir'; abrePel(S.eu ? pelDe(S.eu.numero) : null); render(); atualizar(true); }
+    else if (a === 'verMeuComp') {
+      const eu = meu(); if (!eu) return;
+      S.modal = { tipo: 'meu', carregando: true }; render();
+      let img = null; try { const ri = await API.alunoVerImg(S.eu, eu.data); img = ri && ri.img; } catch (e) {}
+      if (!img) { const v = await idb.get(chaveArq(eu)); if (v && v.img) img = v.img; } // ainda no celular, se não subiu
+      if (S.modal && S.modal.tipo === 'meu') { S.modal = { tipo: 'meu', img }; render(); }
+    }
     else if (a === 'verComp') {
       const p = visiveis().find(x => x.numero === b.dataset.n); if (!p) return;
       S.modal = { numero: p.numero, carregando: true }; render();
