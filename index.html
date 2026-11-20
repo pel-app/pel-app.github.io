@@ -335,7 +335,7 @@ function prepararOCR() {
     await carregar('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js');
     return Tesseract.createWorker('por', 1);
   })();
-  comTempo(ocrW, 40000).catch(() => { ocrIndisp = true; ocrW = null; });
+  comTempo(ocrW, 60000).catch(() => { ocrIndisp = true; ocrW = null; });
   return ocrW;
 }
 // deixa a imagem menor e em tons de cinza: leitura mais rápida e mais certa
@@ -353,7 +353,7 @@ async function prepImagem(img) {
 // e PARA assim que acha o nome do aluno. Não precisa ler o comprovante inteiro.
 async function ocrFoco(file, nome) {
   if (ocrIndisp) throw new Error('leitor de imagem indisponível');
-  const w = await comTempo(prepararOCR(), 9500);
+  const w = await comTempo(prepararOCR(), 60000);
   const cv = await prepImagem(file), W = cv.width, H = cv.height;
   const faixas = [[0.45, 0.80], [0.70, 1], [0.20, 0.52], [0, 0.25]];
   let txt = '';
@@ -366,7 +366,7 @@ async function ocrFoco(file, nome) {
 }
 async function ocr(img) {
   if (ocrIndisp) throw new Error('leitor de imagem indisponível');
-  const w = await comTempo(prepararOCR(), 9500);
+  const w = await comTempo(prepararOCR(), 60000);
   return (await w.recognize(await prepImagem(img))).data.text;
 }
 const MESES = { jan:1, fev:2, mar:3, abr:4, mai:5, jun:6, jul:7, ago:8, set:9, out:10, nov:11, dez:12 };
@@ -854,6 +854,7 @@ function htmlModal() {
     <p class="sub">${esc(itensTxt(p))} · <b>${brl(p.total)}</b></p><p style="margin:8px 0">${SELO[p.status] || SELO.pendente}</p>
     ${cp.lido_em ? `<p class="sub">Nome do aluno no comprovante: <b>${cp.nomeOk ? 'encontrado ✓' : 'não encontrado'}</b> · valor ${cp.valor != null ? brl(cp.valor) : '—'} · data ${cp.data ? diaBR(cp.data) : '—'} · ID ${cp.e2e ? esc(cp.e2e.slice(-10)) : '—'}</p>` : '<p class="sub">A leitura automática ainda não terminou.</p>'}
     ${cp.motivos?.length && p.status !== 'pago' ? '<ul class="motivos">' + cp.motivos.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>' : ''}
+    ${cp.texto || cp.erroLeitura ? `<details style="margin-top:8px"><summary class="sub" style="cursor:pointer">O que o app leu no comprovante</summary><p class="sub" style="font-size:13px">${esc(cp.texto || '(nada)')}${cp.erroLeitura ? '<br><b>Erro:</b> ' + esc(cp.erroLeitura) : ''}</p><p class="sub" style="font-size:13px">Nome procurado: <b>${esc(p.nome || '')}</b></p></details>` : ''}
     <div style="margin-top:12px">${m.carregando ? '<p class="sub">Carregando imagem…</p>' : m.img ? `<img class="comp" src="${m.img}" alt="Comprovante de ${esc(p.numero)}">` : '<div class="aviso">A imagem ainda não chegou (o aluno pode estar sem internet) ou já foi apagada (guardamos por 3 dias).</div>'}</div>
     ${p.status !== 'pago' ? `<button class="btn" data-act="status" data-n="${esc(p.numero)}" data-v="pago">Confirmar pagamento</button>` : `<button class="btn sec peq" data-act="status" data-n="${esc(p.numero)}" data-v="pendente">Desmarcar pago</button>`}
     <button class="btn sec peq" data-act="fecharModal">Fechar</button></div></div>`;
@@ -921,18 +922,32 @@ async function lerComprovante(file) {
 }
 async function verificar(ped, file, img) {
   const k = chaveArq(ped); if (S.verificando === k) return; S.verificando = k;
-  let r, imgOk = !img;
+  let imgOk = !img;
   if (img) try { const ri = await API.alunoImg(S.eu, ped.data, img); imgOk = !!(ri && ri.ok); } catch (e) {}
-  try {
-    const ehPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name || '');
-    const texto = await comTempo(ehPdf ? extrairTexto(file) : ocrFoco(file, ped.nome), 10000); // no máximo 10 s; depois disso vai para conferência manual
-    r = analisar(texto, ped, pixDe(S.cardapio && S.cardapio.data === ped.data ? S.cardapio : ped));
+  const ehPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name || '');
+  const leitura = ehPdf ? extrairTexto(file) : ocrFoco(file, ped.nome); leitura.catch(() => {});
+  const avalia = texto => {
+    const r = analisar(texto, ped, pixDe(S.cardapio && S.cardapio.data === ped.data ? S.cardapio : ped));
     if (r.e2e && visiveis().some(x => x.numero !== ped.numero && x.e2e === r.e2e)) { r.ok = false; r.motivos.push('Este comprovante já foi usado em outro pedido'); }
-  } catch (e) { console.warn('QAJ leitura:', e && e.message || e); r = { ok: false, nomeOk: false, e2e: null, valor: null, data: null, motivos: ['O app não conseguiu ler este comprovante. Confira a imagem.'] }; }
-  const p = { ...ped, status: r.ok ? 'pago' : 'conferir', e2e: r.motivos.some(m => m.includes('já foi usado')) ? null : r.e2e,
-    comprovante: { ...ped.comprovante, nomeOk: !!r.nomeOk, e2e: r.e2e, valor: r.valor, data: r.data, motivos: r.motivos, lido_em: new Date().toISOString() } };
-  try { const res = await enviar(p); if (res !== 'fila' && imgOk) await idb.del(k); } catch (e) {}
-  S.verificando = null; atualizar();
+    r.texto = String(texto || '').replace(/\s+/g, ' ').trim().slice(0, 700); return r;
+  };
+  const falha = (e, msg) => ({ ok: false, nomeOk: false, e2e: null, valor: null, data: null, motivos: [msg || 'O app não conseguiu ler este comprovante. Confira a imagem.'], erroLeitura: String(e && e.message || e).slice(0, 120) });
+  const grava = r => enviar({ ...ped, status: r.ok ? 'pago' : 'conferir', e2e: r.motivos.some(m => m.includes('já foi usado')) ? null : r.e2e,
+    comprovante: { ...ped.comprovante, nomeOk: !!r.nomeOk, e2e: r.e2e, valor: r.valor, data: r.data, motivos: r.motivos, texto: r.texto || '', erroLeitura: r.erroLeitura || '', lido_em: new Date().toISOString() } });
+  let r, atrasou = false;
+  try { r = avalia(await comTempo(leitura, 10000)); } // resultado em até 10 s
+  catch (e) {
+    console.warn('QAJ leitura:', e && e.message || e);
+    if (String(e && e.message).includes('tempo esgotado')) { atrasou = true; r = falha(e, 'Leitura ainda em andamento (1ª vez no celular é mais lenta). Confira a imagem ou aguarde.'); }
+    else r = falha(e);
+  }
+  try { const res = await grava(r); if (!atrasou && res !== 'fila' && imgOk) await idb.del(k); } catch (e) {}
+  atualizar();
+  if (atrasou) { // continua lendo fora da vista; se achar o nome, vira ✓ Pago sozinho
+    try { await grava(avalia(await comTempo(leitura, 60000))); } catch (e) { try { await grava(falha(e)); } catch (e2) {} }
+    if (imgOk) await idb.del(k); atualizar();
+  }
+  S.verificando = null;
 }
 async function checaCompartilhado() {
   const v = await idb.get('compartilhado'); if (!v || !v.file) return;
