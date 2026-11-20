@@ -33,6 +33,7 @@ LAYOUT: uma coluna de 560px, faixa azul no topo, barra de abas fixa embaixo.
 --av:light-dark(#9a5b00,#f2b54a);--avbg:light-dark(#fff1d9,#3a2a10);--pe:light-dark(#5b6472,#9aa5b4);--pebg:light-dark(#eceef2,#232c38)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Barlow,system-ui,sans-serif;overflow-x:clip;-webkit-tap-highlight-color:transparent}
 h1,h2,h3,.num{font-family:"Barlow Condensed",Barlow,sans-serif;font-weight:700;line-height:1.05;margin:0}
 header{position:relative;background:var(--farda);color:#fff;padding:calc(env(safe-area-inset-top) + 14px) max(5vw,16px) 18px}
@@ -73,7 +74,7 @@ textarea{min-height:130px;resize:vertical}
 .motivos{margin:8px 0 0;padding-left:18px;font-size:14px;color:var(--av)}
 .barra{height:8px;background:var(--pebg);border-radius:99px;overflow:hidden;margin-top:10px}
 .barra i{display:block;height:100%;background:var(--farda);width:0;transition:width .3s}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0 4px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0 4px}
 .stats div{background:var(--bg);border-radius:10px;padding:8px;text-align:center}
 .stats .num{font-size:26px;display:block}
 .stats span{font-size:12px;color:var(--mute)}
@@ -101,6 +102,7 @@ nav button{max-width:240px}
 .marca{display:flex;gap:10px;align-items:center}
 #logo{width:46px;height:46px;border-radius:12px;object-fit:cover;border:2px solid rgba(255,255,255,.55);flex:none}
 .seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--pebg);padding:4px;border-radius:12px;margin-bottom:14px}
+.seg{grid-template-columns:repeat(5,minmax(0,1fr))}.seg button{font-size:12.5px!important;padding:4px 2px;line-height:1.15}
 .seg button{min-height:42px;border:0;border-radius:9px;background:none;color:var(--mute);font:600 14px Barlow,sans-serif;cursor:pointer}
 .seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}
 .fotoPrev{width:96px;height:96px;border-radius:22px;object-fit:cover;display:block;background:var(--farda)}
@@ -119,23 +121,70 @@ button.link{background:none;border:0;padding:4px 2px;color:var(--acao2);font:600
 img.comp{display:block;width:100%;border-radius:10px;border:1px solid var(--line);background:#fff}
 .chamada.urgente{border:2px solid var(--acao);box-shadow:0 0 0 4px rgba(226,82,43,.12)}
 .aviso.urg{background:var(--acao);color:#fff;font-weight:600}
-.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#14181f;color:#fff;padding:12px 18px;border-radius:12px;font-weight:600;opacity:0;transition:.25s;z-index:9;max-width:90vw;text-align:center}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 4px}
+.chip{font-size:13px;font-weight:600;padding:5px 10px;border-radius:99px;background:var(--pebg);color:var(--ink)}
+.chip.fim{background:var(--avbg);color:var(--av)}
+.valor{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 2px}.valor .num{font-size:40px;color:var(--acao2)}
+.passos{list-style:none;counter-reset:p;margin:10px 0 0;padding:0}
+.passos li{counter-increment:p;position:relative;padding:12px 0 12px 44px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.passos li:first-child{border-top:0}
+.passos li::before{content:counter(p);position:absolute;left:0;top:10px;width:30px;height:30px;border-radius:50%;background:var(--farda);color:#fff;display:grid;place-items:center;font:700 16px Barlow,sans-serif}
+.passos .btn{margin-top:2px}
+.det{margin-top:10px}.det summary{cursor:pointer;color:var(--mute);font-size:14px;padding:6px 0}
+.barra-pedido{position:fixed;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom));z-index:6;background:var(--card);border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(0,0,0,.08)}
+.bp-in{max-width:560px;margin:0 auto;padding:10px 14px;display:flex;align-items:center;gap:14px}
+.bp-in>div{display:flex;flex-direction:column;line-height:1.1}.bp-in .num{font-size:28px;white-space:nowrap}
+.bp-in .btn{margin:0;flex:1}
+main:has(.barra-pedido){padding-bottom:calc(170px + env(safe-area-inset-bottom))}
+.tabela{margin-top:12px}
+.lin{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px 4px;border-top:1px solid var(--line)}
+.lin .nr{font:700 21px "Barlow Condensed",sans-serif}.lin .tx{font-size:15px}
+.lin.eu{background:var(--pebg);border-radius:10px}
+nav{height:calc(64px + env(safe-area-inset-bottom))}
+.adm-ped{padding:12px 0;border-top:1px solid var(--line)}.adm-ped:first-of-type{border-top:0}
+.adm-ped .acoes{margin:8px 0 0 62px}
+.dois{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-top:10px}.dois .btn{margin:0}
+.lista-ajuda{margin:10px 0;padding-left:18px}.lista-ajuda li{margin:6px 0}
+.hist{display:grid;grid-template-columns:76px minmax(0,1fr);gap:10px;padding:10px 2px;border-top:1px solid var(--line);font-size:15px}
+.hist .quem{display:inline-block;margin-top:3px;font-size:12px;font-weight:600;color:var(--mute);background:var(--pebg);border-radius:99px;padding:1px 8px}
+.pin-ini{display:flex;flex-direction:column;align-items:center;padding:14px;margin:12px 0;border-radius:14px;background:var(--pebg)}.pin-ini b{font:700 44px/1.1 'Barlow Condensed',sans-serif;letter-spacing:8px}
+.toast{pointer-events:none;position:fixed;left:50%;bottom:calc(140px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#14181f;color:#fff;padding:12px 18px;border-radius:12px;font-weight:600;opacity:0;transition:.25s;z-index:9;max-width:90vw;text-align:center}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 .vazio{text-align:center;padding:30px 10px}
 .vazio svg{width:120px;height:90px}
 .rodape{text-align:center;font-size:14px;color:var(--mute);margin-top:6px}
 .rodape button{background:none;border:0;color:var(--acao2);font:600 14px Barlow,sans-serif;cursor:pointer;padding:8px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* PIN com 4 bolinhas (o campo real fica invisível por cima) */
+.pin4{position:relative;display:flex;justify-content:center;gap:18px;padding:14px 0;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.pin4:focus-within{border-color:var(--farda);box-shadow:0 0 0 3px rgba(31,58,95,.15)}
+.pin4 i{width:16px;height:16px;border-radius:50%;border:2px solid var(--mute);transition:background .12s,border-color .12s,transform .12s}
+.pin4 i.on{background:var(--ink);border-color:var(--ink);transform:scale(1.08)}
+.pin4 input{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;font-size:16px;color:transparent;caret-color:transparent;letter-spacing:0;cursor:pointer}
+.erro-num{color:var(--acao2)!important;font-weight:600}
+.bv p{margin:0;padding:9px 0;border-bottom:1px solid var(--line);font-size:15px;line-height:1.35}.bv p:last-child{border-bottom:0}
+.bv-pin{margin-top:10px;padding:18px 16px;border-radius:14px;background:var(--avbg);color:var(--ink);text-align:center}
+.bv-t{font:800 28px/1.1 'Barlow Condensed',Barlow,sans-serif;margin:8px 0 10px;color:var(--av);text-transform:uppercase;letter-spacing:.3px}
+.bv-pin p{margin:6px 0;font-size:16px;line-height:1.4}.bv-forte{font-size:18px!important;font-weight:700}
+.bv-fixo{margin-top:12px;padding:14px 12px}.bv-fixo .bv-t{font-size:22px;margin:0 0 6px}.bv-fixo p{font-size:15px}.bv-fixo .bv-forte{font-size:16px!important}
+.abas-resp button{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;min-height:64px;padding:8px 2px 6px!important;font-size:12px!important;line-height:1.15}
+.abas-resp svg{width:20px;height:20px;flex:none}.abas-resp span{display:block;text-align:center}
+.btn2l{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:58px!important;padding:6px 8px!important;line-height:1.15;text-align:center}
+.btn2l small{font:500 12px Barlow,sans-serif;opacity:.85}
+.som-bt{width:36px;height:36px;border-radius:10px;border:0;background:rgba(255,255,255,.12);color:#fff;display:grid;place-items:center;cursor:pointer;padding:0}
+.som-bt svg{width:20px;height:20px}.som-bt.mudo{opacity:.6}
 </style>
 </head>
 <body>
 <header><div class="wrap">
   <div class="marca"><img id="logo" hidden alt=""><div><h1><span id="tit">PEL</span></h1><small id="hsub">Pedido de almoço</small></div></div>
   <div style="display:flex;align-items:center;gap:6px"><span class="net" id="net">online</span>
+  <button class="som-bt" data-act="som" id="btSom" aria-label="Som"></button>
   <button class="menu" data-act="menu" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="19" r="2.2"/></svg></button></div>
 </div>
 <div class="drop" id="drop" hidden>
-  <button data-act="aba" data-v="admin">Área do responsável</button>
+  <button data-act="aba" data-v="admin" id="menuResp" hidden>Área do responsável</button>
+  <button data-act="aba" data-v="dev" id="menuDev" hidden>Painel do desenvolvedor</button>
   <button data-act="trocar">Trocar meu número</button>
 </div></header>
 <main id="app"></main>
@@ -153,6 +202,7 @@ const CONFIG = window.QAJ_CONFIG, PMIN = +CONFIG.PRIMEIRO_PELOTAO || 6, PMAX = +
 const pelDe = n => { n = String(n || '').replace(/\D/g, ''); if (n.length < 3) return null; const v = parseInt(n.slice(0, -2), 10); return v >= PMIN && v <= PMAX ? String(v) : null; };
 let P = null; // pelotão que está aberto na tela
 const REMOTO = !!(CONFIG.SUPABASE_URL && CONFIG.SUPABASE_KEY);
+const DEV_NUMERO = String(CONFIG.DEV_NUMERO || '2116'); // quem vê o "Painel do desenvolvedor" no menu
 const KEY = String(CONFIG.SUPABASE_KEY || ''), URLDB = String(CONFIG.SUPABASE_URL || '').replace(/\/$/, '');
 
 /* ---------- utilidades ---------- */
@@ -170,7 +220,27 @@ const ls = {
   get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 };
-function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 2600); }
+/* ---------- sons (gerados no próprio app, sem baixar nada) ---------- */
+const som = {
+  on: ls.get('qaj_som', true), ctx: null,
+  ac() { try { if (!som.ctx) som.ctx = new (window.AudioContext || window.webkitAudioContext)(); if (som.ctx.state === 'suspended') som.ctx.resume(); return som.ctx; } catch (e) { return null; } },
+  nota(f, ini, dur, vol, tipo) {
+    const c = som.ac(); if (!c) return; const t = c.currentTime + ini, o = c.createOscillator(), g = c.createGain();
+    o.type = tipo || 'sine'; o.frequency.setValueAtTime(f, t);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + 0.02);
+  },
+  vib(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} },
+  clique() { if (!som.on) return; som.nota(1250, 0, 0.045, 0.05, 'triangle'); som.vib(8); },
+  ok() { if (!som.on) return; som.nota(784, 0, 0.12, 0.09); som.nota(1175, 0.09, 0.18, 0.09); som.vib(20); },
+  erro() { if (!som.on) return; som.nota(220, 0, 0.14, 0.09, 'square'); som.nota(185, 0.12, 0.2, 0.08, 'square'); som.vib([40, 50, 40]); },
+  festa() { if (!som.on) return; [523, 659, 784, 1047].forEach((f, i) => som.nota(f, i * 0.09, 0.25, 0.09)); som.vib([30, 40, 60]); } // pagamento confirmado
+};
+const SOM_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
+const SOM_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
+const somDoAviso = msg => /incorret|inválid|não |nao |erro|precisa|bloque|já foi|já tem|já está|falhou|sem internet|esgot/i.test(msg) ? 'erro'
+  : /pronto|copiad|salv|confirmad|publicad|criad|atualizado|zerad|definid|enviad/i.test(msg) ? 'ok' : null;
+function toast(msg) { const tipo = somDoAviso(String(msg)); if (tipo) som[tipo](); const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 2600); }
 async function copiar(txt) {
   try { await navigator.clipboard.writeText(txt); return true; }
   catch (e) {
@@ -188,30 +258,6 @@ function carregar(src) {
 }
 
 const comTempo = (pr, ms) => Promise.race([pr, new Promise((_, er) => setTimeout(() => er(new Error('tempo esgotado')), ms))]);
-
-/* ---------- desbloqueio com digital / rosto (fica só neste celular) ---------- */
-const b64u = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-const deB64u = t => Uint8Array.from(atob(t.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((t.length + 3) % 4)), c => c.charCodeAt(0));
-const aleat = n => crypto.getRandomValues(new Uint8Array(n));
-const BIO = {
-  async disponivel() { try { return !!(window.PublicKeyCredential && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()); } catch (e) { return false; } },
-  ativo() { const b = ls.get('qaj_bio', null); return !!(b && S.eu && b.numero === S.eu.numero); },
-  async ativar() {
-    const cred = await navigator.credentials.create({ publicKey: {
-      challenge: aleat(32), rp: { name: 'PEL', id: location.hostname },
-      user: { id: aleat(16), name: 'PEL' + S.eu.pelotao + '-' + S.eu.numero, displayName: S.eu.nome || S.eu.numero },
-      pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
-      authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'discouraged' }, timeout: 60000 } });
-    ls.set('qaj_bio', { id: b64u(cred.rawId), numero: S.eu.numero });
-  },
-  async conferir() {
-    const b = ls.get('qaj_bio', null);
-    await navigator.credentials.get({ publicKey: { challenge: aleat(32), rpId: location.hostname, userVerification: 'required', timeout: 60000,
-      allowCredentials: [{ type: 'public-key', id: deB64u(b.id), transports: ['internal'] }] } });
-  },
-  desativar() { ls.set('qaj_bio', null); }
-};
-let bioPode = false; BIO.disponivel().then(v => { bioPode = v; if (v && S.eu) render(); });
 
 /* ---------- Pix copia-e-cola (BR Code estático) ---------- */
 const campo = (id, v) => id + pad(v.length) + v;
@@ -451,14 +497,20 @@ function analisar(texto, ped, c) {
 /* ---------- dados: Supabase ou modo teste ---------- */
 const ERROS = {
   codigo: 'Código do pelotão incorreto', pin: 'PIN incorreto', bloqueado: 'Muitas tentativas erradas. Aguarde 15 minutos',
-  sem_codigo: 'O responsável deste pelotão ainda não liberou o app', fora_da_lista: 'Seu número não está na lista do pelotão',
+  sem_codigo: 'Este pelotão ainda não foi liberado. Fale com o responsável', fora_da_lista: 'Seu número não está na lista do pelotão', sem_resp: 'O desenvolvedor ainda não definiu o responsável deste pelotão', nao_responsavel: 'Só o responsável definido pelo desenvolvedor pode entrar aqui', reservado: 'Este número não está disponível', sem_lista: 'Este pelotão ainda não tem lista de frequência. Fale com o responsável',
   numero: 'Número inválido para este pelotão', pin_formato: 'O PIN precisa ter 4 números',
   sem_responsavel: 'Este pelotão ainda não foi liberado pelo desenvolvedor', senha: 'Senha incorreta',
   travado: 'Pedido já pago: para mudar, fale com o responsável', sem_cardapio: 'O cardápio mudou. Atualize a tela',
-  dup: 'Comprovante já usado em outro pedido', codigo_curto: 'O código precisa ter pelo menos 6 caracteres',
-  senha_curta: 'A senha precisa ter pelo menos 4 caracteres', grande: 'Imagem muito grande', status: 'Situação inválida'
+  dup: 'Comprovante já usado em outro pedido', numero_em_uso: 'Este número já foi confirmado em outro celular. Se é você, peça ao responsável para zerar o PIN', aparelho_sem_id: 'Não foi possível identificar este celular', trocar_pin: 'Crie o seu PIN pessoal para continuar', pin_igual: 'O novo PIN precisa ser diferente do PIN inicial', codigo_curto: 'O código precisa ter pelo menos 4 caracteres',
+  senha_curta: 'A senha precisa ter pelo menos 4 caracteres', muitas: 'Muitos pedidos abertos. Aguarde', nao_achou: 'Pedido não encontrado', tipo: 'Tipo inválido', acao: 'Ação inválida', grande: 'Imagem muito grande', status: 'Situação inválida'
 };
 const msgErro = e => ERROS[e] || ('Erro: ' + e);
+// identificador deste celular (para "um celular = um número" no primeiro acesso)
+function aparelhoId() {
+  let id = ls.get('qaj_aparelho', null);
+  if (!id) { try { id = crypto.randomUUID(); } catch (e) { id = Date.now().toString(36) + Math.random().toString(36).slice(2); } ls.set('qaj_aparelho', id); }
+  return id;
+}
 const a4 = cr => ({ p_pel: cr.pelotao, p_codigo: cr.codigo, p_numero: cr.numero, p_pin: cr.pin });
 const a2 = ad => ({ p_pel: ad.pel, p_senha: ad.senha });
 const API = {
@@ -473,29 +525,76 @@ const API = {
   db() { return ls.get('qaj_db2', { cfg: {}, seg: {}, pins: {}, cardapios: [], pedidos: [], imgs: {} }); },
   grava(db) { ls.set('qaj_db2', db); },
   ultimo(db, pel) { return db.cardapios.filter(x => x.pelotao === pel).sort((a, b) => b.data.localeCompare(a.data))[0] || null; },
-  alunoOk(db, cr) { const sg = db.seg[cr.pelotao] || {}; return !!sg.codigo && sg.codigo === cr.codigo && db.pins[cr.pelotao + '|' + cr.numero] === cr.pin; },
-  admOk(db, ad) { const sg = db.seg[ad.pel] || {}; return !!sg.admin && sg.admin === ad.senha; },
+  alunoOk(db, cr) { const v = this.pinDe(db, cr.pelotao + '|' + cr.numero); return !!v && v.pin === cr.pin && !v.trocar; },
+  admOk(db, ad) { const sg = db.seg[ad.pel] || {}; return (!!sg.admin && sg.admin === ad.senha) || (!!db.dev && db.dev === ad.senha); },
 
   // ----- aluno -----
-  async alunoEntrar(pel, codigo, numero, pin, nome) {
-    if (REMOTO) return this.rpc('aluno_entrar', { p_pel: pel, p_codigo: codigo, p_numero: numero, p_pin: pin, p_nome: nome });
-    const db = this.db(), sg = db.seg[pel] || {};
+  pinDe(db, k) { const v = db.pins[k]; return v == null ? null : typeof v === 'string' ? { pin: v, trocar: false } : v; },
+  async alunoEntrar(pel, codigo, numero, pin, nome, mestra) {
+    if (REMOTO) return this.rpc('aluno_entrar', { p_pel: pel, p_codigo: '', p_numero: numero, p_pin: pin, p_nome: nome, p_aparelho: aparelhoId(), p_mestra: mestra || null });
+    const db = this.db(), sg = db.seg[pel] || {}, ap = aparelhoId(); db.aparelhos = db.aparelhos || {};
     if (pelDe(numero) !== pel) return { erro: 'numero' };
-    if (!sg.codigo) return { erro: 'sem_codigo' };
-    if (codigo !== sg.codigo) return { erro: 'codigo' };
-    const lista = (db.cfg[pel] || {}).alunos || [], x = lista.find(a => a.numero === numero);
-    if (lista.length && !x) return { erro: 'fora_da_lista' };
+    const dev = numero === DEV_NUMERO; // o desenvolvedor não depende de liberação nem da lista
+    if (!sg.admin && !dev) return { erro: 'sem_codigo' };
+    const lista = (db.cfg[pel] || {}).alunos || [], x = lista.find(a => a.numero === numero) || (dev ? { numero, nome: 'Samuel Sousa' } : null);
+    if (!lista.length && !dev) return { erro: 'sem_lista' };
+    if (!x) return { erro: 'fora_da_lista' };
+    const nm = (x && x.nome) || nome || numero, k = pel + '|' + numero, atual = this.pinDe(db, k);
+    if (!atual) { // primeiro acesso: um celular só cadastra um número
+      const v = db.aparelhos[ap];
+      if (v && v !== k) { this.ev(db, pel, numero, 'tentou 1º acesso de um celular já vinculado ao ' + v.split('|')[1], 'aluno'); this.grava(db); return { erro: 'aparelho', numero_vinculado: v.split('|')[1] }; }
+      if (numero === DEV_NUMERO) { if (!db.dev && mestra && mestra.length >= 4) { db.dev = mestra; this.grava(db); } if (!(db.dev && mestra === db.dev)) return { erro: 'reservado' }; }
+      const ini = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+      db.pins[k] = { pin: ini, trocar: true }; db.aparelhos[ap] = k; this.ev(db, pel, numero, 'primeiro acesso (celular vinculado)', 'aluno'); this.grava(db);
+      return { primeiro: true, pin_inicial: ini, nome: nm };
+    }
+    if (!pin && atual.trocar) { // 1º acesso de um número da lista (PIN inicial oculto)
+      const v = db.aparelhos[ap];
+      if (v && v !== k) { this.ev(db, pel, numero, 'tentou 1º acesso de um celular já vinculado ao ' + v.split('|')[1], 'aluno'); this.grava(db); return { erro: 'aparelho', numero_vinculado: v.split('|')[1] }; }
+      if (numero === DEV_NUMERO) { if (!db.dev && mestra && mestra.length >= 4) { db.dev = mestra; this.grava(db); } if (!(db.dev && mestra === db.dev)) return { erro: 'reservado' }; }
+      if (Object.entries(db.aparelhos).some(([t, kk]) => kk === k && t !== ap)) return { erro: 'numero_em_uso' };
+      const ini = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+      db.pins[k] = { pin: ini, trocar: true }; db.aparelhos[ap] = k; this.ev(db, pel, numero, 'primeiro acesso (celular vinculado)', 'aluno'); this.grava(db);
+      return { primeiro: true, pin_inicial: ini, nome: nm };
+    }
     if (!/^\d{4}$/.test(pin)) return { erro: 'pin_formato' };
-    const k = pel + '|' + numero; if (db.pins[k] && db.pins[k] !== pin) return { erro: 'pin' };
-    db.pins[k] = pin; this.grava(db); return { ok: true, nome: (x && x.nome) || nome || numero };
+    if (atual.pin !== pin) return { erro: 'pin' };
+    return { ok: true, nome: nm, trocar: !!atual.trocar };
   },
-  async alunoDados(cr) {
-    if (REMOTO) return this.rpc('aluno_dados', a4(cr));
+  async alunoQuem(pel, numero) {
+    if (REMOTO) return this.rpc('aluno_quem', { p_pel: pel, p_numero: numero, p_aparelho: aparelhoId() });
+    const db = this.db(), sg = db.seg[pel] || {}, ap = aparelhoId(), k = pel + '|' + numero;
+    if (pelDe(numero) !== pel) return { erro: 'numero' };
+    const dev = numero === DEV_NUMERO; // o desenvolvedor não depende de liberação nem da lista
+    if (!sg.admin && !dev) return { erro: 'sem_codigo' };
+    const lista = (db.cfg[pel] || {}).alunos || [], x = lista.find(a => a.numero === numero) || (dev ? { numero, nome: 'Samuel Sousa' } : null);
+    if (!lista.length && !dev) return { erro: 'sem_lista' };
+    if (!x) return { erro: 'fora_da_lista' };
+    const nm = x && x.nome ? x.nome.trim().split(/\s+/) : null, curto = nm ? nm[0] + (nm[1] ? ' ' + nm[1][0] + '.' : '') : null;
+    const v = this.pinDe(db, k); if (v && !v.trocar) return { tem_pin: true, nome: curto };
+    if (Object.entries(db.aparelhos || {}).some(([t, kk]) => kk === k && t !== ap)) return { erro: 'numero_em_uso' };
+    const vv = (db.aparelhos || {})[ap]; if (vv && vv !== k) return { erro: 'aparelho', numero_vinculado: vv.split('|')[1] };
+    return { primeiro: true, dev: numero === DEV_NUMERO, nome: curto };
+  },
+  async alunoTrocarPin(pel, numero, atual, novo) {
+    if (REMOTO) return this.rpc('aluno_trocar_pin', { p_pel: pel, p_numero: numero, p_pin_atual: atual, p_pin_novo: novo });
+    const db = this.db(), k = pel + '|' + numero, v = this.pinDe(db, k);
+    if (!v || v.pin !== atual) return { erro: 'pin' };
+    if (!/^\d{4}$/.test(novo)) return { erro: 'pin_formato' };
+    if (novo === atual) return { erro: 'pin_igual' };
+    db.pins[k] = { pin: novo, trocar: false }; this.ev(db, pel, numero, 'criou o PIN pessoal', 'aluno'); this.grava(db); return { ok: true };
+  },
+  async devDesvincular(senha) {
+    if (REMOTO) return this.rpc('dev_desvincular', { p_mestra: senha, p_aparelho: aparelhoId() });
+    const db = this.db(); if (db.dev !== senha) return { erro: 'senha' }; if (db.aparelhos) delete db.aparelhos[aparelhoId()]; this.grava(db); return { ok: true };
+  },
+  async alunoDados(cr, versao, fotoV) {
+    if (REMOTO) return this.rpc('aluno_dados', { ...a4(cr), p_versao: versao || null, p_foto_v: fotoV || null });
     const db = this.db(); if (!this.alunoOk(db, cr)) return { erro: 'pin' };
     const c = this.ultimo(db, cr.pelotao);
     const ps = c ? db.pedidos.filter(p => p.pelotao === cr.pelotao && p.data === c.data).map(p => p.numero === cr.numero ? p :
       { pelotao: p.pelotao, data: p.data, numero: p.numero, nome: p.nome, itens: p.itens, total: p.total, status: p.status === 'pendente' ? 'pendente' : 'feito' }) : [];
-    return { cfg: db.cfg[cr.pelotao] || {}, cardapio: c, pedidos: ps };
+    return { cfg: db.cfg[cr.pelotao] || {}, cardapio: c, pedidos: ps, sou_resp: (db.seg[cr.pelotao] || {}).resp === cr.numero };
   },
   async alunoSalvar(cr, p) {
     if (REMOTO) return this.rpc('aluno_salvar_pedido', { ...a4(cr), p_ped: p });
@@ -504,13 +603,21 @@ const API = {
     const i = db.pedidos.findIndex(x => x.pelotao === cr.pelotao && x.data === p.data && x.numero === cr.numero);
     if (i >= 0 && db.pedidos[i].status === 'pago') return { erro: 'travado' };
     if (p.e2e && db.pedidos.some((x, j) => j !== i && x.e2e === p.e2e)) return { erro: 'dup' };
-    const novo = { ...p, pelotao: cr.pelotao, numero: cr.numero };
+    const novo = { ...p, pelotao: cr.pelotao, numero: cr.numero }, at = i >= 0 ? db.pedidos[i] : null;
+    const txt = q => (q.itens || []).map(x => (x.qtd > 1 ? x.qtd + 'x ' : '') + x.nome).join(' + ') + ' · ' + brl(q.total), st = p.status || 'pendente';
+    if (!at) this.ev(db, cr.pelotao, cr.numero, 'fez o pedido', 'aluno', txt(p));
+    else if (st === 'pendente' && txt(at) !== txt(p)) this.ev(db, cr.pelotao, cr.numero, 'alterou o pedido', 'aluno', txt(at) + '  →  ' + txt(p));
+    if (st === 'enviado' && (!at || at.status !== 'enviado')) this.ev(db, cr.pelotao, cr.numero, 'enviou o comprovante', 'aluno', txt(p));
+    else if (st === 'pago' && (!at || at.status !== 'pago')) this.ev(db, cr.pelotao, cr.numero, 'pagamento confirmado (leitura automática)', 'app', txt(p));
+    else if (st === 'conferir' && (!at || at.status !== 'conferir')) this.ev(db, cr.pelotao, cr.numero, 'comprovante foi para conferência', 'app', ((p.comprovante || {}).motivos || [])[0] || '');
     if (i >= 0) db.pedidos[i] = novo; else db.pedidos.push(novo); this.grava(db); return { ok: true };
   },
   async alunoCancelar(cr, data) {
     if (REMOTO) return this.rpc('aluno_cancelar', { ...a4(cr), p_data: data });
     const db = this.db(); if (!this.alunoOk(db, cr)) return { erro: 'pin' };
+    const n0 = db.pedidos.length;
     db.pedidos = db.pedidos.filter(x => !(x.pelotao === cr.pelotao && x.data === data && x.numero === cr.numero && x.status === 'pendente'));
+    if (db.pedidos.length < n0) this.ev(db, cr.pelotao, cr.numero, 'cancelou o pedido', 'aluno');
     this.grava(db); return { ok: true };
   },
   async alunoVerImg(cr, data) {
@@ -525,26 +632,42 @@ const API = {
   },
 
   // ----- responsável (ou desenvolvedor com a senha mestra) -----
-  async adminEntrar(pel, senha) {
-    if (REMOTO) return this.rpc('admin_entrar', { p_pel: pel, p_senha: senha });
+  async adminEntrar(pel, senha, comoDev) {
+    const eu = !comoDev && S.eu && pelDe(S.eu.numero) === pel ? S.eu : null;
+    if (REMOTO) return this.rpc('admin_entrar', { p_pel: pel, p_senha: senha, p_numero: eu ? eu.numero : null, p_pin: eu ? eu.pin : null });
     const db = this.db(), sg = db.seg[pel] = db.seg[pel] || {};
+    if (db.dev && senha === db.dev && (!eu || eu.numero === DEV_NUMERO)) return { ok: true, mestre: true, tem_codigo: !!sg.codigo, tem_admin: !!sg.admin }; // senha mestra de teste
     if (!sg.admin) { if (String(senha).length < 4) return { erro: 'senha_curta' }; sg.admin = senha; this.grava(db); } // modo teste: 1º acesso cria a senha
     else if (sg.admin !== senha) return { erro: 'senha' };
+    if (eu || sg.resp) { if (!sg.resp) return { erro: 'sem_resp' }; if (!eu || eu.numero !== sg.resp) return { erro: 'nao_responsavel' }; }
     return { ok: true, mestre: false, tem_codigo: !!sg.codigo, tem_admin: true };
   },
-  async adminDados(ad) {
-    if (REMOTO) return this.rpc('admin_dados', a2(ad));
+  async adminDados(ad, versao, fotoV) {
+    if (REMOTO) return this.rpc('admin_dados', { ...a2(ad), p_versao: versao || null, p_foto_v: fotoV || null });
     const db = this.db(); if (!this.admOk(db, ad)) return { erro: 'senha' };
     const c = this.ultimo(db, ad.pel), sg = db.seg[ad.pel] || {};
-    return { cfg: db.cfg[ad.pel] || {}, cardapio: c, pedidos: c ? db.pedidos.filter(p => p.pelotao === ad.pel && p.data === c.data) : [], tem_codigo: !!sg.codigo, tem_admin: !!sg.admin };
+    return { cfg: db.cfg[ad.pel] || {}, cardapio: c, pedidos: c ? db.pedidos.filter(p => p.pelotao === ad.pel && p.data === c.data) : [], tem_codigo: !!sg.codigo, tem_admin: !!sg.admin,
+      ajudas: (db.ajudas || []).filter(x => x.status === 'aberta' && x.tipo === 'pin' && x.pelotao === ad.pel),
+      acessos: (() => { const ks = Object.keys(db.pins).filter(k => k.startsWith(ad.pel + '|')); const f = ks.filter(k => this.pinDe(db, k).trocar);
+        return { total: ks.length, ativos: ks.length - f.length, faltam: f.map(k => k.split('|')[1]).sort() }; })() };
   },
   async adminSalvarCfg(ad, dados, codigo, nova) {
     if (REMOTO) return this.rpc('admin_salvar_cfg', { ...a2(ad), p_dados: dados, p_codigo: codigo || null, p_nova_senha: nova || null });
     const db = this.db(); if (!this.admOk(db, ad)) return { erro: 'senha' };
-    if (codigo && codigo.length < 6) return { erro: 'codigo_curto' };
+    if (codigo && codigo.length < 4) return { erro: 'codigo_curto' };
     if (nova && nova.length < 4) return { erro: 'senha_curta' };
-    if (dados) db.cfg[ad.pel] = dados; const sg = db.seg[ad.pel] = db.seg[ad.pel] || {};
-    if (codigo) sg.codigo = codigo; if (nova) sg.admin = nova; this.grava(db); return { ok: true };
+    if (dados) {
+      db.cfg[ad.pel] = dados;
+      if (Array.isArray(dados.alunos)) { // todo aluno da lista já nasce com PIN inicial oculto
+        const nums = new Set(dados.alunos.map(a => a.numero));
+        nums.forEach(n => { const k = ad.pel + '|' + n; if (!db.pins[k]) db.pins[k] = { pin: Math.random().toString(36).slice(2), trocar: true }; });
+        Object.keys(db.pins).forEach(k => { const [pp, n] = k.split('|'); if (pp === ad.pel && !nums.has(n) && this.pinDe(db, k).trocar) delete db.pins[k]; });
+      }
+    }
+    const sg = db.seg[ad.pel] = db.seg[ad.pel] || {};
+    if (codigo) { sg.codigo = codigo; this.ev(db, ad.pel, null, 'código do pelotão trocado', 'responsável'); }
+    if (nova) { sg.admin = nova; this.ev(db, ad.pel, null, 'senha do responsável trocada', 'responsável'); }
+    this.grava(db); return { ok: true };
   },
   async adminPublicar(ad, c) {
     if (REMOTO) return this.rpc('admin_publicar', { ...a2(ad), p_c: c });
@@ -556,23 +679,68 @@ const API = {
   async adminStatus(ad, data, numero, status) {
     if (REMOTO) return this.rpc('admin_status', { ...a2(ad), p_data: data, p_numero: numero, p_status: status });
     const db = this.db(); if (!this.admOk(db, ad)) return { erro: 'senha' };
-    const x = db.pedidos.find(q => q.pelotao === ad.pel && q.data === data && q.numero === numero); if (x) x.status = status; this.grava(db); return { ok: true };
+    const x = db.pedidos.find(q => q.pelotao === ad.pel && q.data === data && q.numero === numero); if (x) x.status = status;
+    this.ev(db, ad.pel, numero, status === 'pago' ? 'marcado como pago' : 'pagamento desmarcado', db.dev === ad.senha ? 'desenvolvedor' : 'responsável');
+    this.grava(db); return { ok: true };
   },
   async adminApagar(ad, data, numero) {
     if (REMOTO) return this.rpc('admin_apagar', { ...a2(ad), p_data: data, p_numero: numero });
     const db = this.db(); if (!this.admOk(db, ad)) return { erro: 'senha' };
     db.pedidos = db.pedidos.filter(q => !(q.pelotao === ad.pel && q.data === data && q.numero === numero)); delete db.imgs[ad.pel + '|' + data + '|' + numero];
-    this.grava(db); return { ok: true };
+    this.ev(db, ad.pel, numero, 'pedido excluído', db.dev === ad.senha ? 'desenvolvedor' : 'responsável'); this.grava(db); return { ok: true };
   },
   async adminImg(ad, data, numero) {
     if (REMOTO) return this.rpc('admin_img', { ...a2(ad), p_data: data, p_numero: numero });
     const db = this.db(); if (!this.admOk(db, ad)) return { erro: 'senha' };
     return { img: db.imgs[ad.pel + '|' + data + '|' + numero] || null };
   },
+  // ----- pedidos de ajuda e painel do desenvolvedor -----
+  ev(db, pel, numero, tipo, quem, detalhe) { db.eventos = db.eventos || []; db.eventos.unshift({ id: Date.now() + Math.random(), pelotao: pel, numero, tipo, quem, detalhe: detalhe || null, criado_em: new Date().toISOString() }); db.eventos = db.eventos.slice(0, 400); },
+  async pedirAjuda(pel, numero, tipo, nome, contato) {
+    if (REMOTO) return this.rpc('pedir_ajuda', { p_pel: pel, p_numero: numero || '', p_tipo: tipo, p_nome: nome || '', p_contato: contato || '' });
+    const db = this.db(); db.ajudas = db.ajudas || [];
+    if (db.ajudas.some(x => x.status === 'aberta' && x.pelotao === pel && x.tipo === tipo && (x.numero || '') === (numero || ''))) return { ok: true, ja: true };
+    db.ajudas.unshift({ id: Date.now(), pelotao: pel, numero: numero || null, tipo, nome, contato, status: 'aberta', criado_em: new Date().toISOString() });
+    this.ev(db, pel, numero, tipo === 'pin' ? 'pediu para zerar o PIN' : 'pediu nova senha de responsável', 'pedido de ajuda'); this.grava(db); return { ok: true };
+  },
+  async devPainel(senha) {
+    if (REMOTO) return this.rpc('dev_painel', { p_mestra: senha });
+    const db = this.db(); if (!db.dev) { if (String(senha).length < 4) return { erro: 'senha_curta' }; db.dev = senha; this.grava(db); } // modo teste: 1º acesso cria
+    if (db.dev !== senha) return { erro: 'senha' };
+    const pels = [...new Set([...Object.keys(db.cfg), ...Object.keys(db.seg)])].sort((a, b) => a - b);
+    return { ajudas: db.ajudas || [], eventos: db.eventos || [], pelotoes: pels.map(pel => {
+      const c = this.ultimo(db, pel), ps = c ? db.pedidos.filter(x => x.pelotao === pel && x.data === c.data) : [];
+      return { pelotao: pel, resp_numero: (db.seg[pel] || {}).resp || null, tem_admin: !!(db.seg[pel] || {}).admin, tem_codigo: !!(db.seg[pel] || {}).codigo, alunos: ((db.cfg[pel] || {}).alunos || []).length,
+        com_pin: Object.keys(db.pins).filter(k => k.startsWith(pel + '|') && !this.pinDe(db, k).trocar).length, cardapio: c ? c.data : null, pedidos: ps.length, pagos: ps.filter(x => x.status === 'pago').length };
+    }) };
+  },
+  async devDefinirResp(senha, pel, numero) {
+    if (REMOTO) return this.rpc('dev_definir_resp', { p_mestra: senha, p_pel: pel, p_numero: numero });
+    const db = this.db(); if (db.dev !== senha) return { erro: 'senha' };
+    if (numero && pelDe(numero) !== pel) return { erro: 'numero' };
+    db.seg[pel] = db.seg[pel] || {}; db.seg[pel].resp = numero || null;
+    this.ev(db, pel, numero || null, numero ? 'responsável definido: ' + numero : 'responsável removido', 'desenvolvedor'); this.grava(db); return { ok: true };
+  },
+  async devResolver(senha, id, acao, nova) {
+    if (REMOTO) return this.rpc('dev_resolver', { p_mestra: senha, p_id: id, p_acao: acao, p_nova: nova || null });
+    const db = this.db(); if (db.dev !== senha) return { erro: 'senha' };
+    const x = (db.ajudas || []).find(q => q.id === id); if (!x) return { erro: 'nao_achou' };
+    if (acao === 'zerar_pin') { db.pins[x.pelotao + '|' + x.numero] = { pin: Math.random().toString(36).slice(2), trocar: true }; for (const t in (db.aparelhos || {})) if (db.aparelhos[t] === x.pelotao + '|' + x.numero) delete db.aparelhos[t]; this.ev(db, x.pelotao, x.numero, 'PIN zerado', 'desenvolvedor'); }
+    if (acao === 'nova_senha') { if (String(nova || '').length < 4) return { erro: 'senha_curta' }; (db.seg[x.pelotao] = db.seg[x.pelotao] || {}).admin = nova; this.ev(db, x.pelotao, null, 'senha do responsável trocada', 'desenvolvedor'); }
+    x.status = acao === 'recusar' ? 'recusada' : 'resolvida'; x.por = 'desenvolvedor'; x.resolvido_em = new Date().toISOString(); this.grava(db); return { ok: true };
+  },
+  async adminHistorico(ad, numero) {
+    if (REMOTO) return this.rpc('admin_historico', { ...a2(ad), p_numero: numero || '' });
+    const db = this.db(); if (!this.admOk(db, ad)) return { erro: 'senha' };
+    return { eventos: (db.eventos || []).filter(e => e.pelotao === ad.pel && (!numero || e.numero === numero)).slice(0, 200) };
+  },
   async adminZerarPin(ad, numero) {
     if (REMOTO) return this.rpc('admin_zerar_pin', { ...a2(ad), p_numero: numero });
     const db = this.db(); if (!this.admOk(db, ad)) return { erro: 'senha' };
-    delete db.pins[ad.pel + '|' + numero]; this.grava(db); return { ok: true };
+    db.pins[ad.pel + '|' + numero] = { pin: Math.random().toString(36).slice(2), trocar: true }; for (const t in (db.aparelhos || {})) if (db.aparelhos[t] === ad.pel + '|' + numero) delete db.aparelhos[t];
+    this.ev(db, ad.pel, numero, 'PIN zerado', db.dev && db.dev === ad.senha ? 'desenvolvedor' : 'responsável');
+    (db.ajudas || []).forEach(x => { if (x.status === 'aberta' && x.tipo === 'pin' && x.pelotao === ad.pel && x.numero === numero) { x.status = 'resolvida'; x.por = 'responsável'; } });
+    this.grava(db); return { ok: true };
   }
 };
 const limpaPed = p => { const { id, criado_em, ...r } = p; delete r._fila; return r; };
@@ -580,9 +748,10 @@ const limpaPed = p => { const { id, criado_em, ...r } = p; delete r._fila; retur
 /* ---------- estado ---------- */
 const S = {
   aba: 'pedir', eu: ls.get('qaj_eu', null), cardapio: null, pedidos: [], cfgs: {},
-  fila: ls.get('qaj_fila', []), rasc: {}, rascDe: null, admin: false, analise: null, erro: null, form: null, aj: null, sub: 'pedidos', cfg: {}, adm: null, seg: {}, banco: ls.get('qaj_banco', ''), compart: null, instalar: null
+  fila: ls.get('qaj_fila', []), rasc: {}, rascDe: null, admin: false, analise: null, erro: null, form: null, aj: null, sub: 'pedidos', cfg: {}, adm: null, seg: {}, versoes: {}, ajudas: [], dev: null, devDados: null, devSub: 'ajuda', banco: ls.get('qaj_banco', ''), compart: null, instalar: null, souResp: ls.get('qaj_resp', false)
 };
 function abrePel(pel) {
+  S.versoes = {};
   P = pel; S.cardapio = P ? ls.get('qaj_c_' + P, null) : null; S.pedidos = P ? ls.get('qaj_p_' + P, []) : []; S.cfg = P ? ls.get('qaj_cfg_' + P, {}) : {};
   S.form = null; S.aj = null; S.rascDe = null; aplicaMarca();
 }
@@ -595,7 +764,7 @@ const meu = () => S.eu && visiveis().find(p => p.numero === S.eu.numero);
 const encerrado = () => { const c = S.cardapio; return !c || c.data < isoDia() || (c.prazo && Date.now() > new Date(c.prazo).getTime()); };
 const curto = v => 'R$ ' + (Number(v) % 1 ? Number(v).toFixed(2).replace('.', ',') : Number(v));
 const kk = i => i.nome + '|' + i.preco;
-const itensTxt = p => (p.itens || []).map(i => (i.qtd > 1 ? i.qtd + 'x ' : '') + i.nome + ' (' + curto(i.preco) + ')').join(' + ');
+const itensTxt = p => (p.itens || []).map(i => (i.qtd > 1 ? i.qtd + 'x ' : '') + nomeItem(i)).join(' + ');
 
 /* ---------- envio com fila offline ---------- */
 async function enviar(p) {
@@ -610,12 +779,12 @@ async function enviar(p) {
     const motivos = [...(p.comprovante?.motivos || []), 'Este comprovante já foi usado em outro pedido'];
     await API.alunoSalvar(S.eu, { ...p, e2e: null, status: 'conferir', comprovante: { ...(p.comprovante || {}), motivos } }); return 'dup';
   }
-  if (r && r.erro) { if (['pin', 'codigo'].includes(r.erro)) sessaoInvalida(r.erro); const e = new Error(msgErro(r.erro)); e.status = 400; throw e; }
+  if (r && r.erro) { if (['pin', 'codigo', 'trocar_pin'].includes(r.erro)) sessaoInvalida(r.erro); const e = new Error(msgErro(r.erro)); e.status = 400; throw e; }
   return 'ok';
 }
 function sessaoInvalida(erro) { // PIN zerado pelo responsável ou código do pelotão trocado: entra de novo
-  S.ultNum = S.eu && S.eu.numero; S.eu = null; S.fila = []; ls.set('qaj_eu', null); ls.set('qaj_fila', []);
-  S.aviso = erro === 'codigo' ? 'O código do pelotão mudou. Entre de novo com o código novo.' : 'Entre de novo com o seu PIN.'; render();
+  S.ultNum = S.eu && S.eu.numero; S.eu = null; S.fila = []; S.souResp = false; ls.set('qaj_resp', false); ls.set('qaj_adm', null); ls.set('qaj_eu', null); ls.set('qaj_fila', []);
+  S.aviso = erro === 'trocar_pin' ? 'Crie o seu PIN pessoal para continuar.' : 'Entre de novo com o seu PIN.'; render();
 }
 async function descarregar() {
   for (const p of [...S.fila]) {
@@ -628,17 +797,22 @@ async function atualizar(forcar) {
   if (P && (!REMOTO || navigator.onLine)) {
     try {
       const pel = P; let r = null;
+      const chaveV = (S.adm && S.adm.pel === P ? 'a' : 'e') + P, ver = S.versoes[chaveV], fotoV = S.cfg.foto_v;
       if (S.adm && S.adm.pel === P) {
-        r = await API.adminDados(S.adm);
-        if (r.erro) { S.adm = null; S.aviso = msgErro(r.erro); abrePel(S.eu ? pelDe(S.eu.numero) : null); render(); return; }
-        S.seg = { tem_codigo: r.tem_codigo, tem_admin: r.tem_admin };
+        r = await API.adminDados(S.adm, forcar ? null : ver, fotoV);
+        if (r.erro) { if (!S.adm.mestre) ls.set('qaj_adm', null); S.adm = null; S.aviso = r.erro === 'senha' ? 'A senha do responsável foi alterada. Digite a nova senha.' : msgErro(r.erro); abrePel(S.eu ? pelDe(S.eu.numero) : null); render(); return; }
+        if (!r.igual) { S.seg = { tem_codigo: r.tem_codigo, tem_admin: r.tem_admin }; S.ajudas = r.ajudas || []; S.acessos = r.acessos || null; }
       } else if (S.eu && pelDe(S.eu.numero) === P) {
         if (REMOTO) await descarregar();
         if (!S.eu) return;
-        r = await API.alunoDados(S.eu);
+        r = await API.alunoDados(S.eu, forcar ? null : ver, fotoV);
         if (r.erro) { if (r.erro === 'bloqueado') S.erro = msgErro(r.erro); else return sessaoInvalida(r.erro); r = null; }
       }
+      if (r && 'sou_resp' in r && S.eu) { S.souResp = !!r.sou_resp; ls.set('qaj_resp', S.souResp); render(); }
+      if (r && r.igual) { S.erro = null; r = null; } // nada mudou: resposta de poucos bytes
       if (r && pel === P) {
+        if (r.versao) S.versoes[chaveV] = r.versao;
+        if (r.cfg && r.cfg.foto_igual) { r.cfg.foto = S.cfg.foto; delete r.cfg.foto_igual; } // a foto não veio porque o celular já tem
         S.cfg = r.cfg || {}; S.cardapio = r.cardapio || null; S.pedidos = r.pedidos || []; S.erro = null;
         ls.set('qaj_cfg_' + P, S.cfg); ls.set('qaj_c_' + P, S.cardapio); ls.set('qaj_p_' + P, S.pedidos); aplicaMarca();
       }
@@ -652,28 +826,61 @@ async function atualizar(forcar) {
 
 /* ---------- telas ---------- */
 const SELO = { pago: '<span class="selo s-pago">✓ Pago</span>', conferir: '<span class="selo s-conferir">Conferir</span>', enviado: '<span class="selo s-pendente">Verificando</span>', pendente: '<span class="selo s-pendente">Aguardando pagamento</span>' };
+const SELO_ADM = { pago: '<span class="selo s-pago">✓ Pago</span>', conferir: '<span class="selo s-conferir">Conferir</span>', enviado: '<span class="selo s-pendente">Lendo…</span>', pendente: '<span class="selo s-pendente">Sem pagar</span>' };
 const feito = p => p && p.status && p.status !== 'pendente';
 const seloPub = p => feito(p) ? '<span class="selo s-pago">✓ Pedido feito</span>' : SELO.pendente;
 const vazioSVG = '<svg viewBox="0 0 120 90" aria-hidden="true"><ellipse cx="60" cy="80" rx="44" ry="6" fill="currentColor" opacity=".1"/><path d="M14 40h92a46 34 0 0 1-92 0z" fill="#1f3a5f"/><path d="M14 40h92" stroke="#e2522b" stroke-width="5" stroke-linecap="round"/><path d="M44 30c0-8 8-8 8-16M64 30c0-8 8-8 8-16" stroke="currentColor" opacity=".35" stroke-width="3" fill="none" stroke-linecap="round"/></svg>';
 
-function telaBloqueio() {
-  return `<div class="card vazio"><div class="ok" style="width:72px;height:72px;border-radius:50%;background:var(--pebg);display:grid;place-items:center;margin:0 auto 12px;font-size:34px">🔒</div>
-    <h2>PEL${esc(S.eu.pelotao)} · ${esc(S.eu.numero)}</h2><p class="sub">App protegido. Desbloqueie para continuar.</p>
-    <button class="btn azul" data-act="desbloquear">Desbloquear com digital / rosto</button>
-    <details style="margin-top:12px;text-align:left"><summary class="sub" style="cursor:pointer">Usar o PIN</summary>
-      <input id="pinTrava" type="password" inputmode="numeric" maxlength="4" placeholder="Seu PIN" style="margin-top:8px">
-      <button class="btn sec peq" data-act="desbloquearPin">Desbloquear com PIN</button></details></div>`;
+function telaPrimeiro() {
+  const f = S.primeiro;
+  return `<div class="card"><h2>Primeiro acesso · ${esc(f.numero)}</h2><p class="sub">${esc(f.nome || '')} · PEL${esc(f.pel)}</p>
+    <div class="aviso">🔒 Seu número estava protegido por um PIN inicial. Como este é o seu <b>primeiro acesso</b>, crie agora o seu <b>PIN pessoal</b> (obrigatório). Este celular fica vinculado ao seu número.</div>
+    <label class="fl" for="pNovo">Seu novo PIN (4 números)</label>${pin4('pNovo', 'new-password')}
+    <label class="fl" for="pConf">Repita o novo PIN</label>${pin4('pConf', 'new-password')}
+    <button class="btn azul" data-act="salvarPinNovo">Salvar meu PIN</button>
+    <p class="sub" style="margin-top:8px">Não conte o seu PIN a ninguém. Se esquecer, o responsável pode zerar.</p></div>`;
 }
 function telaCadastro() {
-  return `${S.aviso ? `<div class="aviso">${esc(S.aviso)}</div>` : ''}<div class="card"><h2>Entrar</h2><p class="sub">Só entra quem é do pelotão. Peça o código ao responsável do seu pelotão.</p>
-  <label class="fl" for="cNum">Seu número (ex.: 2116)</label><input id="cNum" inputmode="numeric" maxlength="6" autocomplete="username" value="${esc(S.eu?.numero || S.ultNum || '')}">
+  if (S.primeiro) return telaPrimeiro();
+  return `${S.aviso ? `<div class="aviso">${esc(S.aviso)}</div>` : ''}<div class="card"><h2>Entrar</h2><p class="sub">Entre com o seu número e o seu PIN.</p>
+  <label class="fl" for="cNum">Seu número</label><input id="cNum" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="username" value="${esc(S.eu?.numero || S.ultNum || '')}">
   <p class="sub" id="quem" style="margin-top:6px">O pelotão é identificado pelo número.</p>
-  <label class="fl" for="cCod">Código do pelotão</label><input id="cCod" autocomplete="off" autocapitalize="off">
-  <label class="fl" for="cPin">Seu PIN (4 números)</label><input id="cPin" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password">
-  <p class="sub" style="margin-top:6px">No primeiro acesso, você cria o PIN. Nos próximos, use o mesmo. Não conte a ninguém.</p>
-  <label class="fl" for="cNome">Nome de guerra (só se não estiver na lista)</label><input id="cNome" maxlength="40">
-  <button class="btn azul" data-act="salvarEu">Entrar</button>${REMOTO ? '' : '<p class="sub" style="margin-top:10px">Modo teste: o código é o que o responsável definir em Ajustes.</p>'}</div>`;
+  <div id="devAtalho" ${ls.get('qaj_dev') && (S.eu?.numero || S.ultNum || '') === DEV_NUMERO ? '' : 'hidden'}><button class="btn sec peq" data-act="aba" data-v="dev">🛠️ Sou o desenvolvedor: abrir o painel</button></div>
+  <label class="fl" for="cPin">Seu PIN</label>${pin4('cPin', 'current-password')}
+  ${ls.get('qaj_ja_entrou') ? '' : '<div class="bv-pin bv-fixo"><p class="bv-forte">🔒 Depois você não precisa mais colocar senha. Só clicar e fazer o pedido.</p></div>'}
+  <button class="btn azul" data-act="salvarEu">Entrar</button>
+  <p class="rodape" style="margin-top:12px"><button data-act="esqueciPin">Esqueci meu PIN</button></p></div>`;
 }
+async function confereNumero(pel, n) {
+  const q = $('#quem'), vai = () => { const c = $('#cPin'); if (c) c.focus(); };
+  if (REMOTO && !navigator.onLine) return vai(); // sem internet: deixa seguir
+  q.textContent = 'PEL' + pel + ' · conferindo na lista…'; S.confNum = n;
+  let r; try { r = await API.alunoQuem(pel, n); } catch (e) { return vai(); }
+  if (S.confNum !== n || !$('#cNum') || $('#cNum').value !== n) return; // a pessoa já mudou o número
+  const da = $('#devAtalho'); if (da) da.hidden = !(n === DEV_NUMERO && (r.dev || ls.get('qaj_dev')));
+  if (r.dev) { q.textContent = 'PEL' + pel + ' · primeiro acesso do desenvolvedor'; return vai(); }
+  if (!r.erro) { q.textContent = 'PEL' + pel + (r.nome ? ' · ' + r.nome : '') + (r.primeiro ? ' · primeiro acesso: crie o seu PIN' : ''); return vai(); }
+  const msg = { sem_codigo: 'O PEL' + pel + ' ainda não foi liberado', sem_lista: 'O PEL' + pel + ' ainda não tem lista de frequência',
+    fora_da_lista: 'O ' + n + ' não está na lista do PEL' + pel, reservado: 'Este número não está disponível', numero_em_uso: 'Este número já foi confirmado em outro celular',
+    aparelho: 'Este celular já está cadastrado no número ' + (r.numero_vinculado || '') }[r.erro] || msgErro(r.erro);
+  q.textContent = msg; q.classList.add('erro-num');
+  if (r.erro === 'aparelho' || r.erro === 'numero_em_uso') vai();
+}
+function pin4(id, ac) {
+  return `<div class="pin4"><i></i><i></i><i></i><i></i><input id="${id}" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="${ac}" aria-label="PIN de 4 números"></div>`;
+}
+function pinBolinhas() { // acende uma bolinha por número digitado
+  document.querySelectorAll('.pin4 input').forEach(x => {
+    const v = x.value.replace(/\D/g, '').slice(0, 4); if (v !== x.value) x.value = v;
+    x.parentNode.querySelectorAll('i').forEach((b, i) => b.classList.toggle('on', i < v.length));
+  });
+}
+document.addEventListener('input', e => {
+  if (!(e.target.closest && e.target.closest('.pin4'))) return; pinBolinhas();
+  if (e.target.id === 'cPin' && e.target.value.length === 4 && pelDe(($('#cNum') || {}).value || '') && !S.entrando) { // entra sozinho
+    const bt = document.querySelector('[data-act=salvarEu]'); if (bt) { e.target.blur(); bt.click(); }
+  }
+});
 function telaPedir() {
   if (!S.eu) return telaCadastro();
   if (pelDe(S.eu.numero) !== P) return `<div class="card"><h2>Você está no ${esc(P)}º Pelotão</h2><p class="sub">Está aberta a área do responsável de outro pelotão. Para fazer o seu pedido, saia dela.</p><button class="btn azul" data-act="sairAdmin">Voltar para o ${esc(pelDe(S.eu.numero))}º Pelotão</button></div>`;
@@ -688,40 +895,46 @@ function telaPedir() {
   const prazo = c.prazo ? new Date(c.prazo) : null;
   const minA = minutosAte(c);
   if (!feito(eu) && minA != null && minA > 0 && minA <= 30) h += `<div class="aviso urg">⏰ Faltam <b>${minA} min</b> para encerrar os pedidos (até ${horaDe(c.prazo)}).${eu ? ' Falta enviar o seu comprovante.' : ''}</div>`;
-  h += `<div class="card"><h2>Cardápio de ${esc(diaNome(c.data))}</h2>
-    <p class="sub">${c.fornecedor ? esc(c.fornecedor) + ' · ' : ''}${prazo ? (fim ? 'Pedidos encerrados' : 'Pedidos até ' + pad(prazo.getHours()) + ':' + pad(prazo.getMinutes())) : (fim ? 'Pedidos encerrados' : 'Pedidos abertos')}</p>`;
+  const info = `<div class="chips">${c.fornecedor ? `<span class="chip">🍽️ ${esc(c.fornecedor)}</span>` : ''}<span class="chip ${fim ? 'fim' : ''}">${fim ? 'Pedidos encerrados' : prazo ? '⏰ Pedidos até ' + horaDe(c.prazo) : 'Pedidos abertos'}</span></div>`;
+  // ---- pedido concluído ----
   if (feito(eu)) {
-    h += `</div><div class="card feito"><div class="ok">✓</div><h2>Pedido feito!</h2>
+    h += `<div class="card feito"><div class="ok">✓</div><h2>Pedido feito!</h2>
       <p style="margin:10px 0 4px;font-size:18px"><b>${esc(itensTxt(eu))}</b></p><p class="sub">${brl(eu.total)} · comprovante enviado${eu._fila ? ' (será enviado quando houver internet)' : ''}</p>
       <p class="sub" style="margin-top:10px">Pode fechar o app. Para mudar o pedido, fale com o responsável.</p>
       <button class="btn sec peq" data-act="verMeuComp">Ver meu comprovante</button></div>`;
     return h + rodape();
   }
+  // ---- pedido feito, falta pagar: o pagamento vem primeiro ----
+  if (eu) {
+    const pc = pixDe(c);
+    h += `<div class="card"><h2>Falta pagar</h2>
+      <p class="sub">Seu pedido: <b>${esc(itensTxt(eu))}</b></p>
+      <div class="valor"><span class="num">${brl(eu.total)}</span>${eu._fila ? '<span class="selo s-pendente">será enviado quando houver internet</span>' : ''}</div>
+      <ol class="passos">
+        <li><b>Copie o Pix</b><button class="btn azul" data-act="copiarPix">Copiar Pix de ${brl(eu.total)}</button>
+          <span class="sub">Para ${esc(pc.recebedor || '')}. O celular abre a escolha de app: toque no seu banco.</span></li>
+        <li><b>Pague no app do banco</b><span class="sub">Pix → Pix Copia e Cola → cole e confirme.</span></li>
+        <li><b>Envie o comprovante</b><label class="btn">Enviar comprovante<input type="file" id="comp" accept="image/*,application/pdf" hidden></label>
+          <span class="sub">Print ou PDF. Ou, no app do banco, toque em Compartilhar → PEL.</span></li>
+      </ol>
+      <details class="det"><summary>Ver código Pix e chave</summary><div class="pix">${esc(gerarPix(c, eu.total, txidDe(eu)))}</div>
+        <p class="sub">Chave: ${esc(normChave(pc.tipo_chave, pc.chave))}</p></details>
+      ${!fim ? '<button class="link" data-act="cancelar" style="margin-top:8px">Cancelar pedido</button>' : ''}</div>`;
+  }
+  // ---- cardápio ----
   const grupos = c.itens.some(i => 'grupo' in i); let ult = null;
-  h += c.itens.map((i, k) => (grupos && (i.preco + '|' + i.grupo) !== ult ? (ult = i.preco + '|' + i.grupo, `<div class="grp"><b>Marmitas de ${curto(i.preco)}</b>${i.grupo ? `<span>${esc(i.grupo)}</span>` : ''}</div>`) : '') +
+  h += `<div class="card"><h2>${eu ? 'Quer mudar o pedido?' : 'Cardápio de ' + esc(diaNome(c.data))}</h2>${info}` +
+    c.itens.map((i, k) => (grupos && (i.preco + '|' + i.grupo) !== ult ? (ult = i.preco + '|' + i.grupo, `<div class="grp"><b>Marmitas de ${curto(i.preco)}</b>${i.grupo ? `<span>${esc(i.grupo)}</span>` : ''}</div>`) : '') +
     `<div class="item"><div class="n">${esc(i.nome)}${grupos ? '' : `<div class="p">${brl(i.preco)}</div>`}</div>
     <div class="step"><button data-act="menos" data-k="${k}" ${fim ? 'disabled' : ''} aria-label="Menos ${esc(i.nome)}">−</button><span class="q">${S.rasc[kk(i)] || 0}</span>
-    <button class="mais" data-act="mais" data-k="${k}" ${fim ? 'disabled' : ''} aria-label="Mais ${esc(i.nome)}">+</button></div></div>`).join('');
-  h += `<div class="total"><span class="sub">Total</span><span class="num">${brl(total)}</span></div>`;
-  if (!fim) h += `<button class="btn" data-act="pedir" ${total ? '' : 'disabled'}>${eu ? 'Atualizar meu pedido' : 'Fazer pedido'}</button>`;
-  h += `</div>`;
-  if (eu) {
-    const pix = gerarPix(c, eu.total, txidDe(eu));
-    h += `<div class="card"><h2>Pagamento</h2>
-      <p style="margin:6px 0">${SELO[eu.status] || SELO.pendente} ${eu._fila ? '<span class="selo s-pendente">Será enviado quando houver internet</span>' : ''}</p>
-      <p class="sub">Seu pedido: <b>${esc(itensTxt(eu))}</b> · ${brl(eu.total)}</p>
-      ${eu.status === 'conferir' && eu.comprovante?.motivos?.length ? '<ul class="motivos">' + eu.comprovante.motivos.map(m => '<li>' + esc(m) + '</li>').join('') + '</ul><p class="sub">O responsável vai conferir. Se quiser, envie outro comprovante.</p>' : ''}
-      <button class="btn azul" data-act="copiarPix">1. Copiar Pix de ${brl(eu.total)}</button>
-      <p class="sub" style="margin-top:6px">O código é copiado e o celular abre a escolha de app: toque no seu banco. Lá, use Pix Copia e Cola.</p>
-      <div class="pix">${esc(pix)}</div>
-      <p class="sub" style="margin-top:6px">Recebedor: ${esc(pixDe(c).recebedor)} · chave ${esc(normChave(pixDe(c).tipo_chave, pixDe(c).chave))}</p>
-      <label class="btn" style="margin-top:14px">2. Enviar comprovante<input type="file" id="comp" accept="image/*,application/pdf" hidden></label>
-      <p class="sub" style="margin-top:8px">Print ou PDF do comprovante. Assim que enviar, seu pedido está feito.</p>
-      ${!fim ? '<button class="btn sec peq" data-act="cancelar">Cancelar pedido</button>' : ''}</div>`;
-  }
+    <button class="mais" data-act="mais" data-k="${k}" ${fim ? 'disabled' : ''} aria-label="Mais ${esc(i.nome)}">+</button></div></div>`).join('') + `</div>`;
+  // ---- barra fixa com o total e o botão ----
+  const mudou = !eu || Math.abs(total - eu.total) > 0.001 || c.itens.some(i => (S.rasc[kk(i)] || 0) !== ((eu.itens || []).find(x => kk(x) === kk(i))?.qtd || 0));
+  if (!fim && total > 0 && mudou) h += `<div class="barra-pedido"><div class="bp-in"><div><span class="sub">Total</span><b class="num">${brl(total)}</b></div>
+    <button class="btn" data-act="pedir">${eu ? 'Atualizar pedido' : 'Fazer pedido'}</button></div></div>`;
   return h + rodape();
 }
-const rodape = () => `<p class="rodape">Você: <b>${esc(S.eu.numero)}</b> – ${esc(S.eu.nome)} · ${esc(pelDe(S.eu.numero))}º Pel. <button data-act="trocar">trocar</button>${bioPode ? (BIO.ativo() ? '<br>🔒 Desbloqueio com digital/rosto ativo · <button data-act="bioDesativar">desativar</button>' : '<br><button data-act="bioAtivar">🔒 Proteger com digital / rosto</button>') : ''}${REMOTO ? '' : '<br>Modo teste: os dados ficam só neste aparelho.'}</p>`;
+const rodape = () => `<p class="rodape"><b>${esc(S.eu.numero)}</b> · ${esc((S.eu.nome || '').split(' ').slice(0, 2).join(' '))} · PEL${esc(pelDe(S.eu.numero))} · <button data-act="trocar">sair</button>${REMOTO ? '<br>' : '<br>Modo teste: os dados ficam só neste aparelho.'}</p>`;
 
 function resumo() {
   const ps = visiveis(), cont = {};
@@ -731,7 +944,7 @@ function resumo() {
 function textoLista() {
   const c = S.cardapio, r = resumo();
   // só entram os pedidos com pagamento confirmado
-  return 'Marmitas para ' + diaNome(c.data) + '\n\n' + r.pagos.map(p => p.numero + ' - ' + itensTxt(p) + ' ✅').join('\n');
+  return 'Marmitas confirmadas – ' + diaBR(c.data) + '\n\n' + r.pagos.map(p => p.numero + ' - ' + itensTxt(p) + ' ✅').join('\n');
 }
 // nome do prato; o preço só aparece quando o mesmo prato existe em dois preços (ex.: Frango guisado de 10 e de 15)
 function nomeItem(i) {
@@ -765,12 +978,11 @@ function telaLista() {
   if (!P) return telaCadastro();
   const c = S.cardapio;
   if (!c) return `<div class="card vazio">${vazioSVG}<h2>Nenhuma lista ainda</h2><p class="sub">A lista aparece quando houver cardápio publicado.</p></div>`;
-  const r = resumo();
+  const r = resumo(), nf = r.ps.filter(feito).length;
   return `${S.erro ? `<div class="aviso">${esc(S.erro)}</div>` : ''}<div class="card"><h2>Marmitas para ${esc(diaNome(c.data))}</h2>
-    <div class="stats" style="grid-template-columns:repeat(3,minmax(0,1fr))"><div><b class="num">${r.ps.length}</b><span>pedidos</span></div><div><b class="num" style="color:var(--ok)">${r.ps.filter(feito).length}</b><span>feitos</span></div>
-    <div><b class="num">${r.ps.filter(p => !feito(p)).length}</b><span>sem comprovante</span></div></div>
-    ${r.ps.length ? r.ps.map(p => `<div class="ped ${S.eu && p.numero === S.eu.numero ? 'eu' : ''}"><span class="nr">${esc(p.numero)}</span><span class="tx">${esc(itensTxt(p))}</span>${seloPub(p)}</div>`).join('') : '<p class="sub">Ninguém pediu ainda.</p>'}
-    ${faltam().length ? `<p class="sub" style="margin-top:12px">Ainda não pediram (${faltam().length}): ${faltam().map(a => esc(a.numero)).join(' · ')}</p>` : ''}</div>`;
+    <div class="stats"><div><b class="num">${r.ps.length}</b><span>pedidos</span></div><div><b class="num" style="color:var(--ok)">${nf}</b><span>feitos</span></div>
+    <div><b class="num">${r.ps.length - nf}</b><span>pendentes</span></div></div>
+    ${r.ps.length ? `<div class="tabela">${r.ps.map(p => `<div class="lin ${S.eu && p.numero === S.eu.numero ? 'eu' : ''}"><span class="nr">${esc(p.numero)}</span><span class="tx">${esc(itensTxt(p))}</span>${feito(p) ? '<span class="selo s-pago">✓ Feito</span>' : '<span class="selo s-pendente">Pendente</span>'}</div>`).join('')}</div>` : '<p class="sub" style="margin-top:12px">Ninguém pediu ainda.</p>'}</div>`;
 }
 const pixCfg = () => S.cfg.pix || {};
 const alunos = () => S.cfg.alunos || [];
@@ -807,31 +1019,28 @@ const htmlPrevia = () => S.form.previa.length ? S.form.previa.map((i, k) => `<di
 const htmlAlunos = () => { const l = lerAlunos(S.aj.alunosTxt); return `${lerAlunos.fora ? `<div class="aviso" style="margin:10px 0 0">${lerAlunos.fora} número${lerAlunos.fora === 1 ? '' : 's'} de outro pelotão ${lerAlunos.fora === 1 ? 'foi ignorado' : 'foram ignorados'}.</div>` : ''}<p class="sub" style="margin-top:8px"><b>${l.length}</b> aluno${l.length === 1 ? '' : 's'} reconhecido${l.length === 1 ? '' : 's'}</p><div class="alunos">${l.map(a => `<span><b>${esc(a.numero)}</b> ${esc(a.nome)}</span>`).join('')}</div>`; };
 const htmlFoto = () => S.aj.foto ? `<img class="fotoPrev" src="${S.aj.foto}" alt="Foto do app">` : `<img class="fotoPrev" src="icon-192.png" alt="Ícone padrão">`;
 const msgArq = alvo => S.arq && S.arq.alvo === alvo ? `<div class="aviso" style="margin:12px 0 0;${S.arq.ok ? 'background:var(--okbg);color:var(--ok)' : ''}">${esc(S.arq.msg)}${S.arq.lendo ? '<div class="barra"><i id="barraArq"></i></div>' : ''}</div>` : '';
-const SUBS = [['pedidos', 'Pedidos'], ['cardapio', 'Cardápio'], ['pelotao', 'Pelotão'], ['ajustes', 'Ajustes']];
+const SUBS = [['pedidos', 'Pedidos'], ['cardapio', 'Subir<br>cardápio'], ['pelotao', 'Subir<br>frequência'], ['historico', 'Histórico'], ['ajustes', 'Ajustes']];
+const SUB_ICO = {"pedidos": '<path d="M9 5h6M9 3h6v4H9z"/><path d="M7 5H5v16h14V5h-2"/><path d="M9 12h6M9 16h4"/>', "cardapio": '<path d="M3 12h18a9 9 0 0 1-18 0z"/><path d="M12 3v6M9 6l3-3 3 3"/>', "pelotao": '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>', "historico": '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', "ajustes": '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>'};
 
 
 function adminPedidos() {
   const c = S.cardapio;
-  if (!c) return `<div class="card vazio">${vazioSVG}<h2>Sem cardápio</h2><p class="sub">Publique o cardápio na aba Cardápio.</p></div>`;
+  if (!c) return `<div class="card vazio">${vazioSVG}<h2>Sem cardápio</h2><p class="sub">Publique o cardápio na aba Subir cardápio.</p></div>`;
   const r = resumo(), fl = faltam(), min = minutosAte(c), semComp = r.ps.filter(p => p.status === 'pendente').length;
   const urgente = min != null && min > 0 && min <= 30, chamada = textoChamada();
-  return `<div class="card chamada ${urgente ? 'urgente' : ''}"><h2>${urgente ? '⏰ Hora da chamada' : 'Chamada'}</h2>
-    <p class="sub">${min == null ? 'Sem horário limite definido.' : min > 0 ? 'Pedidos encerram às <b>' + horaDe(c.prazo) + '</b> · faltam <b>' + min + ' min</b>' : 'Pedidos encerrados às ' + horaDe(c.prazo)}
-    · ${fl.length} sem pedido${alunos().length ? '' : ' (carregue a lista do pelotão)'} · ${semComp} sem comprovante</p>
-    <div class="pix" style="white-space:pre-wrap;font-family:Barlow,sans-serif;font-size:14px;color:var(--ink)">${esc(chamada)}</div>
-    <a class="btn" href="https://wa.me/?text=${encodeURIComponent(chamada)}" target="_blank" rel="noopener">Enviar chamada no WhatsApp</a>
-    <button class="btn sec peq" data-act="copiarChamada">Copiar chamada</button></div>
-  <div class="card"><h2>Pedidos de ${esc(diaNome(c.data))}</h2><p class="sub">${r.ps.length} pedido${r.ps.length === 1 ? '' : 's'} · ${r.pagos.length} pago${r.pagos.length === 1 ? '' : 's'} · ${brl(r.total)} no total</p>
-    <div class="pix" style="white-space:pre-wrap;font-family:Barlow,sans-serif;font-size:15px;color:var(--ink)">${esc(textoResumo())}</div>
-    <p class="sub" style="margin-top:6px">O resumo e a lista contam só os pedidos pagos.${r.ps.length > r.pagos.length ? ' Fora: ' + (r.ps.length - r.pagos.length) + ' (sem comprovante, verificando ou a conferir).' : ''}</p>
-    <button class="btn azul" data-act="copiarResumo" ${r.pagos.length ? '' : 'disabled'}>Copiar resumo para o fornecedor</button>
-    <button class="btn sec peq" data-act="copiarLista" ${r.pagos.length ? '' : 'disabled'}>Copiar lista para o grupo</button>
-    ${fl.length ? `<p class="sub" style="margin-top:12px">Ainda não pediram (${fl.length}): ${fl.map(a => esc(a.numero)).join(' · ')}</p>` : ''}
-    ${r.ps.map(p => `<div class="ped" style="flex-wrap:wrap"><span class="nr">${esc(p.numero)}</span><span class="tx">${esc(itensTxt(p))}<small>${esc(p.nome || '')} · ${brl(p.total)}${p.comprovante?.e2e ? ' · ID ' + esc(p.comprovante.e2e.slice(-8)) : ''}</small>
-      ${p.status === 'enviado' ? '<small>Comprovante recebido. A leitura termina no celular do aluno.</small>' : ''}
-      ${p.comprovante?.motivos?.length && p.status !== 'pago' ? '<ul class="motivos">' + p.comprovante.motivos.map(m => '<li>' + esc(m) + '</li>').join('') + '</ul>' : ''}</span>${SELO[p.status] || SELO.pendente}
-      <div class="acoes" style="width:100%">${feito(p) || p.comprovante ? `<button data-act="verComp" data-n="${esc(p.numero)}">Ver comprovante</button>` : '<button disabled style="opacity:.5">Sem comprovante</button>'}${p.status !== 'pago' ? `<button data-act="status" data-n="${esc(p.numero)}" data-v="pago">Marcar pago</button>` : `<button data-act="status" data-n="${esc(p.numero)}" data-v="pendente">Desmarcar pago</button>`}
-      <button data-act="apagar" data-n="${esc(p.numero)}">Excluir</button></div></div>`).join('')}</div>`;
+  return `<div class="card"><h2>Pedidos de ${esc(diaNome(c.data))}</h2><p class="sub">${r.ps.length} pedido${r.ps.length === 1 ? '' : 's'} · ${r.pagos.length} pago${r.pagos.length === 1 ? '' : 's'} · ${brl(r.total)} no total</p>
+    ${r.pagos.length ? `<div class="pix" style="white-space:pre-wrap;font-family:Barlow,sans-serif;font-size:15px;color:var(--ink)">${esc(textoResumo())}</div>` : '<p class="sub" style="margin-top:8px">Nenhum pedido pago ainda. O resumo para o fornecedor aparece aqui.</p>'}
+    ${r.ps.length > r.pagos.length ? `<p class="sub" style="margin-top:6px">O resumo conta só os pagos. Fora: ${r.ps.length - r.pagos.length}.</p>` : ''}
+    <div class="dois"><button class="btn azul peq btn2l" data-act="copiarResumo" ${r.pagos.length ? '' : 'disabled'}><b>Copiar resumo</b><small>📦 enviar para o fornecedor</small></button>
+    <button class="btn sec peq btn2l" data-act="copiarLista" ${r.pagos.length ? '' : 'disabled'}><b>Copiar lista final</b><small>💬 enviar para o grupo (só confirmados)</small></button></div>
+    ${fl.length ? `<details class="det"><summary>Ainda não pediram (${fl.length})</summary><p class="sub">${fl.map(a => esc(a.numero)).join(' · ')}</p></details>` : ''}</div>
+  <div class="card"><h2>Pedidos (${r.ps.length})</h2>
+    ${r.ps.length ? '' : '<p class="sub">Ninguém pediu ainda.</p>'}
+    ${r.ps.map(p => `<div class="adm-ped">
+      <div class="lin" style="border:0;padding:0"><span class="nr">${esc(p.numero)}</span><span class="tx">${esc(itensTxt(p))}<small class="sub" style="display:block">${esc((p.nome || '').split(' ').slice(0, 3).join(' '))} · ${brl(p.total)}</small></span>${SELO_ADM[p.status] || SELO_ADM.pendente}</div>
+      ${p.status === 'enviado' ? '<p class="sub" style="margin:4px 0 0 62px;font-size:13px">Lendo o comprovante no celular do aluno…</p>' : ''}
+      ${p.comprovante?.motivos?.length && p.status !== 'pago' ? '<ul class="motivos" style="margin-left:62px">' + p.comprovante.motivos.map(m => '<li>' + esc(m) + '</li>').join('') + '</ul>' : ''}
+      <div class="acoes">${feito(p) || p.comprovante ? `<button data-act="verComp" data-n="${esc(p.numero)}">🧾 Comprovante</button>` : ''}${p.status !== 'pago' ? `<button data-act="status" data-n="${esc(p.numero)}" data-v="pago">✓ Marcar pago</button>` : `<button data-act="status" data-n="${esc(p.numero)}" data-v="pendente">Desmarcar</button>`}<button data-act="apagar" data-n="${esc(p.numero)}">Excluir</button></div></div>`).join('')}</div>`;
 }
 function adminCardapio() {
   const f = S.form, c = S.cardapio, px = pixCfg();
@@ -854,9 +1063,26 @@ function adminPelotao() {
     <label class="btn sec peq">Carregar PDF, foto ou arquivo de texto<input type="file" id="alArq" accept="application/pdf,.pdf,image/*,.txt,.csv,text/plain,text/csv" hidden></label>
     ${msgArq('alunos')}<div id="alPrev">${htmlAlunos()}</div>
     <button class="btn" data-act="salvarPelotao">Salvar lista do pelotão</button></div>
-  <div class="card"><h2>Aluno esqueceu o PIN</h2><p class="sub">Zere o PIN e ele cria um novo no próximo acesso.</p>
+  ${S.ajudas && S.ajudas.length ? `<div class="card chamada urgente"><h2>Pedidos para zerar PIN (${S.ajudas.length})</h2>${S.ajudas.map(x => `<div class="lin" style="grid-template-columns:60px minmax(0,1fr) auto"><span class="nr">${esc(x.numero)}</span><span class="tx">${esc(x.nome || '')}<small class="sub" style="display:block">${quando(x.criado_em)}</small></span><button class="btn sec peq" style="margin:0;width:auto;padding:0 12px" data-act="zerarPinAjuda" data-v="${esc(x.numero)}">Zerar PIN</button></div>`).join('')}</div>` : ''}
+  ${S.acessos && S.acessos.total ? `<div class="card"><h2>Primeiro acesso</h2><p class="sub"><b>${S.acessos.ativos}</b> de ${S.acessos.total} alunos já criaram o PIN pessoal. Os outros números estão protegidos por um PIN inicial oculto.</p>
+    ${S.acessos.faltam.length ? `<details class="det"><summary>Ainda não entraram (${S.acessos.faltam.length})</summary><p class="sub">${S.acessos.faltam.map(esc).join(' · ')}</p></details>` : ''}</div>` : ''}
+  <div class="card"><h2>Aluno esqueceu o PIN</h2><p class="sub">Zere o PIN: o aluno faz o primeiro acesso de novo e cria um PIN novo.</p>
     <label class="fl" for="zpNum">Número do aluno</label><input id="zpNum" inputmode="numeric" maxlength="6">
     <button class="btn sec peq" data-act="zerarPin">Zerar PIN</button></div>`;
+}
+function adminHistorico() {
+  const ev = S.hist || null;
+  return `<div class="card"><h2>Histórico do PEL${esc(P)}</h2><p class="sub">Tudo o que os alunos fizeram (últimos 45 dias): PIN, pedidos, comprovantes e pagamentos.</p>
+    <div class="linha2" style="margin-top:10px"><input id="hNum" inputmode="numeric" maxlength="6" placeholder="Nº do aluno" value="${esc(S.histNum || '')}">
+    <button class="btn azul peq" style="margin:0" data-act="histFiltrar">Filtrar</button></div>
+    ${ev == null ? '<p class="sub" style="margin-top:12px">Carregando…</p>' : ev.length ? `<div class="tabela">${ev.map(e => `<div class="hist">
+      <span class="sub">${quando(e.criado_em)}</span>
+      <span><b>${esc(e.numero || 'PEL' + P)}</b> — ${esc(e.tipo)}${e.detalhe ? `<small class="sub" style="display:block">${esc(e.detalhe)}</small>` : ''}<small class="quem">${esc(e.quem || '')}</small></span></div>`).join('')}</div>`
+      : '<p class="sub" style="margin-top:12px">Nada registrado' + (S.histNum ? ' para o ' + esc(S.histNum) : '') + '.</p>'}</div>`;
+}
+async function carregaHist() {
+  if (!S.adm) return; try { const r = await API.adminHistorico(S.adm, S.histNum || ''); S.hist = r.erro ? [] : (r.eventos || []); } catch (e) { S.hist = []; }
+  if (S.sub === 'historico') render();
 }
 function adminAjustes() {
   const a = S.aj;
@@ -876,29 +1102,40 @@ function adminAjustes() {
     <label class="fl" for="aRec">Nome do recebedor (como aparece no banco)</label><input id="aRec" data-a="recebedor" value="${esc(a.recebedor)}">
     <label class="fl" for="aCid">Cidade</label><input id="aCid" data-a="cidade" value="${esc(a.cidade)}"></div>
   <div class="card"><h2>Acesso ao PEL${esc(P)}</h2>
-    <label class="fl" for="aCod">Código de acesso dos alunos ${S.seg.tem_codigo ? '<span class="selo s-pago">definido</span>' : '<span class="selo s-conferir">não definido</span>'}</label>
-    <input id="aCod" data-a="codigo" autocomplete="off" autocapitalize="off" placeholder="${S.seg.tem_codigo ? 'Deixe vazio para manter' : 'Mínimo 6 caracteres, ex.: pel21qaj'}" value="${esc(a.codigo || '')}">
-    <p class="sub" style="margin-top:6px">Passe só no grupo do pelotão. Se trocar, todos precisam entrar de novo com o código novo.</p>
     <label class="fl" for="aPin">Senha do responsável ${S.seg.tem_admin ? '<span class="selo s-pago">definida</span>' : '<span class="selo s-conferir">não definida</span>'}</label>
     <input id="aPin" data-a="pin" type="password" autocomplete="new-password" placeholder="${S.seg.tem_admin ? 'Nova senha (vazio = manter)' : 'Mínimo 4 caracteres'}" value="${esc(a.pin)}">
     <p class="sub" style="margin-top:6px">Para passar a função a outro aluno, troque a senha e entregue a nova a ele.</p></div>
   <button class="btn" data-act="salvarAjustes">Salvar ajustes</button>
-  <div class="card" style="margin-top:14px"><h2>Testar leitura de comprovante</h2>
+  ${S.adm && S.adm.mestre ? `<div class="card" style="margin-top:14px"><h2>Testar leitura de comprovante <span class="selo s-pago">só desenvolvedor</span></h2>
     <p class="sub">Escolha um comprovante para ver, passo a passo, o que o app consegue ler. Serve para descobrir problemas.</p>
     <div class="linha2"><div><label class="fl" for="diagNome">Nome a procurar</label><input id="diagNome" placeholder="Ex.: Samuel Sousa"></div>
     <div><label class="fl" for="diagValor">Valor (R$)</label><input id="diagValor" inputmode="decimal" placeholder="15,00"></div></div>
     <label class="btn azul peq">Escolher comprovante<input type="file" id="diagArq" accept="image/*,application/pdf" hidden></label>
-    <pre id="diagOut" class="pix" style="white-space:pre-wrap;max-height:420px;overflow:auto;font-size:12px">${esc(S.diag || '')}</pre></div>`;
+    <pre id="diagOut" class="pix" style="white-space:pre-wrap;max-height:420px;overflow:auto;font-size:12px">${esc(S.diag || '')}</pre></div>` : ''}`;
 }
 function telaAdmin() {
-  if (!S.adm) { const sel = S.pelSel || (S.eu && pelDe(S.eu.numero)) || P || String(PMIN);
+  if (!S.adm && (S.eu || S.pelResp)) { const pel = S.eu ? pelDe(S.eu.numero) : S.pelResp;
+    return `${S.aviso ? `<div class="aviso">${esc(S.aviso)}</div>` : ''}<div class="card"><h2>Área do responsável</h2>
+    <div class="pin-ini" style="margin:12px 0"><span class="sub">Seu pelotão</span><b>PEL${esc(pel)}</b><span class="sub">${esc(pel)}º Pelotão</span></div>
+    <p class="sub">Digite a senha de responsável do seu pelotão.${REMOTO ? '' : ' (Modo teste: no 1º acesso, a senha digitada vira a senha do pelotão.)'}</p>
+    <input id="pelSel" type="hidden" value="${esc(pel)}">
+    <label class="fl" for="pin">Senha</label><input id="pin" type="password" autocomplete="current-password"><button class="btn azul" data-act="entrarAdmin">Entrar</button>
+    <p class="rodape" style="margin-top:12px"><button data-act="esqueciSenha">Esqueci a senha</button>${S.eu ? '' : ' · <button data-act="voltarEntrar">voltar</button>'}</p></div>`; }
+  if (!S.adm && REMOTO) return `<div class="card"><h2>Área do responsável</h2><p class="sub">Primeiro entre com o <b>seu número e PIN</b>. O app abre a área do seu pelotão automaticamente.</p>
+    <button class="btn azul" data-act="aba" data-v="pedir">Ir para entrar</button></div>`;
+  if (!S.adm) { const sel = S.pelSel || P || String(PMIN); // modo teste, sem ninguém logado: escolhe o pelotão para liberar
     return `${S.aviso ? `<div class="aviso">${esc(S.aviso)}</div>` : ''}<div class="card"><h2>Área do responsável</h2><p class="sub">Escolha o seu pelotão e digite a senha de responsável. Cada pelotão é liberado pelo desenvolvedor.${REMOTO ? '' : ' (Modo teste: no 1º acesso, a senha digitada vira a senha do pelotão.)'}</p>
     <label class="fl" for="pelSel">Pelotão</label><select id="pelSel">${Array.from({ length: PMAX - PMIN + 1 }, (_, i) => String(PMIN + i)).map(v => `<option value="${v}" ${v === sel ? 'selected' : ''}>${v}º Pelotão</option>`).join('')}</select>
-    <label class="fl" for="pin">Senha</label><input id="pin" type="password" autocomplete="current-password"><button class="btn azul" data-act="entrarAdmin">Entrar</button></div>`; }
+    <label class="fl" for="pin">Senha</label><input id="pin" type="password" autocomplete="current-password"><button class="btn azul" data-act="entrarAdmin">Entrar</button>
+    <p class="rodape" style="margin-top:12px"><button data-act="esqueciSenha">Esqueci a senha</button></p></div>`; }
   if (!S.form) iniciaForm(); if (!S.aj) iniciaAjustes();
   const sub = S.sub || 'pedidos';
-  return `<p class="sub" style="margin:0 0 8px"><span class="selo s-pago">${S.adm.mestre ? 'Desenvolvedor' : 'Responsável'} · PEL${esc(P)}</span></p>${!S.seg.tem_admin ? '<div class="aviso">Este pelotão ainda não tem senha de responsável. Defina em <b>Ajustes</b> e entregue ao responsável.</div>' : ''}${!S.seg.tem_codigo ? '<div class="aviso">Sem <b>código de acesso</b>, nenhum aluno entra. Defina em <b>Ajustes</b>.</div>' : ''}<div class="seg">${SUBS.map(([v, l]) => `<button data-act="sub" data-v="${v}" class="${sub === v ? 'on' : ''}">${l}</button>`).join('')}</div>` +
-    (sub === 'pedidos' ? adminPedidos() : sub === 'cardapio' ? adminCardapio() : sub === 'pelotao' ? adminPelotao() : adminAjustes()) +
+  const barraDev = S.adm.mestre ? `<div class="card" style="padding:10px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <button class="btn sec peq" style="margin:0;width:auto;padding:0 12px" data-act="voltarPainel">← Painel</button>
+      <select id="trocaPel" style="flex:1;min-width:120px;padding:9px">${Array.from({ length: PMAX - PMIN + 1 }, (_, i) => String(PMIN + i)).map(v => `<option value="${v}" ${v === P ? 'selected' : ''}>PEL${v}</option>`).join('')}</select>
+      <button class="btn azul peq" style="margin:0;width:auto;padding:0 14px" data-act="devAbrir" data-de="troca">Ir</button></div>` : '';
+  return `${barraDev}<p class="sub" style="margin:0 0 8px"><span class="selo s-pago">${S.adm.mestre ? 'Desenvolvedor' : 'Responsável'} · PEL${esc(P)}</span></p>${!S.seg.tem_admin ? '<div class="aviso">Este pelotão ainda não tem senha de responsável. Defina em <b>Ajustes</b> e entregue ao responsável.</div>' : ''}<div class="seg abas-resp">${SUBS.map(([v, l]) => `<button data-act="sub" data-v="${v}" class="${sub === v ? 'on' : ''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${SUB_ICO[v]}</svg><span>${l}${v === 'pelotao' && S.ajudas && S.ajudas.length ? ' (' + S.ajudas.length + ')' : ''}</span></button>`).join('')}</div>` +
+    (sub === 'pedidos' ? adminPedidos() : sub === 'cardapio' ? adminCardapio() : sub === 'pelotao' ? adminPelotao() : sub === 'historico' ? adminHistorico() : adminAjustes()) +
     `<p class="rodape"><button data-act="sairAdmin">Sair da área do responsável</button></p>`;
 }
 async function processaFoto(file) {
@@ -921,11 +1158,58 @@ async function salvarCfg(patch, codigo, nova) {
   if (r.erro) { toast(msgErro(r.erro)); return false; }
   S.cfg = novo; ls.set('qaj_cfg_' + P, novo); aplicaMarca();
   if (codigo) S.seg.tem_codigo = true;
-  if (nova) { S.seg.tem_admin = true; if (!S.adm.mestre) S.adm.senha = nova; }
+  if (nova) { S.seg.tem_admin = true; if (!S.adm.mestre) { S.adm.senha = nova; if (S.eu) ls.set('qaj_adm', { pel: S.adm.pel, numero: S.eu.numero, senha: nova }); } }
   return true;
 }
 function htmlModal() {
   const m = S.modal; if (!m) return '';
+  if (m.tipo === 'esqueciSenha' || m.tipo === 'esqueciPin') {
+    const pel = m.pel, zap = String(CONFIG.CONTATO_DEV || '').replace(/\D/g, '');
+    const corpo = m.tipo === 'esqueciPin'
+      ? `<p>Por segurança, ninguém consegue ver o seu PIN. Peça ao <b>responsável do seu pelotão</b> para <b>zerar o seu PIN</b> (na área dele: Pelotão → "Aluno esqueceu o PIN").</p>
+         <p class="sub" style="margin-top:8px">Depois, entre com o seu número e digite um <b>PIN novo</b>: ele já vira o seu PIN.</p>
+         ${pel ? `<button class="btn azul" data-act="pedirAjuda" data-v="pin">Pedir para zerar meu PIN</button><p class="sub" style="margin-top:6px">O pedido chega ao responsável do PEL${esc(pel)} e ao desenvolvedor.</p>` : '<div class="aviso" style="margin-top:10px">Digite seu número na tela de entrada para poder enviar o pedido.</div>'}`
+      : `<p>Por segurança, a senha do responsável <b>não pode ser recuperada</b>, só trocada.</p>
+         <ul class="lista-ajuda"><li><b>Quem ainda sabe a senha</b> (o responsável anterior) pode entrar e trocar em <b>Ajustes → Senha do responsável</b>.</li>
+         <li>Se ninguém lembra, <b>só o desenvolvedor</b> pode criar uma senha nova: ele entra no PEL${esc(pel)} com a senha mestra e define a nova senha em Ajustes.</li></ul>
+         <label class="fl" for="ajNome">Seu nome</label><input id="ajNome" maxlength="60">
+         <label class="fl" for="ajZap">Seu WhatsApp (com DDD)</label><input id="ajZap" inputmode="tel" maxlength="20">
+         <button class="btn azul" data-act="pedirAjuda" data-v="senha">Pedir nova senha ao desenvolvedor</button>
+         ${zap ? `<a class="btn sec peq" href="https://wa.me/${zap}?text=${encodeURIComponent('Olá! Esqueci a senha de responsável do PEL' + pel + ' no app PEL. Pode criar uma nova?')}" target="_blank" rel="noopener">Falar com o desenvolvedor</a>` : ''}
+         ${REMOTO ? '' : `<div class="aviso" style="margin-top:12px">Modo teste: como os dados estão só neste celular, você pode apagar a senha de teste do PEL${esc(pel)} e criar outra.</div><button class="btn sec peq" data-act="zerarSenhaTeste" data-v="${esc(pel)}">Apagar senha de teste do PEL${esc(pel)}</button>`}`;
+    return `<div class="fundo" data-act="fecharModal"><div class="caixa" role="dialog" aria-label="Ajuda">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>${m.tipo === 'esqueciPin' ? 'Esqueci meu PIN' : 'Esqueci a senha'}</h2><button class="x" data-act="fecharModal" aria-label="Fechar">×</button></div>
+      <div style="margin-top:8px">${corpo}</div><button class="btn sec peq" data-act="fecharModal">Entendi</button></div></div>`;
+  }
+  if (m.tipo === 'boasVindas') {
+    return `<div class="fundo" data-act="fecharModal"><div class="caixa" role="dialog" aria-label="Bem-vindo ao PEL">
+      <h2>Bem-vindo ao PEL 👋</h2>
+      <div class="bv-pin">
+        <div style="font-size:40px;line-height:1">🔒</div>
+        <div class="bv-t">Senha só no<br>primeiro acesso</div>
+        <p>Crie agora um PIN de 4 números, só para a sua segurança.</p>
+        <p class="bv-forte">Depois você <u>não precisa mais</u> colocar senha. Só clicar e fazer o pedido.</p>
+      </div>
+      <p class="sub" style="margin:12px 0 0;text-align:center">Peça o almoço, pague no Pix e envie o comprovante. O app confere e coloca seu nome na lista sozinho.</p>
+      <button class="btn azul" data-act="fecharModal">Entendi, começar</button></div></div>`;
+  }
+  if (m.tipo === 'devRecadastrar') {
+    return `<div class="fundo" data-act="fecharModal"><div class="caixa" role="dialog" aria-label="Recadastrar número">
+      <h2>Zerar o primeiro acesso do ${esc(m.numero)}?</h2>
+      <div class="pin-ini" style="margin:14px 0"><span class="sub">PEL${esc(m.pel)}</span><b>${esc(m.numero)}</b></div>
+      <div class="aviso">O PIN atual deixa de valer e o celular ligado a este número fica livre. A pessoa vai entrar e <b>criar um PIN novo</b>, como no 1º acesso.</div>
+      <button class="btn" data-act="devRecadastrarOk">Sim, zerar</button>
+      <button class="btn sec peq" data-act="fecharModal">Cancelar</button></div></div>`;
+  }
+  if (m.tipo === 'confirmaNumero') {
+    return `<div class="fundo" data-act="fecharModal"><div class="caixa" role="dialog" aria-label="Confirme o número">
+      <h2>Confirme o seu número</h2>
+      <div class="pin-ini" style="margin:14px 0"><span class="sub">Número</span><b>${esc(m.numero)}</b><span class="sub">${m.nome ? esc(m.nome) + ' · ' : ''}PEL${esc(m.pel)}</span></div>
+      ${m.mestre ? '<label class="fl" for="cMestra">Senha mestra</label><input id="cMestra" type="password" autocomplete="current-password" style="margin-bottom:10px">' : ''}
+      <div class="aviso">⚠️ Depois de confirmar, este número fica <b>vinculado a este celular</b> e <b>ninguém mais poderá escolhê-lo</b>. O PIN que você digitou passa a ser o seu PIN.</div>
+      <button class="btn" data-act="confirmarNumero">Sim, este é o meu número</button>
+      <button class="btn sec peq" data-act="fecharModal">Não, quero corrigir</button></div></div>`;
+  }
   if (m.tipo === 'meu') {
     const eu = meu();
     return `<div class="fundo" data-act="fecharModal"><div class="caixa" role="dialog" aria-label="Meu comprovante">
@@ -955,15 +1239,89 @@ function htmlModal() {
     ${p.status !== 'pago' ? `<button class="btn" data-act="status" data-n="${esc(p.numero)}" data-v="pago">Confirmar pagamento</button>` : `<button class="btn sec peq" data-act="status" data-n="${esc(p.numero)}" data-v="pendente">Desmarcar pago</button>`}
     <button class="btn sec peq" data-act="fecharModal">Fechar</button></div></div>`;
 }
+const quando = iso => { const d = new Date(iso); return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+async function carregaDev() {
+  if (!S.dev) return; try { const r = await API.devPainel(S.dev.senha); if (r.erro) { S.dev = null; toast(msgErro(r.erro)); } else S.devDados = r; } catch (e) { S.erro = 'Sem conexão'; }
+  if (S.aba === 'dev') render();
+}
+function telaDev() {
+  if (!S.dev) return `<div class="card"><h2>Painel do desenvolvedor</h2><p class="sub">Acesso só para o desenvolvedor, com a senha mestra.${REMOTO ? '' : ' (Modo teste: no 1º acesso, a senha digitada vira a senha mestra de teste.)'}</p>
+    <label class="fl" for="devPin">Senha mestra</label><input id="devPin" type="password" autocomplete="current-password"><button class="btn azul" data-act="devEntrar">Entrar</button>
+    ${REMOTO ? '' : '<p class="rodape" style="margin-top:12px"><button data-act="zerarMestraTeste">Esqueci a senha mestra de teste</button></p>'}</div>`;
+  const d = S.devDados || { ajudas: [], eventos: [], pelotoes: [] }, abertas = d.ajudas.filter(x => x.status === 'aberta');
+  const subs = [['ajuda', 'Ajuda' + (abertas.length ? ' (' + abertas.length + ')' : '')], ['pelotoes', 'Pelotões'], ['historico', 'Histórico']];
+  let h = `<p class="sub" style="margin:0 0 8px"><span class="selo s-pago">Desenvolvedor</span> <button class="link" data-act="devAtualizar">atualizar</button> · <button class="link" data-act="devLiberarCel">liberar este celular</button> · <button class="link" data-act="devSair">sair</button></p>
+    <div class="seg" style="grid-template-columns:repeat(3,minmax(0,1fr))">${subs.map(([v, l]) => `<button data-act="devSub" data-v="${v}" class="${S.devSub === v ? 'on' : ''}">${l}</button>`).join('')}</div>`;
+  if (S.devSub === 'ajuda') {
+    h += `<div class="card"><h2>Pedidos de ajuda</h2>${d.ajudas.length ? '' : '<p class="sub">Nenhum pedido de ajuda.</p>'}` + d.ajudas.map(x => {
+      const ab = x.status === 'aberta', zap = String(x.contato || '').replace(/\D/g, '');
+      return `<div class="adm-ped" style="${ab ? '' : 'opacity:.55'}"><div><b>PEL${esc(x.pelotao)}${x.numero ? ' · ' + esc(x.numero) : ''}</b> — ${x.tipo === 'pin' ? 'esqueceu o PIN' : 'esqueceu a senha de responsável'}
+        <small class="sub" style="display:block">${esc(x.nome || '')}${x.contato ? ' · ' + esc(x.contato) : ''} · ${quando(x.criado_em)}${ab ? '' : ' · ' + esc(x.status) + (x.por ? ' por ' + esc(x.por) : '')}</small></div>
+        ${ab ? (x.tipo === 'pin'
+          ? `<div class="acoes" style="margin:8px 0 0"><button data-act="devResolver" data-id="${x.id}" data-v="zerar_pin">Zerar PIN</button><button data-act="devResolver" data-id="${x.id}" data-v="recusar">Recusar</button></div>`
+          : `<div class="linha2" style="margin-top:8px"><input id="nova${x.id}" type="text" placeholder="Nova senha (mín. 4)" autocomplete="off"><button class="btn azul peq" style="margin:0" data-act="devResolver" data-id="${x.id}" data-v="nova_senha">Criar senha</button></div>
+             <div class="acoes" style="margin:8px 0 0">${zap ? `<a class="btn sec peq" style="margin:0;width:auto;padding:0 12px;min-height:36px" href="https://wa.me/55${zap.replace(/^55/, '')}" target="_blank" rel="noopener">WhatsApp</a>` : ''}<button data-act="devResolver" data-id="${x.id}" data-v="recusar">Recusar</button></div>`) : ''}</div>`;
+    }).join('') + `</div>`;
+  } else if (S.devSub === 'pelotoes') {
+    h += `<div class="card"><h2>🔄 Zerar primeiro acesso</h2>
+      <p class="sub">Apaga o PIN e solta o celular ligado ao número. A pessoa volta a entrar <b>como se fosse a primeira vez</b>: digita o número e cria um PIN novo, no mesmo celular ou em outro.</p>
+      <label class="fl" for="devNum">Número da pessoa</label><div class="linha2"><input id="devNum" inputmode="numeric" maxlength="4" autocomplete="off">
+      <button class="btn azul peq" style="margin:0" data-act="devRecadastrar">Zerar</button></div></div>
+      <div class="card"><h2>Pelotões</h2>${d.pelotoes.length ? '' : '<p class="sub">Nenhum pelotão liberado ainda.</p>'}` + d.pelotoes.map(g => `<div class="adm-ped">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b style="font:700 22px Barlow Condensed,sans-serif">PEL${esc(g.pelotao)}</b><button class="btn sec peq" style="margin:0;width:auto;padding:0 14px" data-act="devAbrir" data-v="${esc(g.pelotao)}">Abrir</button></div>
+      <div class="linha2" style="margin-top:8px"><input id="resp${esc(g.pelotao)}" inputmode="numeric" maxlength="4" placeholder="Nº do responsável" value="${esc(g.resp_numero || '')}" autocomplete="off">
+        <button class="btn azul peq" style="margin:0" data-act="devDefResp" data-v="${esc(g.pelotao)}">${g.resp_numero ? 'Trocar' : 'Definir'}</button></div>
+      <div class="chips">${g.resp_numero ? '<span class="chip">👤 responsável: ' + esc(g.resp_numero) + '</span>' : '<span class="chip fim">responsável não definido</span>'}${g.tem_admin ? '<span class="chip">✓ senha criada</span>' : '<span class="chip fim">sem senha</span>'}
+      <span class="chip">${g.alunos} na lista · ${g.com_pin} com PIN</span>${g.cardapio ? `<span class="chip">cardápio ${diaBR(g.cardapio)}: ${g.pedidos} pedidos, ${g.pagos} pagos</span>` : ''}</div></div>`).join('') +
+      `<p class="sub" style="margin-top:10px"><b>Responsável:</b> digite o número da pessoa e toque em <b>Definir</b>. Só ela verá a "Área do responsável" no menu. A <b>senha</b> do responsável se cria em <b>Abrir</b> → <b>Ajustes</b>.</p>
+      <label class="fl" for="devPel">Abrir ou liberar outro pelotão</label><div class="linha2"><select id="devPel">${Array.from({ length: PMAX - PMIN + 1 }, (_, i) => String(PMIN + i)).map(v => `<option value="${v}">${v}º Pelotão</option>`).join('')}</select>
+      <button class="btn azul peq" style="margin:0" data-act="devAbrir">Abrir</button></div></div>`;
+  } else {
+    h += `<div class="card"><h2>Histórico de acesso</h2>${d.eventos.length ? '' : '<p class="sub">Nada registrado ainda.</p>'}` +
+      d.eventos.map(e => `<div class="lin" style="grid-template-columns:86px minmax(0,1fr)"><span class="sub" style="font-size:13px">${quando(e.criado_em)}</span>
+        <span class="tx"><b>PEL${esc(e.pelotao || '')}${e.numero ? ' · ' + esc(e.numero) : ''}</b> — ${esc(e.tipo)} <small class="sub">(${esc(e.quem || '')})</small>${e.detalhe ? `<small class="sub" style="display:block">${esc(e.detalhe)}</small>` : ''}</span></div>`).join('') + `</div>`;
+  }
+  return h;
+}
+/* ---------- botão "voltar" do celular: volta para a última tela ---------- */
+const nav = {
+  voltando: false,
+  foto() { return { aba: S.aba, sub: S.sub, devSub: S.devSub, adm: !!S.adm, modal: S.modal ? S.modal.tipo : null }; },
+  chave(f) { return f ? [f.aba, f.adm ? 'adm:' + f.sub : '', f.aba === 'dev' ? f.devSub : '', f.modal || ''].join('|') : ''; },
+  marca() { // chamada em todo render: grava um passo novo quando a tela muda
+    if (nav.voltando) return;
+    const f = nav.foto(), atual = history.state && history.state.pel ? history.state.f : null;
+    try { if (!atual) history.replaceState({ pel: 1, f }, ''); else if (nav.chave(f) !== nav.chave(atual)) history.pushState({ pel: 1, f }, ''); } catch (e) {}
+  }
+};
+window.addEventListener('popstate', ev => {
+  const f = ev.state && ev.state.pel ? ev.state.f : null; if (!f) return;
+  nav.voltando = true;
+  try {
+    S.modal = null; // voltar fecha a janela que estiver aberta
+    if (S.adm && !f.adm) { const eraDev = S.adm.mestre && S.dev; S.adm = null; S.pelResp = null; abrePel(S.eu ? pelDe(S.eu.numero) : null); if (!eraDev && f.aba === 'admin') f.aba = 'pedir'; atualizar(true); }
+    S.aba = f.adm && !S.adm ? 'pedir' : f.aba; // não reabre a área do responsável sem entrar de novo
+    if (S.adm && f.sub) S.sub = f.sub;
+    if (f.devSub) S.devSub = f.devSub;
+    if (S.aba === 'dev' && S.dev) carregaDev();
+    window.scrollTo(0, 0); render();
+    try { history.replaceState({ pel: 1, f: nav.foto() }, ''); } catch (e) {}
+  } finally { nav.voltando = false; }
+});
 function render() {
+  { const md = $('#menuDev'); if (md) md.hidden = !(S.eu && S.eu.numero === DEV_NUMERO); }
+  { const bs = $('#btSom'); if (bs) { bs.innerHTML = som.on ? SOM_ON : SOM_OFF; bs.setAttribute('aria-label', som.on ? 'Som ligado' : 'Som desligado'); bs.classList.toggle('mudo', !som.on); } }
+  { const mr = $('#menuResp'); if (mr) mr.hidden = !(S.souResp || S.adm || (!REMOTO && !S.eu)); } // só o responsável escolhido vê // só para quem está logado como o desenvolvedor
   if (S.aba === 'pedir' && S.eu && !S.adm) { const eu = meu(); if (eu && !feito(eu)) setTimeout(prepararOCR, 1500); }
-  const md = $('#modal'); if (md) md.innerHTML = S.travado ? '' : htmlModal();
+  const md = $('#modal'); if (md) md.innerHTML = htmlModal();
+  $('#nav').hidden = !S.eu;
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === S.aba));
-  $('#app').innerHTML = S.travado && S.eu ? telaBloqueio() : S.aba === 'pedir' ? telaPedir() : S.aba === 'lista' ? telaLista() : telaAdmin();
-  ligaArquivos();
+  $('#app').innerHTML = S.aba === 'dev' ? telaDev() : S.aba === 'pedir' ? telaPedir() : S.aba === 'lista' ? telaLista() : telaAdmin();
+  ligaArquivos(); pinBolinhas();
   const n = $('#net'), on = navigator.onLine;
   n.textContent = !REMOTO ? 'modo teste' : on ? 'online' : 'offline'; n.classList.toggle('off', !REMOTO || !on);
   $('#hsub').textContent = S.cardapio ? 'Cardápio de ' + diaNome(S.cardapio.data) : 'Pedido de almoço';
+  nav.marca();
 }
 
 /* ---------- ações ---------- */
@@ -1001,10 +1359,10 @@ async function miniatura(file) {
     const url = URL.createObjectURL(file); src = new Image();
     await new Promise((ok, er) => { src.onload = ok; src.onerror = er; src.src = url; });
   }
-  const w = src.naturalWidth || src.width, h = src.naturalHeight || src.height, k = Math.min(1, 700 / w, 1600 / h);
+  const w = src.naturalWidth || src.width, h = src.naturalHeight || src.height, k = Math.min(1, 600 / w, 1400 / h);
   const cv = document.createElement('canvas'); cv.width = Math.round(w * k); cv.height = Math.round(h * k);
   const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height); cx.drawImage(src, 0, 0, cv.width, cv.height);
-  return cv.toDataURL('image/jpeg', 0.6);
+  return cv.toDataURL('image/jpeg', 0.55);
 }
 async function lerComprovante(file) {
   const eu = meu(); if (!eu || !file) return;
@@ -1026,11 +1384,11 @@ async function verificar(ped, file, img) {
   const avalia = texto => {
     const r = analisar(texto, ped, pixDe(S.cardapio && S.cardapio.data === ped.data ? S.cardapio : ped));
     if (r.e2e && visiveis().some(x => x.numero !== ped.numero && x.e2e === r.e2e)) { r.ok = false; r.motivos.push('Este comprovante já foi usado em outro pedido'); }
-    r.texto = String(texto || '').replace(/\s+/g, ' ').trim().slice(0, 700); return r;
+    r.texto = String(texto || '').replace(/\s+/g, ' ').trim().slice(0, 400); return r;
   };
   const falha = (e, msg) => ({ ok: false, nomeOk: false, e2e: null, valor: null, data: null, motivos: [msg || 'O app não conseguiu ler este comprovante. Confira a imagem.'], erroLeitura: String(e && e.message || e).slice(0, 120) });
-  const grava = r => enviar({ ...ped, status: r.ok ? 'pago' : 'conferir', e2e: r.motivos.some(m => m.includes('já foi usado')) ? null : r.e2e,
-    comprovante: { ...ped.comprovante, nomeOk: !!r.nomeOk, e2e: r.e2e, valor: r.valor, data: r.data, motivos: r.motivos, texto: r.texto || '', erroLeitura: r.erroLeitura || '', lido_em: new Date().toISOString() } });
+  const grava = r => (r.ok && som.festa(), enviar({ ...ped, status: r.ok ? 'pago' : 'conferir', e2e: r.motivos.some(m => m.includes('já foi usado')) ? null : r.e2e,
+    comprovante: { ...ped.comprovante, nomeOk: !!r.nomeOk, e2e: r.e2e, valor: r.valor, data: r.data, motivos: r.motivos, texto: r.texto || '', erroLeitura: r.erroLeitura || '', lido_em: new Date().toISOString() } }));
   let r, atrasou = false;
   try { r = avalia(await comTempo(leitura, 10000)); } // resultado em até 10 s
   catch (e) {
@@ -1053,7 +1411,7 @@ async function checaCompartilhado() {
   S.compart = v.file; S.aba = 'pedir'; usaCompartilhado();
 }
 function usaCompartilhado() {
-  if (!S.compart || S.travado) return render();
+  if (!S.compart) return render();
   const eu = meu();
   if (eu && !feito(eu)) { const f = S.compart; S.compart = null; lerComprovante(f); }
   else if (feito(eu)) { S.compart = null; toast('Seu pedido já tem comprovante'); render(); }
@@ -1063,6 +1421,13 @@ async function retomarVerificacao() {
   const eu = meu(); if (!eu || eu.status !== 'enviado' || S.verificando) return;
   const v = await idb.get(chaveArq(eu)); if (v && v.file) verificar(v.ped || eu, v.file, v.img);
 }
+let toquesTit = 0, toqueTitEm = 0;
+document.addEventListener('click', ev => {
+  if (!ev.target.closest('#tit')) return;
+  const ag = Date.now(); toquesTit = ag - toqueTitEm < 600 ? toquesTit + 1 : 1; toqueTitEm = ag;
+  if (toquesTit >= 5) { toquesTit = 0; S.aba = 'dev'; render(); }
+});
+document.addEventListener('pointerdown', ev => { if (ev.target.closest('button, .btn, [data-act], select, label.btn')) som.clique(); }, true);
 document.addEventListener('click', async ev => {
   if (ev.target.closest('label') && ev.target.closest('label').querySelector('input[type=file]')) S.escolhendo = Date.now();
   const b = ev.target.closest('[data-act]');
@@ -1073,22 +1438,83 @@ document.addEventListener('click', async ev => {
   if (a === 'menu') { drop.hidden = !drop.hidden; mb.setAttribute('aria-expanded', String(!drop.hidden)); return; }
   drop.hidden = true; mb.setAttribute('aria-expanded', 'false');
   try {
-    if (a === 'aba') { S.aba = b.dataset.v; window.scrollTo(0, 0); render(); }
-    else if (a === 'salvarEu') {
-      const numero = $('#cNum').value.replace(/\D/g, ''), pel = pelDe(numero), codigo = $('#cCod').value.trim(), pin = $('#cPin').value.trim();
-      if (!pel) return toast('Número inválido. Use o número completo (pelotões do ' + PMIN + 'º ao ' + PMAX + 'º), ex.: 2116');
-      if (!codigo) return toast('Digite o código do pelotão');
-      if (!/^\d{4}$/.test(pin)) return toast('O PIN precisa ter 4 números');
-      if (REMOTO && !navigator.onLine) return toast('Precisa de internet no primeiro acesso');
-      const r = await API.alunoEntrar(pel, codigo, numero, pin, $('#cNome').value.trim());
-      if (r.erro) return toast(msgErro(r.erro));
-      S.eu = { numero, nome: r.nome, pelotao: pel, codigo, pin }; S.aviso = null; ls.set('qaj_eu', S.eu); abrePel(pel); render(); atualizar(true);
+    if (a === 'aba' && b.dataset.v === 'admin' && !S.adm && S.eu) { // senha já usada neste celular: entra sem pedir de novo
+      const g = ls.get('qaj_adm'), pel = pelDe(S.eu.numero);
+      if (g && g.numero === S.eu.numero && g.pel === pel && (!REMOTO || navigator.onLine)) {
+        const r = await API.adminEntrar(pel, g.senha);
+        if (!r.erro) {
+          S.adm = { pel, senha: g.senha, mestre: false }; S.seg = { tem_codigo: r.tem_codigo, tem_admin: r.tem_admin }; S.aviso = null;
+          S.aba = 'admin'; S.sub = 'pedidos'; window.scrollTo(0, 0); abrePel(pel); render(); await atualizar(true); return;
+        }
+        ls.set('qaj_adm', null); // a senha mudou (ou deixou de ser o responsável): pede de novo
+        S.aviso = r.erro === 'senha' ? 'A senha do responsável foi alterada. Digite a nova senha.' : msgErro(r.erro);
+      }
     }
-    else if (a === 'bioAtivar') { try { await BIO.ativar(); toast('Pronto! O app vai pedir sua digital/rosto ao abrir'); } catch (e) { toast('Não foi possível ativar neste celular'); } render(); }
-    else if (a === 'bioDesativar') { BIO.desativar(); toast('Desbloqueio desativado'); render(); }
-    else if (a === 'desbloquear') { try { await BIO.conferir(); S.travado = false; render(); await atualizar(true); usaCompartilhado(); } catch (e) { toast('Não reconhecido. Tente de novo ou use o PIN'); } }
-    else if (a === 'desbloquearPin') { if ($('#pinTrava').value === S.eu.pin) { S.travado = false; render(); await atualizar(true); usaCompartilhado(); } else toast('PIN incorreto'); }
-    else if (a === 'trocar') { BIO.desativar(); S.ultNum = S.eu && S.eu.numero; S.eu = null; S.adm = null; S.fila = []; ls.set('qaj_eu', null); ls.set('qaj_fila', []); S.aba = 'pedir'; abrePel(null); render(); }
+    if (a === 'aba') { S.aba = b.dataset.v; window.scrollTo(0, 0); if (S.aba === 'dev' && S.dev) S.devSub = 'ajuda'; render(); if (S.aba === 'dev') carregaDev(); }
+    else if (a === 'salvarEu') {
+      if (S.entrando) return; S.entrando = true; setTimeout(() => { S.entrando = false; }, 800);
+      const numero = $('#cNum').value.replace(/\D/g, ''), pel = pelDe(numero), pin = $('#cPin').value.trim();
+      if (!pel) return toast('Número inválido. Use o número completo (pelotões do ' + PMIN + 'º ao ' + PMAX + 'º), ex.: 2116');
+      if (!/^\d{4}$/.test(pin)) return toast(pin ? 'O PIN precisa ter 4 números' : 'Digite o seu PIN de 4 números (no 1º acesso, crie o seu aqui)');
+      if (REMOTO && !navigator.onLine) return toast('Precisa de internet para entrar');
+      { // ainda não tem PIN pessoal? então este é o 1º acesso: confirma o número e o PIN digitado vira o PIN dele
+        const q = await API.alunoQuem(pel, numero);
+        if (q.erro === 'aparelho') return toast('Este celular já está cadastrado no número ' + q.numero_vinculado + '. Cada celular só pode cadastrar um número.');
+        if (q.dev) { S.modal = { tipo: 'confirmaNumero', pel, numero, nome: 'Desenvolvedor', pin, nomeGuerra: '', mestre: true }; render(); return; }
+        if (q.erro) { if ($('#cPin')) { $('#cPin').value = ''; pinBolinhas(); } return toast(msgErro(q.erro)); }
+        if (q.primeiro) { S.modal = { tipo: 'confirmaNumero', pel, numero, nome: q.nome, pin, nomeGuerra: '' }; render(); return; }
+      }
+      const r = await API.alunoEntrar(pel, '', numero, pin, '');
+      if (r.erro === 'aparelho') return toast('Este celular já está cadastrado no número ' + r.numero_vinculado + '. Cada celular só pode cadastrar um número.');
+      if (r.erro === 'pin_formato' && !pin) return toast('Este número já tem PIN. Digite o seu PIN (ou toque em "Esqueci meu PIN")');
+      if (r.erro) { if ($('#cPin')) { $('#cPin').value = ''; pinBolinhas(); } return toast(msgErro(r.erro)); }
+      if (r.primeiro || r.trocar) { S.primeiro = { pel, numero, nome: r.nome, inicial: r.primeiro ? r.pin_inicial : pin }; S.aviso = null; render(); return; }
+      S.eu = { numero, nome: r.nome, pelotao: pel, codigo: '', pin }; ls.set('qaj_ja_entrou', true); if (S.eu.numero === DEV_NUMERO) ls.set('qaj_dev', true); S.aviso = null; ls.set('qaj_eu', S.eu); abrePel(pel); render(); atualizar(true);
+    }
+    else if (a === 'voltarEntrar') { S.pelResp = null; S.aba = 'pedir'; render(); }
+    else if (a === 'abrirRespPel') { S.aba = 'admin'; render(); }
+    else if (a === 'som') { som.on = !som.on; ls.set('qaj_som', som.on); render(); if (som.on) som.ok(); toast(som.on ? '🔊 Som ligado' : '🔇 Som desligado'); }
+    else if (a === 'confirmarNumero') {
+      const m = S.modal, mestra = m.mestre ? ($('#cMestra') || {}).value || '' : null;
+      if (m.mestre && !mestra) return toast('Digite a senha mestra');
+      S.modal = null; render();
+      const r = await API.alunoEntrar(m.pel, '', m.numero, '', m.nomeGuerra, mestra);
+      if (r.erro === 'aparelho') return toast('Este celular já está cadastrado no número ' + r.numero_vinculado + '. Cada celular só pode cadastrar um número.');
+      if (r.erro) return toast(msgErro(r.erro));
+      if (!r.primeiro) return toast('Este número já tem PIN. Digite o seu PIN (ou toque em "Esqueci meu PIN")');
+      const t = await API.alunoTrocarPin(m.pel, m.numero, r.pin_inicial, m.pin); if (t.erro) return toast(msgErro(t.erro));
+      S.eu = { numero: m.numero, nome: r.nome, pelotao: m.pel, codigo: '', pin: m.pin }; ls.set('qaj_ja_entrou', true); if (S.eu.numero === DEV_NUMERO) ls.set('qaj_dev', true); S.aviso = null; ls.set('qaj_eu', S.eu);
+      toast('Pronto! Seu PIN foi criado. Use ele nas próximas vezes'); abrePel(m.pel); render(); atualizar(true);
+    }
+    else if (a === 'salvarPinNovo') {
+      const f = S.primeiro, n1 = $('#pNovo').value.trim(), n2 = $('#pConf').value.trim();
+      if (!/^\d{4}$/.test(n1)) return toast('O PIN precisa ter 4 números');
+      if (n1 !== n2) return toast('Os dois PINs não são iguais');
+      const r = await API.alunoTrocarPin(f.pel, f.numero, f.inicial, n1); if (r.erro) return toast(msgErro(r.erro));
+      S.eu = { numero: f.numero, nome: f.nome, pelotao: f.pel, codigo: '', pin: n1 }; S.primeiro = null; ls.set('qaj_eu', S.eu);
+      toast('Pronto! Use este PIN nas próximas vezes'); abrePel(f.pel); render(); atualizar(true);
+    }
+    else if (a === 'devRecadastrar') {
+      const numero = ($('#devNum').value || '').replace(/\D/g, ''), pel = pelDe(numero);
+      if (!pel) return toast('Número inválido. Use o número completo, ex.: 2116');
+      S.modal = { tipo: 'devRecadastrar', pel, numero }; render();
+    }
+    else if (a === 'devRecadastrarOk') {
+      const m = S.modal; S.modal = null; render();
+      const r = await API.adminZerarPin({ pel: m.pel, senha: S.dev.senha }, m.numero);
+      if (r.erro) return toast(msgErro(r.erro));
+      toast('Pronto! O ' + m.numero + ' foi zerado: agora é como o 1º acesso');
+      if (S.eu && S.eu.numero === m.numero) { S.ultNum = null; S.eu = null; S.souResp = false; S.fila = []; ls.set('qaj_eu', null); ls.set('qaj_fila', []); ls.set('qaj_resp', false); } // era este celular: sai do número na hora
+      await carregaDev();
+    }
+    else if (a === 'devDefResp') {
+      const pel = b.dataset.v, n = ($('#resp' + pel).value || '').replace(/\D/g, '');
+      if (n && pelDe(n) !== pel) return toast('Esse número não é do PEL' + pel);
+      const r = await API.devDefinirResp(S.dev.senha, pel, n); if (r.erro) return toast(msgErro(r.erro));
+      toast(n ? 'Responsável do PEL' + pel + ': ' + n : 'Responsável do PEL' + pel + ' removido'); await carregaDev();
+    }
+    else if (a === 'devLiberarCel') { const r = await API.devDesvincular(S.dev.senha); toast(r.erro ? msgErro(r.erro) : 'Este celular pode cadastrar outro número'); }
+    else if (a === 'trocar') { S.souResp = false; ls.set('qaj_resp', false); ls.set('qaj_adm', null); S.dev = null; S.devDados = null; S.primeiro = null; S.ultNum = S.eu && S.eu.numero; S.eu = null; S.adm = null; S.fila = []; ls.set('qaj_eu', null); ls.set('qaj_fila', []); S.aba = 'pedir'; abrePel(null); render(); }
     else if (a === 'mais' || a === 'menos') { const i = c.itens[+b.dataset.k]; S.rasc[kk(i)] = Math.max(0, (S.rasc[kk(i)] || 0) + (a === 'mais' ? 1 : -1)); render(); }
     else if (a === 'pedir') {
       if (encerrado()) return toast('Pedidos encerrados');
@@ -1114,19 +1540,59 @@ document.addEventListener('click', async ev => {
       if (navigator.share) { toast('Pix copiado! Escolha o app do seu banco'); navigator.share({ text: cod }).catch(() => {}); }
       else toast(await cp ? 'Pix copiado! Abra o app do banco e cole' : 'Não deu para copiar. Segure o código e copie');
     }
-    else if (a === 'copiarLista') toast(await copiar(textoLista()) ? 'Lista copiada' : 'Não deu para copiar');
+    else if (a === 'copiarLista') toast(await copiar(textoLista()) ? 'Lista final copiada. Cole no grupo do pelotão' : 'Não deu para copiar');
     else if (a === 'copiarChamada') toast(await copiar(textoChamada()) ? 'Chamada copiada' : 'Não deu para copiar');
-    else if (a === 'copiarResumo') toast(await copiar(textoResumo()) ? 'Resumo copiado' : 'Não deu para copiar');
+    else if (a === 'copiarResumo') toast(await copiar(textoResumo()) ? 'Resumo copiado. Cole na conversa do fornecedor' : 'Não deu para copiar');
     else if (a === 'instalar') { S.instalar.prompt(); S.instalar = null; render(); }
     else if (a === 'entrarAdmin') {
       const pel = $('#pelSel').value, senha = $('#pin').value; S.pelSel = pel;
       if (REMOTO && !navigator.onLine) return toast('Precisa de internet para entrar');
       const r = await API.adminEntrar(pel, senha);
-      if (r.erro) return toast(msgErro(r.erro));
-      S.adm = { pel, senha, mestre: !!r.mestre }; S.seg = { tem_codigo: r.tem_codigo, tem_admin: r.tem_admin }; S.aviso = null;
-      S.sub = r.tem_codigo && r.tem_admin ? 'pedidos' : 'ajustes'; abrePel(pel); render(); await atualizar(true);
+      if (r.erro) return toast(msgErro(r.erro) + (r.erro === 'senha' ? '. Esqueceu? Toque em "Esqueci a senha"' : ''));
+      S.adm = { pel, senha, mestre: !!r.mestre }; if (r.mestre && !S.dev) S.dev = { senha }; S.seg = { tem_codigo: r.tem_codigo, tem_admin: r.tem_admin }; S.aviso = null;
+      if (!r.mestre && S.eu) ls.set('qaj_adm', { pel, numero: S.eu.numero, senha }); // nas próximas vezes entra direto
+      S.sub = r.tem_admin ? 'pedidos' : 'ajustes'; abrePel(pel); render(); await atualizar(true);
     }
-    else if (a === 'sairAdmin') { S.adm = null; S.aba = 'pedir'; abrePel(S.eu ? pelDe(S.eu.numero) : null); render(); atualizar(true); }
+    else if (a === 'sairAdmin') { S.pelResp = null; const eraDev = S.adm && S.adm.mestre && S.dev; S.adm = null; S.aba = eraDev ? 'dev' : 'pedir'; if (eraDev) { S.devSub = 'pelotoes'; carregaDev(); } abrePel(S.eu ? pelDe(S.eu.numero) : null); render(); atualizar(true); }
+    else if (a === 'devEntrar') {
+      const senha = $('#devPin').value; if (REMOTO && !navigator.onLine) return toast('Precisa de internet');
+      const r = await API.devPainel(senha); if (r.erro) return toast(msgErro(r.erro));
+      S.dev = { senha }; S.devDados = r; S.devSub = 'ajuda'; ls.set('qaj_dev', true); render(); // este celular passa a ser o do desenvolvedor
+    }
+    else if (a === 'zerarMestraTeste') { if (REMOTO) return; const db = API.db(); delete db.dev; API.grava(db); toast('Senha mestra de teste apagada. Digite uma nova'); }
+    else if (a === 'voltarPainel') { S.adm = null; S.aba = 'dev'; S.devSub = 'pelotoes'; abrePel(S.eu ? pelDe(S.eu.numero) : null); render(); carregaDev(); }
+    else if (a === 'devSair') { S.dev = null; S.devDados = null; S.aba = 'pedir'; render(); }
+    else if (a === 'devAtualizar') { await carregaDev(); toast('Atualizado'); }
+    else if (a === 'devSub') { S.devSub = b.dataset.v; render(); }
+    else if (a === 'devResolver') {
+      const id = Number(b.dataset.id), acao = b.dataset.v, nova = acao === 'nova_senha' ? (($('#nova' + b.dataset.id) || {}).value || '') : null;
+      if (acao === 'nova_senha' && nova.length < 4) return toast('A senha precisa ter pelo menos 4 caracteres');
+      const r = await API.devResolver(S.dev.senha, id, acao, nova); if (r.erro) return toast(msgErro(r.erro));
+      toast(acao === 'zerar_pin' ? 'PIN zerado' : acao === 'nova_senha' ? 'Senha criada. Avise o responsável' : 'Pedido recusado'); await carregaDev();
+    }
+    else if (a === 'devAbrir') {
+      if (!S.dev) return toast('Entre no painel primeiro');
+      const pel = b.dataset.v || (b.dataset.de === 'troca' ? $('#trocaPel').value : $('#devPel').value); const r = await API.adminEntrar(pel, S.dev.senha, true);
+      if (r.erro) return toast(msgErro(r.erro));
+      S.adm = { pel, senha: S.dev.senha, mestre: true }; S.seg = { tem_codigo: r.tem_codigo, tem_admin: r.tem_admin };
+      S.sub = r.tem_admin ? 'pedidos' : 'ajustes'; S.aba = 'admin'; abrePel(pel); render(); await atualizar(true);
+    }
+    else if (a === 'pedirAjuda') {
+      const tipo = b.dataset.v, pel = S.modal && S.modal.pel;
+      if (!pel) return toast('Escolha o pelotão / digite seu número primeiro');
+      const numero = tipo === 'pin' ? (($('#cNum') || {}).value || '').replace(/\D/g, '') : '';
+      const nome = (($('#ajNome') || {}).value || '').trim(), contato = (($('#ajZap') || {}).value || '').trim();
+      if (tipo === 'senha' && (!nome || !contato)) return toast('Preencha seu nome e WhatsApp');
+      const r = await API.pedirAjuda(pel, numero, tipo, nome, contato); if (r.erro) return toast(msgErro(r.erro));
+      S.modal = null; render(); toast(r.ja ? 'Seu pedido já foi enviado. Aguarde' : 'Pedido enviado! Aguarde o retorno');
+    }
+    else if (a === 'esqueciSenha') { S.modal = { tipo: 'esqueciSenha', pel: ($('#pelSel') || {}).value || P || '' }; render(); }
+    else if (a === 'histFiltrar') { S.histNum = ($('#hNum').value || '').replace(/\D/g, ''); S.hist = null; render(); carregaHist(); }
+    else if (a === 'esqueciPin') { S.modal = { tipo: 'esqueciPin', pel: pelDe(($('#cNum') || {}).value) || '' }; render(); }
+    else if (a === 'zerarSenhaTeste') {
+      if (REMOTO) return; const db = API.db(); if (db.seg[b.dataset.v]) delete db.seg[b.dataset.v].admin; API.grava(db);
+      S.modal = null; render(); toast('Senha de teste apagada. Entre com uma senha nova');
+    }
     else if (a === 'verMeuComp') {
       const eu = meu(); if (!eu) return;
       S.modal = { tipo: 'meu', carregando: true }; render();
@@ -1146,8 +1612,9 @@ document.addEventListener('click', async ev => {
       S.banco = b.dataset.v; ls.set('qaj_banco', S.banco); S.modal = null; render();
       toast('Abrindo ' + bancoEu()[1] + '… Vá em Pix Copia e Cola e cole'); // o link encaminha para o banco
     }
-    else if (a === 'fecharModal') { if (ev.target.closest('.caixa') && !b.classList.contains('x') && b.tagName !== 'BUTTON') return; S.modal = null; render(); }
-    else if (a === 'sub') { S.arq = null; S.sub = b.dataset.v; window.scrollTo(0, 0); render(); }
+    else if (a === 'fecharModal') { if (ev.target.closest('.caixa') && !b.classList.contains('x') && b.tagName !== 'BUTTON') return; const m = S.modal; S.modal = null; if (m && m.tipo === 'boasVindas') ls.set('qaj_bv', 1); render();
+      if (m && m.tipo === 'confirmaNumero' && $('#cNum')) { $('#cNum').value = m.numero; $('#cPin').value = m.pin || ''; pinBolinhas(); $('#cNum').focus(); } }
+    else if (a === 'sub') { S.arq = null; S.sub = b.dataset.v; if (S.sub === 'historico') { S.hist = null; carregaHist(); } window.scrollTo(0, 0); render(); }
     else if (a === 'rmFoto') { S.aj.foto = null; render(); }
     else if (a === 'salvarPelotao') {
       const l = lerAlunos(S.aj.alunosTxt);
@@ -1157,13 +1624,13 @@ document.addEventListener('click', async ev => {
     else if (a === 'salvarAjustes') {
       const j = S.aj;
       if (j.chave.trim() && !j.recebedor.trim()) return toast('Preencha o nome do recebedor');
-      if (j.codigo && j.codigo.trim().length < 6) return toast('O código precisa ter pelo menos 6 caracteres');
       if (j.pin && j.pin.length < 4) return toast('A senha precisa ter pelo menos 4 caracteres');
       const ok = await salvarCfg({ titulo: j.titulo.trim(), prazo: j.prazo, foto: j.foto,
         pix: { tipo_chave: tipoChave(j.chave, j.tipo_chave), chave: j.chave.trim(), recebedor: j.recebedor.trim(), cidade: j.cidade.trim() || 'Belem' } },
-        (j.codigo || '').trim() || null, j.pin || null);
+        null, j.pin || null);
       if (ok) { j.pin = ''; j.codigo = ''; toast('Ajustes salvos'); render(); }
     }
+    else if (a === 'zerarPinAjuda') { const r = await API.adminZerarPin(S.adm, b.dataset.v); toast(r.erro ? msgErro(r.erro) : 'PIN do ' + b.dataset.v + ' zerado'); await atualizar(true); }
     else if (a === 'zerarPin') {
       const n = $('#zpNum').value.replace(/\D/g, ''); if (pelDe(n) !== P) return toast('Número não é do PEL' + P);
       const r = await API.adminZerarPin(S.adm, n); toast(r.erro ? msgErro(r.erro) : 'PIN do ' + n + ' zerado'); $('#zpNum').value = '';
@@ -1205,8 +1672,14 @@ document.addEventListener('input', ev => {
       $('#chaveInfo').textContent = infoChave(S.aj.chave, S.aj.tipo_chave);
     }
   } else if (t.id === 'cNum' && $('#quem')) {
-    const n = t.value.replace(/\D/g, ''), pel = pelDe(n);
-    $('#quem').textContent = pel ? 'PEL' + pel + ' · ' + pel + 'º Pelotão' : (n.length >= 3 ? 'Número inválido' : 'O pelotão é identificado pelo número.');
+    // pelotões 6º ao 9º: 3 números (ex.: 601) · 10º ao 30º: 4 números (ex.: 2116)
+    const tam = /^[6-9]/.test(t.value.replace(/\D/g, '')) ? 3 : 4, n = t.value.replace(/\D/g, '').slice(0, tam), pel = pelDe(n);
+    if (n !== t.value) t.value = n;
+    const ruim = /^[045]/.test(n) || (n.length >= 2 && /^[1-3]/.test(n) && !pelDe(n.slice(0, 2) + '00'));
+    $('#quem').textContent = pel && n.length === tam ? 'PEL' + pel + ' · ' + pel + 'º Pelotão' : ruim ? 'Número inválido (pelotões do ' + PMIN + 'º ao ' + PMAX + 'º)' : 'O pelotão é identificado pelo número.';
+    $('#quem').classList.remove('erro-num');
+    if (pel && n.length === tam) confereNumero(pel, n); // número completo: confere na lista do pelotão
+    const da = $('#devAtalho'); if (da) da.hidden = !(ls.get('qaj_dev') && n === DEV_NUMERO); // depois de escolhido, só no celular do desenvolvedor
   } else if (t.dataset.pi != null && S.form) {
     const i = S.form.previa[+t.dataset.pi]; if (!i) return;
     i[t.dataset.pk] = t.dataset.pk === 'preco' ? (parseFloat(t.value.replace(',', '.')) || 0) : t.value;
@@ -1264,19 +1737,14 @@ function ligaArquivos() { document.querySelectorAll('input[type=file]').forEach(
 window.addEventListener('online', () => atualizar(true));
 window.addEventListener('offline', () => render());
 window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); S.instalar = e; render(); });
-let saiuEm = 0;
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) { saiuEm = Date.now(); return; }
-  if (BIO.ativo() && saiuEm && Date.now() - saiuEm > 10 * 60000 && !S.escolhendo) { S.travado = true; S.modal = null; render(); return; }
-  atualizar();
-});
-let ultAt = 0; // responsável: a cada 5 s; aluno: a cada 15 s
-setInterval(() => { if (document.hidden) return; const t = S.adm ? 5000 : 15000; if (Date.now() - ultAt >= t - 500) { ultAt = Date.now(); atualizar(); } }, 5000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) atualizar(); });
+let ultAt = 0; // responsável: a cada 8 s; aluno: a cada 30 s (só busca o que mudou)
+setInterval(() => { if (document.hidden) return; if (S.aba === 'dev') { if (Date.now() - ultAt >= 14500) { ultAt = Date.now(); carregaDev(); } return; } const t = S.adm ? 8000 : 30000; if (Date.now() - ultAt >= t - 500) { ultAt = Date.now(); atualizar(); } }, 5000);
 try { if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
 
 window.__qaj = { gerarPix, crc16, lerCardapio, analisar, temNome, normChave, tipoChave };
-if (S.eu && (!pelDe(S.eu.numero) || !S.eu.pin || !S.eu.codigo)) S.eu = null;
-S.travado = BIO.ativo();
+if (S.eu && (!pelDe(S.eu.numero) || !S.eu.pin)) S.eu = null;
+if (!S.eu && !ls.get('qaj_bv')) S.modal = { tipo: 'boasVindas' }; // aparece só na primeira vez que abre o app
 abrePel(S.eu ? pelDe(S.eu.numero) : null); render(); atualizar(true).then(checaCompartilhado);
 }
 </script>
