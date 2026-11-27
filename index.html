@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1f3a5f">
+<meta name="theme-color" content="#1d3a5f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="PEL">
@@ -11,8 +11,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png">
 <title>PEL</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="dmsans.woff" as="font" type="font/woff" crossorigin>
 
 <!-- Configuração fica em config.js (preencha uma vez; nas atualizações, não substitua esse arquivo) -->
 <script src="config.js"></script>
@@ -23,19 +22,18 @@
 VOICE: prático, de quartel — direto, sem enfeite, cada toque resolve algo.
 IDEA: a ficha de rancho / lista de chamada do pelotão, agora viva.
 PICTURE: o próprio cardápio com contadores e o valor grande; a lista com selos de pago.
-COLOUR and TYPE: azul-farda #1f3a5f, branco, tomate #e2522b como ação; Barlow Condensed nos títulos e números.
+COLOUR and TYPE: azul-farda #1d3a5f e tomate #e4572e (tons suavizados), verde para pago; DM Sans (arquivo local) em tudo.
 LAYOUT: uma coluna de 560px, faixa azul no topo, barra de abas fixa embaixo.
 */
-:root{color-scheme:light dark;
---bg:light-dark(#f4f5f7,#0f141b);--card:light-dark(#fff,#18202b);--ink:light-dark(#14181f,#eef1f5);
---mute:light-dark(#5b6472,#9aa5b4);--line:light-dark(#e1e4e9,#2a3442);--farda:#1f3a5f;
---acao:#e2522b;--acao2:light-dark(#c4421e,#ff6a42);--ok:light-dark(#17703f,#4cc283);--okbg:light-dark(#e3f4ea,#13301f);
---av:light-dark(#9a5b00,#f2b54a);--avbg:light-dark(#fff1d9,#3a2a10);--pe:light-dark(#5b6472,#9aa5b4);--pebg:light-dark(#eceef2,#232c38)}
+:root{color-scheme:light dark;--f:'DM Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--bg:#f3f5f8;--card:#ffffff;--ink:#141a22;--mute:#5d6878;--line:#e2e7ee;--pebg:#edf1f6;--pe:#5d6878;--farda:#1d3a5f;--farda2:#284d7a;--acao:#e4572e;--acao2:#cc4520;--acao-tx:#ffffff;--ok:#17794a;--okbg:#e4f5ec;--av:#9a5d00;--avbg:#fff3df;--foco:rgba(29,58,95,.18)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0e131a;--card:#171f2a;--ink:#edf1f6;--mute:#9ba7b7;--line:#283444;--pebg:#212c3a;--pe:#9ba7b7;--farda:#2a4f7f;--farda2:#3a649a;--acao:#ef6a42;--acao2:#ff7a52;--acao-tx:#ffffff;--ok:#4cc283;--okbg:#13301f;--av:#f2b54a;--avbg:#3a2a10;--foco:rgba(143,180,230,.25)}}
+:root[data-theme=dark]{--bg:#0e131a;--card:#171f2a;--ink:#edf1f6;--mute:#9ba7b7;--line:#283444;--pebg:#212c3a;--pe:#9ba7b7;--farda:#2a4f7f;--farda2:#3a649a;--acao:#ef6a42;--acao2:#ff7a52;--acao-tx:#ffffff;--ok:#4cc283;--okbg:#13301f;--av:#f2b54a;--avbg:#3a2a10;--foco:rgba(143,180,230,.25)}
+@font-face{font-family:'DM Sans';src:url(dmsans.woff) format('woff');font-weight:100 1000;font-display:swap}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 [hidden]{display:none!important}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Barlow,system-ui,sans-serif;overflow-x:clip;-webkit-tap-highlight-color:transparent}
-h1,h2,h3,.num{font-family:"Barlow Condensed",Barlow,sans-serif;font-weight:700;line-height:1.05;margin:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--f);overflow-x:clip;-webkit-tap-highlight-color:transparent}
+h1,h2,h3,.num{font-family:var(--f);font-weight:700;line-height:1.05;margin:0}
 header{position:relative;background:var(--farda);color:#fff;padding:calc(env(safe-area-inset-top) + 14px) max(5vw,16px) 18px}
 header .wrap{display:flex;align-items:center;gap:12px;justify-content:space-between}
 header h1{font-size:clamp(24px,7vw,32px);letter-spacing:.3px}
@@ -55,17 +53,17 @@ main{max-width:560px;margin:0 auto;padding:16px 14px calc(96px + env(safe-area-i
 .step{display:flex;align-items:center;gap:4px}
 .step button{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:22px;font-weight:600;cursor:pointer}
 .step button.mais{background:var(--farda);border-color:var(--farda);color:#fff}
-.step .q{width:28px;text-align:center;font:700 22px "Barlow Condensed",sans-serif}
+.step .q{width:28px;text-align:center;font:700 22px var(--f)}
 .total{display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 4px}
 .total .num{font-size:44px;color:var(--acao2);white-space:nowrap}
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;border:0;border-radius:12px;background:var(--acao);color:#fff;font:700 18px Barlow,sans-serif;cursor:pointer;margin-top:10px;text-decoration:none}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;border:0;border-radius:12px;background:var(--acao);color:#fff;font:700 18px var(--f);cursor:pointer;margin-top:10px;text-decoration:none}
 .btn:disabled{opacity:.45}
 .btn.sec{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
 .btn.azul{background:var(--farda)}
 .btn.peq{min-height:44px;font-size:16px}
 button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,label:focus-within{outline:3px solid var(--acao);outline-offset:2px}
 label.fl{display:block;font-size:14px;font-weight:600;margin:12px 0 4px}
-input,textarea,select{width:100%;font:16px Barlow,sans-serif;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+input,textarea,select{width:100%;font:16px var(--f);padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
 textarea{min-height:130px;resize:vertical}
 .linha2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
 .selo{display:inline-block;font-size:13px;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap}
@@ -79,16 +77,16 @@ textarea{min-height:130px;resize:vertical}
 .stats .num{font-size:26px;display:block}
 .stats span{font-size:12px;color:var(--mute)}
 .ped{display:flex;gap:10px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
-.ped .nr{font:700 22px "Barlow Condensed",sans-serif;width:52px;flex:none}
+.ped .nr{font:700 22px var(--f);width:52px;flex:none}
 .ped .tx{flex:1;font-size:15px}
 .ped .tx small{display:block;color:var(--mute)}
 .ped.eu{background:linear-gradient(90deg,transparent,var(--pebg),transparent)}
 .acoes{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
-.acoes button{min-height:36px;padding:0 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 14px Barlow,sans-serif;cursor:pointer}
+.acoes button{min-height:36px;padding:0 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 14px var(--f);cursor:pointer}
 .prev{display:grid;grid-template-columns:minmax(0,1fr) 84px 44px;gap:6px;margin-top:6px}
 .prev button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;font-size:18px;cursor:pointer}
 nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom);z-index:5}
-nav button{flex:1;max-width:186px;background:none;border:0;color:var(--mute);font:600 13px Barlow,sans-serif;padding:8px 0 10px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+nav button{flex:1;max-width:186px;background:none;border:0;color:var(--mute);font:600 13px var(--f);padding:8px 0 10px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
 nav button svg{width:24px;height:24px}
 nav button.on{color:var(--farda)}
 :root[data-theme=dark] nav button.on{color:#8fb4e6}
@@ -96,28 +94,28 @@ nav button.on{color:var(--farda)}
 .menu{width:44px;height:44px;border:0;border-radius:12px;background:rgba(255,255,255,.12);color:#fff;cursor:pointer;display:grid;place-items:center}
 .menu svg{width:22px;height:22px}
 .drop{position:absolute;right:max(5vw,16px);top:calc(100% - 8px);background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.18);z-index:8;min-width:220px;overflow:hidden}
-.drop button{display:block;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);color:var(--ink);font:600 16px Barlow,sans-serif;padding:14px 16px;cursor:pointer}
+.drop button{display:block;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);color:var(--ink);font:600 16px var(--f);padding:14px 16px;cursor:pointer}
 .drop button:first-child{border-top:0}
 nav button{max-width:240px}
 .marca{display:flex;gap:10px;align-items:center}
 #logo{width:46px;height:46px;border-radius:12px;object-fit:cover;border:2px solid rgba(255,255,255,.55);flex:none}
 .seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--pebg);padding:4px;border-radius:12px;margin-bottom:14px}
 .seg{grid-template-columns:repeat(5,minmax(0,1fr))}.seg button{font-size:12.5px!important;padding:4px 2px;line-height:1.15}
-.seg button{min-height:42px;border:0;border-radius:9px;background:none;color:var(--mute);font:600 14px Barlow,sans-serif;cursor:pointer}
+.seg button{min-height:42px;border:0;border-radius:9px;background:none;color:var(--mute);font:600 14px var(--f);cursor:pointer}
 .seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.14)}
 .fotoPrev{width:96px;height:96px;border-radius:22px;object-fit:cover;display:block;background:var(--farda)}
 .alunos{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;max-height:220px;overflow:auto}
 .alunos span{font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:3px 8px}
 .grp{margin:16px 0 2px;padding-top:12px;border-top:2px solid var(--farda)}.grp:first-of-type{margin-top:8px}
-.grp b{font:700 20px "Barlow Condensed",sans-serif;display:block}.grp span{font-size:14px;color:var(--mute)}
-.feito{text-align:center;padding:24px 16px}.feito .ok{width:64px;height:64px;border-radius:50%;background:var(--okbg);color:var(--ok);font:700 36px/64px Barlow,sans-serif;margin:0 auto 10px}
+.grp b{font:700 20px var(--f);display:block}.grp span{font-size:14px;color:var(--mute)}
+.feito{text-align:center;padding:24px 16px}.feito .ok{width:64px;height:64px;border-radius:50%;background:var(--okbg);color:var(--ok);font:700 36px/64px var(--f);margin:0 auto 10px}
 #modal .fundo{position:fixed;inset:0;background:rgba(10,14,20,.62);z-index:20;display:flex;align-items:flex-end;justify-content:center;padding:12px 10px calc(10px + env(safe-area-inset-bottom))}
 #modal .caixa{background:var(--card);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:16px;padding:16px}
 #modal .x{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:24px;cursor:pointer;flex:none}
 .bancos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
-.bancos a{text-decoration:none;min-height:56px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 16px Barlow,sans-serif;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.bancos a{text-decoration:none;min-height:56px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 16px var(--f);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
 .bancos a.ult{border:2px solid var(--farda);grid-column:1/-1}.bancos small{font-size:12px;color:var(--mute);font-weight:500}
-button.link{background:none;border:0;padding:4px 2px;color:var(--acao2);font:600 14px Barlow,sans-serif;cursor:pointer;text-decoration:underline}
+button.link{background:none;border:0;padding:4px 2px;color:var(--acao2);font:600 14px var(--f);cursor:pointer;text-decoration:underline}
 img.comp{display:block;width:100%;border-radius:10px;border:1px solid var(--line);background:#fff}
 .chamada.urgente{border:2px solid var(--acao);box-shadow:0 0 0 4px rgba(226,82,43,.12)}
 .aviso.urg{background:var(--acao);color:#fff;font-weight:600}
@@ -128,7 +126,7 @@ img.comp{display:block;width:100%;border-radius:10px;border:1px solid var(--line
 .passos{list-style:none;counter-reset:p;margin:10px 0 0;padding:0}
 .passos li{counter-increment:p;position:relative;padding:12px 0 12px 44px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
 .passos li:first-child{border-top:0}
-.passos li::before{content:counter(p);position:absolute;left:0;top:10px;width:30px;height:30px;border-radius:50%;background:var(--farda);color:#fff;display:grid;place-items:center;font:700 16px Barlow,sans-serif}
+.passos li::before{content:counter(p);position:absolute;left:0;top:10px;width:30px;height:30px;border-radius:50%;background:var(--farda);color:#fff;display:grid;place-items:center;font:700 16px var(--f)}
 .passos .btn{margin-top:2px}
 .det{margin-top:10px}.det summary{cursor:pointer;color:var(--mute);font-size:14px;padding:6px 0}
 .barra-pedido{position:fixed;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom));z-index:6;background:var(--card);border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(0,0,0,.08)}
@@ -138,7 +136,7 @@ img.comp{display:block;width:100%;border-radius:10px;border:1px solid var(--line
 main:has(.barra-pedido){padding-bottom:calc(170px + env(safe-area-inset-bottom))}
 .tabela{margin-top:12px}
 .lin{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px 4px;border-top:1px solid var(--line)}
-.lin .nr{font:700 21px "Barlow Condensed",sans-serif}.lin .tx{font-size:15px}
+.lin .nr{font:700 21px var(--f)}.lin .tx{font-size:15px}
 .lin.eu{background:var(--pebg);border-radius:10px}
 nav{height:calc(64px + env(safe-area-inset-bottom))}
 .adm-ped{padding:12px 0;border-top:1px solid var(--line)}.adm-ped:first-of-type{border-top:0}
@@ -147,13 +145,13 @@ nav{height:calc(64px + env(safe-area-inset-bottom))}
 .lista-ajuda{margin:10px 0;padding-left:18px}.lista-ajuda li{margin:6px 0}
 .hist{display:grid;grid-template-columns:76px minmax(0,1fr);gap:10px;padding:10px 2px;border-top:1px solid var(--line);font-size:15px}
 .hist .quem{display:inline-block;margin-top:3px;font-size:12px;font-weight:600;color:var(--mute);background:var(--pebg);border-radius:99px;padding:1px 8px}
-.pin-ini{display:flex;flex-direction:column;align-items:center;padding:14px;margin:12px 0;border-radius:14px;background:var(--pebg)}.pin-ini b{font:700 44px/1.1 'Barlow Condensed',sans-serif;letter-spacing:8px}
+.pin-ini{display:flex;flex-direction:column;align-items:center;padding:14px;margin:12px 0;border-radius:14px;background:var(--pebg)}.pin-ini b{font:700 44px/1.1 var(--f);letter-spacing:8px}
 .toast{pointer-events:none;position:fixed;left:50%;bottom:calc(140px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#14181f;color:#fff;padding:12px 18px;border-radius:12px;font-weight:600;opacity:0;transition:.25s;z-index:9;max-width:90vw;text-align:center}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 .vazio{text-align:center;padding:30px 10px}
 .vazio svg{width:120px;height:90px}
 .rodape{text-align:center;font-size:14px;color:var(--mute);margin-top:6px}
-.rodape button{background:none;border:0;color:var(--acao2);font:600 14px Barlow,sans-serif;cursor:pointer;padding:8px}
+.rodape button{background:none;border:0;color:var(--acao2);font:600 14px var(--f);cursor:pointer;padding:8px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 /* PIN com 4 bolinhas (o campo real fica invisível por cima) */
 .pin4{position:relative;display:flex;justify-content:center;gap:18px;padding:14px 0;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
@@ -164,15 +162,59 @@ nav{height:calc(64px + env(safe-area-inset-bottom))}
 .erro-num{color:var(--acao2)!important;font-weight:600}
 .bv p{margin:0;padding:9px 0;border-bottom:1px solid var(--line);font-size:15px;line-height:1.35}.bv p:last-child{border-bottom:0}
 .bv-pin{margin-top:10px;padding:18px 16px;border-radius:14px;background:var(--avbg);color:var(--ink);text-align:center}
-.bv-t{font:800 28px/1.1 'Barlow Condensed',Barlow,sans-serif;margin:8px 0 10px;color:var(--av);text-transform:uppercase;letter-spacing:.3px}
+.bv-t{font:800 28px/1.1 var(--f);margin:8px 0 10px;color:var(--av);text-transform:uppercase;letter-spacing:.3px}
 .bv-pin p{margin:6px 0;font-size:16px;line-height:1.4}.bv-forte{font-size:18px!important;font-weight:700}
 .bv-fixo{margin-top:12px;padding:14px 12px}.bv-fixo .bv-t{font-size:22px;margin:0 0 6px}.bv-fixo p{font-size:15px}.bv-fixo .bv-forte{font-size:16px!important}
 .abas-resp button{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;min-height:64px;padding:8px 2px 6px!important;font-size:12px!important;line-height:1.15}
 .abas-resp svg{width:20px;height:20px;flex:none}.abas-resp span{display:block;text-align:center}
 .btn2l{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:58px!important;padding:6px 8px!important;line-height:1.15;text-align:center}
-.btn2l small{font:500 12px Barlow,sans-serif;opacity:.85}
+.btn2l small{font:500 12px var(--f);opacity:.85}
 .som-bt{width:36px;height:36px;border-radius:10px;border:0;background:rgba(255,255,255,.12);color:#fff;display:grid;place-items:center;cursor:pointer;padding:0}
 .som-bt svg{width:20px;height:20px}.som-bt.mudo{opacity:.6}
+.ios-passos{margin:0 0 12px;padding-left:22px;line-height:1.5}.ios-passos li{margin:6px 0}
+
+/* ===== acabamento final: letras, centralização e espaçamentos ===== */
+h1,h2,h3,.num{letter-spacing:-.015em}
+header h1{font-size:26px;font-weight:800}
+.card{border-radius:18px;padding:18px 16px;box-shadow:0 1px 2px rgba(15,23,42,.04),0 4px 14px rgba(15,23,42,.04)}
+.card > h2{font-size:22px;font-weight:700;text-align:center;margin-bottom:6px}
+.card > h2 + .sub, .card > h2 + p.sub{text-align:center}
+.vazio{text-align:center}
+.btn{border-radius:14px;font-weight:700;letter-spacing:.01em;box-shadow:0 2px 0 rgba(0,0,0,.06)}
+.btn.sec{box-shadow:none}
+.btn:active{transform:translateY(1px)}
+input,textarea,select{border-radius:12px}
+input:focus,textarea:focus,select:focus{border-color:var(--farda);outline:none;box-shadow:0 0 0 3px rgba(31,58,95,.15)}
+label.fl{color:var(--ink)}
+.valor{justify-content:center;margin:8px 0 6px}.valor .num{font-size:46px}
+.passos{margin-top:12px}
+.chips{justify-content:center}
+.grp{text-align:left}
+.aviso{border-radius:12px;line-height:1.4}
+.rodape{text-align:center}
+/* tela de entrar: número grande e centralizado */
+#cNum{font:700 30px var(--f);text-align:center;letter-spacing:6px;padding:14px 12px}
+#cNum::placeholder{font-weight:500;font-size:20px;letter-spacing:1px;color:var(--mute);opacity:.7}
+#quem{text-align:center}
+.entrar label.fl{text-align:center}
+.bv-fixo{text-align:center}
+/* barra fixa do pedido em navegadores antigos (sem :has) */
+main.com-barra{padding-bottom:calc(170px + env(safe-area-inset-bottom))}
+
+
+/* ===== cores originais aprimoradas ===== */
+header{background:linear-gradient(160deg,var(--farda2),var(--farda) 70%);box-shadow:0 2px 10px rgba(16,32,56,.18)}
+.btn{color:var(--acao-tx);box-shadow:0 2px 8px rgba(228,87,46,.22)}
+.btn.azul{background:linear-gradient(160deg,var(--farda2),var(--farda));box-shadow:0 2px 8px rgba(29,58,95,.22)}
+.btn.sec{box-shadow:none;color:var(--ink)}
+.btn:disabled{box-shadow:none}
+.step button.mais{background:var(--farda);border-color:var(--farda)}
+.passos li::before{background:var(--farda)}
+input:focus,textarea:focus,select:focus{border-color:var(--farda2);box-shadow:0 0 0 3px var(--foco)}
+.pin4:focus-within{border-color:var(--farda2);box-shadow:0 0 0 3px var(--foco)}
+nav button.on{color:var(--farda)}
+.card{box-shadow:0 1px 2px rgba(16,32,56,.05),0 6px 18px rgba(16,32,56,.05)}
+.selo.s-pago{box-shadow:inset 0 0 0 1px rgba(23,121,74,.15)}
 </style>
 </head>
 <body>
@@ -501,7 +543,7 @@ const ERROS = {
   numero: 'Número inválido para este pelotão', pin_formato: 'O PIN precisa ter 4 números',
   sem_responsavel: 'Este pelotão ainda não foi liberado pelo desenvolvedor', senha: 'Senha incorreta',
   travado: 'Pedido já pago: para mudar, fale com o responsável', sem_cardapio: 'O cardápio mudou. Atualize a tela',
-  dup: 'Comprovante já usado em outro pedido', numero_em_uso: 'Este número já foi confirmado em outro celular. Se é você, peça ao responsável para zerar o PIN', aparelho_sem_id: 'Não foi possível identificar este celular', trocar_pin: 'Crie o seu PIN pessoal para continuar', pin_igual: 'O novo PIN precisa ser diferente do PIN inicial', codigo_curto: 'O código precisa ter pelo menos 4 caracteres',
+  dup: 'Comprovante já usado em outro pedido', numero_em_uso: 'Este número já está ligado a outro celular. Se é você, toque em "Troquei de celular"', aparelho_sem_id: 'Não foi possível identificar este celular', trocar_pin: 'Crie o seu PIN pessoal para continuar', pin_igual: 'O novo PIN precisa ser diferente do PIN inicial', codigo_curto: 'O código precisa ter pelo menos 4 caracteres',
   senha_curta: 'A senha precisa ter pelo menos 4 caracteres', muitas: 'Muitos pedidos abertos. Aguarde', nao_achou: 'Pedido não encontrado', tipo: 'Tipo inválido', acao: 'Ação inválida', grande: 'Imagem muito grande', status: 'Situação inválida'
 };
 const msgErro = e => ERROS[e] || ('Erro: ' + e);
@@ -525,7 +567,7 @@ const API = {
   db() { return ls.get('qaj_db2', { cfg: {}, seg: {}, pins: {}, cardapios: [], pedidos: [], imgs: {} }); },
   grava(db) { ls.set('qaj_db2', db); },
   ultimo(db, pel) { return db.cardapios.filter(x => x.pelotao === pel).sort((a, b) => b.data.localeCompare(a.data))[0] || null; },
-  alunoOk(db, cr) { const v = this.pinDe(db, cr.pelotao + '|' + cr.numero); return !!v && v.pin === cr.pin && !v.trocar; },
+  alunoOk(db, cr) { return !!cr.pin && (db.aparelhos || {})[cr.pin] === cr.pelotao + '|' + cr.numero; },
   admOk(db, ad) { const sg = db.seg[ad.pel] || {}; return (!!sg.admin && sg.admin === ad.senha) || (!!db.dev && db.dev === ad.senha); },
 
   // ----- aluno -----
@@ -539,27 +581,13 @@ const API = {
     const lista = (db.cfg[pel] || {}).alunos || [], x = lista.find(a => a.numero === numero) || (dev ? { numero, nome: 'Samuel Sousa' } : null);
     if (!lista.length && !dev) return { erro: 'sem_lista' };
     if (!x) return { erro: 'fora_da_lista' };
-    const nm = (x && x.nome) || nome || numero, k = pel + '|' + numero, atual = this.pinDe(db, k);
-    if (!atual) { // primeiro acesso: um celular só cadastra um número
-      const v = db.aparelhos[ap];
-      if (v && v !== k) { this.ev(db, pel, numero, 'tentou 1º acesso de um celular já vinculado ao ' + v.split('|')[1], 'aluno'); this.grava(db); return { erro: 'aparelho', numero_vinculado: v.split('|')[1] }; }
-      if (numero === DEV_NUMERO) { if (!db.dev && mestra && mestra.length >= 4) { db.dev = mestra; this.grava(db); } if (!(db.dev && mestra === db.dev)) return { erro: 'reservado' }; }
-      const ini = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
-      db.pins[k] = { pin: ini, trocar: true }; db.aparelhos[ap] = k; this.ev(db, pel, numero, 'primeiro acesso (celular vinculado)', 'aluno'); this.grava(db);
-      return { primeiro: true, pin_inicial: ini, nome: nm };
-    }
-    if (!pin && atual.trocar) { // 1º acesso de um número da lista (PIN inicial oculto)
-      const v = db.aparelhos[ap];
-      if (v && v !== k) { this.ev(db, pel, numero, 'tentou 1º acesso de um celular já vinculado ao ' + v.split('|')[1], 'aluno'); this.grava(db); return { erro: 'aparelho', numero_vinculado: v.split('|')[1] }; }
-      if (numero === DEV_NUMERO) { if (!db.dev && mestra && mestra.length >= 4) { db.dev = mestra; this.grava(db); } if (!(db.dev && mestra === db.dev)) return { erro: 'reservado' }; }
-      if (Object.entries(db.aparelhos).some(([t, kk]) => kk === k && t !== ap)) return { erro: 'numero_em_uso' };
-      const ini = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
-      db.pins[k] = { pin: ini, trocar: true }; db.aparelhos[ap] = k; this.ev(db, pel, numero, 'primeiro acesso (celular vinculado)', 'aluno'); this.grava(db);
-      return { primeiro: true, pin_inicial: ini, nome: nm };
-    }
-    if (!/^\d{4}$/.test(pin)) return { erro: 'pin_formato' };
-    if (atual.pin !== pin) return { erro: 'pin' };
-    return { ok: true, nome: nm, trocar: !!atual.trocar };
+    const nm = (x && x.nome) || nome || numero, k = pel + '|' + numero;
+    if (db.aparelhos[ap] === k) return { ok: true, nome: nm }; // já é deste celular
+    if (Object.values(db.aparelhos).includes(k)) { this.ev(db, pel, numero, 'tentou usar um número já confirmado em outro celular', 'aluno'); this.grava(db); return { erro: 'numero_em_uso' }; }
+    if (db.aparelhos[ap]) return { erro: 'aparelho', numero_vinculado: db.aparelhos[ap].split('|')[1] };
+    if (dev) { if (!db.dev && mestra && mestra.length >= 4) { db.dev = mestra; this.grava(db); } if (!(db.dev && mestra === db.dev)) return { erro: 'reservado' }; }
+    db.aparelhos[ap] = k; this.ev(db, pel, numero, 'primeiro acesso (celular vinculado)', 'aluno'); this.grava(db);
+    return { ok: true, primeiro: true, nome: nm };
   },
   async alunoQuem(pel, numero) {
     if (REMOTO) return this.rpc('aluno_quem', { p_pel: pel, p_numero: numero, p_aparelho: aparelhoId() });
@@ -571,8 +599,8 @@ const API = {
     if (!lista.length && !dev) return { erro: 'sem_lista' };
     if (!x) return { erro: 'fora_da_lista' };
     const nm = x && x.nome ? x.nome.trim().split(/\s+/) : null, curto = nm ? nm[0] + (nm[1] ? ' ' + nm[1][0] + '.' : '') : null;
-    const v = this.pinDe(db, k); if (v && !v.trocar) return { tem_pin: true, nome: curto };
-    if (Object.entries(db.aparelhos || {}).some(([t, kk]) => kk === k && t !== ap)) return { erro: 'numero_em_uso' };
+    if ((db.aparelhos || {})[ap] === k) return { ja_meu: true, nome: curto };
+    if (Object.values(db.aparelhos || {}).includes(k)) return { erro: 'numero_em_uso' };
     const vv = (db.aparelhos || {})[ap]; if (vv && vv !== k) return { erro: 'aparelho', numero_vinculado: vv.split('|')[1] };
     return { primeiro: true, dev: numero === DEV_NUMERO, nome: curto };
   },
@@ -701,7 +729,7 @@ const API = {
     const db = this.db(); db.ajudas = db.ajudas || [];
     if (db.ajudas.some(x => x.status === 'aberta' && x.pelotao === pel && x.tipo === tipo && (x.numero || '') === (numero || ''))) return { ok: true, ja: true };
     db.ajudas.unshift({ id: Date.now(), pelotao: pel, numero: numero || null, tipo, nome, contato, status: 'aberta', criado_em: new Date().toISOString() });
-    this.ev(db, pel, numero, tipo === 'pin' ? 'pediu para zerar o PIN' : 'pediu nova senha de responsável', 'pedido de ajuda'); this.grava(db); return { ok: true };
+    this.ev(db, pel, numero, tipo === 'pin' ? 'pediu para liberar o número (trocou de celular)' : 'pediu nova senha de responsável', 'pedido de ajuda'); this.grava(db); return { ok: true };
   },
   async devPainel(senha) {
     if (REMOTO) return this.rpc('dev_painel', { p_mestra: senha });
@@ -738,7 +766,7 @@ const API = {
     if (REMOTO) return this.rpc('admin_zerar_pin', { ...a2(ad), p_numero: numero });
     const db = this.db(); if (!this.admOk(db, ad)) return { erro: 'senha' };
     db.pins[ad.pel + '|' + numero] = { pin: Math.random().toString(36).slice(2), trocar: true }; for (const t in (db.aparelhos || {})) if (db.aparelhos[t] === ad.pel + '|' + numero) delete db.aparelhos[t];
-    this.ev(db, ad.pel, numero, 'PIN zerado', db.dev && db.dev === ad.senha ? 'desenvolvedor' : 'responsável');
+    this.ev(db, ad.pel, numero, 'número liberado', db.dev && db.dev === ad.senha ? 'desenvolvedor' : 'responsável');
     (db.ajudas || []).forEach(x => { if (x.status === 'aberta' && x.tipo === 'pin' && x.pelotao === ad.pel && x.numero === numero) { x.status = 'resolvida'; x.por = 'responsável'; } });
     this.grava(db); return { ok: true };
   }
@@ -784,7 +812,7 @@ async function enviar(p) {
 }
 function sessaoInvalida(erro) { // PIN zerado pelo responsável ou código do pelotão trocado: entra de novo
   S.ultNum = S.eu && S.eu.numero; S.eu = null; S.fila = []; S.souResp = false; ls.set('qaj_resp', false); ls.set('qaj_adm', null); ls.set('qaj_eu', null); ls.set('qaj_fila', []);
-  S.aviso = erro === 'trocar_pin' ? 'Crie o seu PIN pessoal para continuar.' : 'Entre de novo com o seu PIN.'; render();
+  S.aviso = 'Entre de novo com o seu número.'; render();
 }
 async function descarregar() {
   for (const p of [...S.fila]) {
@@ -829,7 +857,7 @@ const SELO = { pago: '<span class="selo s-pago">✓ Pago</span>', conferir: '<sp
 const SELO_ADM = { pago: '<span class="selo s-pago">✓ Pago</span>', conferir: '<span class="selo s-conferir">Conferir</span>', enviado: '<span class="selo s-pendente">Lendo…</span>', pendente: '<span class="selo s-pendente">Sem pagar</span>' };
 const feito = p => p && p.status && p.status !== 'pendente';
 const seloPub = p => feito(p) ? '<span class="selo s-pago">✓ Pedido feito</span>' : SELO.pendente;
-const vazioSVG = '<svg viewBox="0 0 120 90" aria-hidden="true"><ellipse cx="60" cy="80" rx="44" ry="6" fill="currentColor" opacity=".1"/><path d="M14 40h92a46 34 0 0 1-92 0z" fill="#1f3a5f"/><path d="M14 40h92" stroke="#e2522b" stroke-width="5" stroke-linecap="round"/><path d="M44 30c0-8 8-8 8-16M64 30c0-8 8-8 8-16" stroke="currentColor" opacity=".35" stroke-width="3" fill="none" stroke-linecap="round"/></svg>';
+const vazioSVG = '<svg viewBox="0 0 120 90" aria-hidden="true"><ellipse cx="60" cy="80" rx="44" ry="6" fill="currentColor" opacity=".1"/><path d="M14 40h92a46 34 0 0 1-92 0z" fill="#1d3a5f"/><path d="M14 40h92" stroke="#e4572e" stroke-width="5" stroke-linecap="round"/><path d="M44 30c0-8 8-8 8-16M64 30c0-8 8-8 8-16" stroke="currentColor" opacity=".35" stroke-width="3" fill="none" stroke-linecap="round"/></svg>';
 
 function telaPrimeiro() {
   const f = S.primeiro;
@@ -840,29 +868,39 @@ function telaPrimeiro() {
     <button class="btn azul" data-act="salvarPinNovo">Salvar meu PIN</button>
     <p class="sub" style="margin-top:8px">Não conte o seu PIN a ninguém. Se esquecer, o responsável pode zerar.</p></div>`;
 }
+// entra com o número: o 1º celular que confirmar fica com ele (a "senha" é o próprio celular)
+async function entrarComo(pel, numero, mestra) {
+  const r = await API.alunoEntrar(pel, '', numero, '', '', mestra);
+  if (r.erro === 'aparelho') return toast('Este celular já está ligado ao número ' + r.numero_vinculado + '. Cada celular só pode usar um número.');
+  if (r.erro) return toast(msgErro(r.erro));
+  S.eu = { numero, nome: r.nome, pelotao: pel, codigo: '', pin: aparelhoId() }; ls.set('qaj_eu', S.eu); ls.set('qaj_ja_entrou', true);
+  if (numero === DEV_NUMERO) ls.set('qaj_dev', true);
+  S.aviso = null; if (r.primeiro) toast('Pronto! Este celular agora é do ' + numero);
+  abrePel(pel); render(); atualizar(true);
+}
 function telaCadastro() {
   if (S.primeiro) return telaPrimeiro();
-  return `${S.aviso ? `<div class="aviso">${esc(S.aviso)}</div>` : ''}<div class="card"><h2>Entrar</h2><p class="sub">Entre com o seu número e o seu PIN.</p>
-  <label class="fl" for="cNum">Seu número</label><input id="cNum" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="username" value="${esc(S.eu?.numero || S.ultNum || '')}">
+  return `${avisoInstalar()}${S.aviso ? `<div class="aviso">${esc(S.aviso)}</div>` : ''}<div class="card entrar"><h2>Entrar</h2>
+  <label class="fl" for="cNum">Seu número</label><input id="cNum" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="Ex.: 2130" value="${esc(S.eu?.numero || S.ultNum || '')}">
   <p class="sub" id="quem" style="margin-top:6px">O pelotão é identificado pelo número.</p>
   <div id="devAtalho" ${ls.get('qaj_dev') && (S.eu?.numero || S.ultNum || '') === DEV_NUMERO ? '' : 'hidden'}><button class="btn sec peq" data-act="aba" data-v="dev">🛠️ Sou o desenvolvedor: abrir o painel</button></div>
-  <label class="fl" for="cPin">Seu PIN</label>${pin4('cPin', 'current-password')}
-  ${ls.get('qaj_ja_entrou') ? '' : '<div class="bv-pin bv-fixo"><p class="bv-forte">🔒 Depois você não precisa mais colocar senha. Só clicar e fazer o pedido.</p></div>'}
+  ${ls.get('qaj_ja_entrou') ? '' : '<div class="bv-pin bv-fixo"><p class="bv-forte">📱 Seu número fica ligado a este celular. Depois é só abrir e fazer o pedido.</p></div>'}
   <button class="btn azul" data-act="salvarEu">Entrar</button>
-  <p class="rodape" style="margin-top:12px"><button data-act="esqueciPin">Esqueci meu PIN</button></p></div>`;
+  <p class="rodape" style="margin-top:12px"><button data-act="esqueciPin">Troquei de celular</button></p></div>`;
 }
 async function confereNumero(pel, n) {
-  const q = $('#quem'), vai = () => { const c = $('#cPin'); if (c) c.focus(); };
+  const q = $('#quem'), vai = () => { const c = document.querySelector('[data-act=salvarEu]'); if (c) c.focus(); };
   if (REMOTO && !navigator.onLine) return vai(); // sem internet: deixa seguir
   q.textContent = 'PEL' + pel + ' · conferindo na lista…'; S.confNum = n;
   let r; try { r = await API.alunoQuem(pel, n); } catch (e) { return vai(); }
   if (S.confNum !== n || !$('#cNum') || $('#cNum').value !== n) return; // a pessoa já mudou o número
   const da = $('#devAtalho'); if (da) da.hidden = !(n === DEV_NUMERO && (r.dev || ls.get('qaj_dev')));
   if (r.dev) { q.textContent = 'PEL' + pel + ' · primeiro acesso do desenvolvedor'; return vai(); }
-  if (!r.erro) { q.textContent = 'PEL' + pel + (r.nome ? ' · ' + r.nome : '') + (r.primeiro ? ' · primeiro acesso: crie o seu PIN' : ''); return vai(); }
+  if (r.ja_meu) { q.textContent = 'PEL' + pel + (r.nome ? ' · ' + r.nome : ''); return entrarComo(pel, n, null); } // (no Safari do iPhone nunca é "já meu": o 1º acesso é feito no app) // já é deste celular: entra sozinho
+  if (!r.erro) { q.textContent = 'PEL' + pel + (r.nome ? ' · ' + r.nome : '') + (r.primeiro ? ' · primeiro acesso' : ''); return vai(); }
   const msg = { sem_codigo: 'O PEL' + pel + ' ainda não foi liberado', sem_lista: 'O PEL' + pel + ' ainda não tem lista de frequência',
-    fora_da_lista: 'O ' + n + ' não está na lista do PEL' + pel, reservado: 'Este número não está disponível', numero_em_uso: 'Este número já foi confirmado em outro celular',
-    aparelho: 'Este celular já está cadastrado no número ' + (r.numero_vinculado || '') }[r.erro] || msgErro(r.erro);
+    fora_da_lista: 'O ' + n + ' não está na lista do PEL' + pel, reservado: 'Este número não está disponível', numero_em_uso: 'Este número já está ligado a outro celular',
+    aparelho: 'Este celular já está ligado ao número ' + (r.numero_vinculado || '') }[r.erro] || msgErro(r.erro);
   q.textContent = msg; q.classList.add('erro-num');
   if (r.erro === 'aparelho' || r.erro === 'numero_em_uso') vai();
 }
@@ -881,14 +919,28 @@ document.addEventListener('input', e => {
     const bt = document.querySelector('[data-act=salvarEu]'); if (bt) { e.target.blur(); bt.click(); }
   }
 });
+// iPhone: o app instalado não enxerga os dados do Safari. Por isso o 1º acesso tem que ser feito já pelo app instalado
+const iosSafari = () => { const ua = navigator.userAgent; const ios = /iphone|ipad|ipod/i.test(ua) || (/macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
+  return ios && !(navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches)); };
+// como instalar: Android (botão), iPhone (Compartilhar → Tela de Início) ou dentro do Instagram/WhatsApp (abrir no navegador)
+function avisoInstalar() {
+  const ua = navigator.userAgent, ios = /iphone|ipad|ipod/i.test(ua) || (/macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
+  const instalado = navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+  if (instalado) return '';
+  const dentro = /FBAN|FBAV|Instagram|WhatsApp|Line\/|TikTok|Telegram/i.test(ua);
+  const caixa = t => `<div class="aviso" style="background:var(--pebg);color:var(--ink)">${t}</div>`;
+  if (dentro) return caixa(ios ? '📲 <b>Para instalar:</b> toque em <b>⋯</b> e escolha <b>Abrir no Safari</b>.' : '📲 <b>Para instalar:</b> toque em <b>⋮</b> e escolha <b>Abrir no Chrome</b>.');
+  if (S.instalar) return caixa('📲 <b>Instale o app</b> no celular. <button class="btn peq azul" data-act="instalar">Instalar</button>');
+  if (ios) return caixa('📲 <b>Instale no iPhone:</b> toque em <b>Compartilhar</b> <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5v10h14V11h-1"/></svg> → <b>Adicionar à Tela de Início</b> → <b>Adicionar</b>.');
+  return '';
+}
 function telaPedir() {
   if (!S.eu) return telaCadastro();
   if (pelDe(S.eu.numero) !== P) return `<div class="card"><h2>Você está no ${esc(P)}º Pelotão</h2><p class="sub">Está aberta a área do responsável de outro pelotão. Para fazer o seu pedido, saia dela.</p><button class="btn azul" data-act="sairAdmin">Voltar para o ${esc(pelDe(S.eu.numero))}º Pelotão</button></div>`;
   const c = S.cardapio, eu = meu(), fim = encerrado();
   let h = S.compart ? '<div class="aviso" style="background:var(--okbg);color:var(--ok)"><b>Comprovante recebido.</b> Escolha o prato e toque em Fazer pedido: ele vai junto.</div>' : '';
   h += S.erro ? `<div class="aviso">${esc(S.erro)}</div>` : '';
-  if (S.instalar || (/iphone|ipad/i.test(navigator.userAgent) && !navigator.standalone))
-    h += `<div class="aviso" style="background:var(--pebg);color:var(--ink)">${S.instalar ? '<b>Instale o app</b> para abrir mesmo sem internet. <button class="btn peq azul" data-act="instalar">Instalar</button>' : '<b>Instale no iPhone:</b> toque em Compartilhar e depois em “Adicionar à Tela de Início”.'}</div>`;
+  h += avisoInstalar();
   if (!c) return h + `<div class="card vazio">${vazioSVG}<h2>Sem cardápio ainda</h2><p class="sub">Quando o responsável publicar, ele aparece aqui.</p></div>` + rodape();
   if (S.rascDe !== c.data + (eu?.atualizado_em || '')) { S.rasc = {}; (eu?.itens || []).forEach(i => S.rasc[kk(i)] = i.qtd); S.rascDe = c.data + (eu?.atualizado_em || ''); }
   const total = c.itens.reduce((s, i) => s + (S.rasc[kk(i)] || 0) * i.preco, 0);
@@ -912,10 +964,9 @@ function telaPedir() {
       <div class="valor"><span class="num">${brl(eu.total)}</span>${eu._fila ? '<span class="selo s-pendente">será enviado quando houver internet</span>' : ''}</div>
       <ol class="passos">
         <li><b>Copie o Pix</b><button class="btn azul" data-act="copiarPix">Copiar Pix de ${brl(eu.total)}</button>
-          <span class="sub">Para ${esc(pc.recebedor || '')}. O celular abre a escolha de app: toque no seu banco.</span></li>
+          <span class="sub">Para ${esc(pc.recebedor || '')}</span></li>
         <li><b>Pague no app do banco</b><span class="sub">Pix → Pix Copia e Cola → cole e confirme.</span></li>
-        <li><b>Envie o comprovante</b><label class="btn">Enviar comprovante<input type="file" id="comp" accept="image/*,application/pdf" hidden></label>
-          <span class="sub">Print ou PDF. Ou, no app do banco, toque em Compartilhar → PEL.</span></li>
+        <li><b>Envie o comprovante</b><label class="btn">Enviar comprovante<input type="file" id="comp" accept="image/*,application/pdf" hidden></label></li>
       </ol>
       <details class="det"><summary>Ver código Pix e chave</summary><div class="pix">${esc(gerarPix(c, eu.total, txidDe(eu)))}</div>
         <p class="sub">Chave: ${esc(normChave(pc.tipo_chave, pc.chave))}</p></details>
@@ -1029,7 +1080,7 @@ function adminPedidos() {
   const r = resumo(), fl = faltam(), min = minutosAte(c), semComp = r.ps.filter(p => p.status === 'pendente').length;
   const urgente = min != null && min > 0 && min <= 30, chamada = textoChamada();
   return `<div class="card"><h2>Pedidos de ${esc(diaNome(c.data))}</h2><p class="sub">${r.ps.length} pedido${r.ps.length === 1 ? '' : 's'} · ${r.pagos.length} pago${r.pagos.length === 1 ? '' : 's'} · ${brl(r.total)} no total</p>
-    ${r.pagos.length ? `<div class="pix" style="white-space:pre-wrap;font-family:Barlow,sans-serif;font-size:15px;color:var(--ink)">${esc(textoResumo())}</div>` : '<p class="sub" style="margin-top:8px">Nenhum pedido pago ainda. O resumo para o fornecedor aparece aqui.</p>'}
+    ${r.pagos.length ? `<div class="pix" style="white-space:pre-wrap;font-family:var(--f);font-size:15px;color:var(--ink)">${esc(textoResumo())}</div>` : '<p class="sub" style="margin-top:8px">Nenhum pedido pago ainda. O resumo para o fornecedor aparece aqui.</p>'}
     ${r.ps.length > r.pagos.length ? `<p class="sub" style="margin-top:6px">O resumo conta só os pagos. Fora: ${r.ps.length - r.pagos.length}.</p>` : ''}
     <div class="dois"><button class="btn azul peq btn2l" data-act="copiarResumo" ${r.pagos.length ? '' : 'disabled'}><b>Copiar resumo</b><small>📦 enviar para o fornecedor</small></button>
     <button class="btn sec peq btn2l" data-act="copiarLista" ${r.pagos.length ? '' : 'disabled'}><b>Copiar lista final</b><small>💬 enviar para o grupo (só confirmados)</small></button></div>
@@ -1063,16 +1114,16 @@ function adminPelotao() {
     <label class="btn sec peq">Carregar PDF, foto ou arquivo de texto<input type="file" id="alArq" accept="application/pdf,.pdf,image/*,.txt,.csv,text/plain,text/csv" hidden></label>
     ${msgArq('alunos')}<div id="alPrev">${htmlAlunos()}</div>
     <button class="btn" data-act="salvarPelotao">Salvar lista do pelotão</button></div>
-  ${S.ajudas && S.ajudas.length ? `<div class="card chamada urgente"><h2>Pedidos para zerar PIN (${S.ajudas.length})</h2>${S.ajudas.map(x => `<div class="lin" style="grid-template-columns:60px minmax(0,1fr) auto"><span class="nr">${esc(x.numero)}</span><span class="tx">${esc(x.nome || '')}<small class="sub" style="display:block">${quando(x.criado_em)}</small></span><button class="btn sec peq" style="margin:0;width:auto;padding:0 12px" data-act="zerarPinAjuda" data-v="${esc(x.numero)}">Zerar PIN</button></div>`).join('')}</div>` : ''}
-  ${S.acessos && S.acessos.total ? `<div class="card"><h2>Primeiro acesso</h2><p class="sub"><b>${S.acessos.ativos}</b> de ${S.acessos.total} alunos já criaram o PIN pessoal. Os outros números estão protegidos por um PIN inicial oculto.</p>
+  ${S.ajudas && S.ajudas.length ? `<div class="card chamada urgente"><h2>Trocaram de celular (${S.ajudas.length})</h2>${S.ajudas.map(x => `<div class="lin" style="grid-template-columns:60px minmax(0,1fr) auto"><span class="nr">${esc(x.numero)}</span><span class="tx">${esc(x.nome || '')}<small class="sub" style="display:block">${quando(x.criado_em)}</small></span><button class="btn sec peq" style="margin:0;width:auto;padding:0 12px" data-act="zerarPinAjuda" data-v="${esc(x.numero)}">Liberar</button></div>`).join('')}</div>` : ''}
+  ${S.acessos && S.acessos.total ? `<div class="card"><h2>Primeiro acesso</h2><p class="sub"><b>${S.acessos.ativos}</b> de ${S.acessos.total} alunos já entraram no app.</p>
     ${S.acessos.faltam.length ? `<details class="det"><summary>Ainda não entraram (${S.acessos.faltam.length})</summary><p class="sub">${S.acessos.faltam.map(esc).join(' · ')}</p></details>` : ''}</div>` : ''}
-  <div class="card"><h2>Aluno esqueceu o PIN</h2><p class="sub">Zere o PIN: o aluno faz o primeiro acesso de novo e cria um PIN novo.</p>
+  <div class="card"><h2>Aluno trocou de celular</h2><p class="sub">Libere o número: o aluno entra de novo no celular novo.</p>
     <label class="fl" for="zpNum">Número do aluno</label><input id="zpNum" inputmode="numeric" maxlength="6">
-    <button class="btn sec peq" data-act="zerarPin">Zerar PIN</button></div>`;
+    <button class="btn sec peq" data-act="zerarPin">Liberar número</button></div>`;
 }
 function adminHistorico() {
   const ev = S.hist || null;
-  return `<div class="card"><h2>Histórico do PEL${esc(P)}</h2><p class="sub">Tudo o que os alunos fizeram (últimos 45 dias): PIN, pedidos, comprovantes e pagamentos.</p>
+  return `<div class="card"><h2>Histórico do PEL${esc(P)}</h2><p class="sub">Tudo o que os alunos fizeram (últimos 45 dias): acessos, pedidos, comprovantes e pagamentos.</p>
     <div class="linha2" style="margin-top:10px"><input id="hNum" inputmode="numeric" maxlength="6" placeholder="Nº do aluno" value="${esc(S.histNum || '')}">
     <button class="btn azul peq" style="margin:0" data-act="histFiltrar">Filtrar</button></div>
     ${ev == null ? '<p class="sub" style="margin-top:12px">Carregando…</p>' : ev.length ? `<div class="tabela">${ev.map(e => `<div class="hist">
@@ -1121,7 +1172,7 @@ function telaAdmin() {
     <input id="pelSel" type="hidden" value="${esc(pel)}">
     <label class="fl" for="pin">Senha</label><input id="pin" type="password" autocomplete="current-password"><button class="btn azul" data-act="entrarAdmin">Entrar</button>
     <p class="rodape" style="margin-top:12px"><button data-act="esqueciSenha">Esqueci a senha</button>${S.eu ? '' : ' · <button data-act="voltarEntrar">voltar</button>'}</p></div>`; }
-  if (!S.adm && REMOTO) return `<div class="card"><h2>Área do responsável</h2><p class="sub">Primeiro entre com o <b>seu número e PIN</b>. O app abre a área do seu pelotão automaticamente.</p>
+  if (!S.adm && REMOTO) return `<div class="card"><h2>Área do responsável</h2><p class="sub">Primeiro entre com o <b>seu número</b>. O app abre a área do seu pelotão automaticamente.</p>
     <button class="btn azul" data-act="aba" data-v="pedir">Ir para entrar</button></div>`;
   if (!S.adm) { const sel = S.pelSel || P || String(PMIN); // modo teste, sem ninguém logado: escolhe o pelotão para liberar
     return `${S.aviso ? `<div class="aviso">${esc(S.aviso)}</div>` : ''}<div class="card"><h2>Área do responsável</h2><p class="sub">Escolha o seu pelotão e digite a senha de responsável. Cada pelotão é liberado pelo desenvolvedor.${REMOTO ? '' : ' (Modo teste: no 1º acesso, a senha digitada vira a senha do pelotão.)'}</p>
@@ -1166,9 +1217,9 @@ function htmlModal() {
   if (m.tipo === 'esqueciSenha' || m.tipo === 'esqueciPin') {
     const pel = m.pel, zap = String(CONFIG.CONTATO_DEV || '').replace(/\D/g, '');
     const corpo = m.tipo === 'esqueciPin'
-      ? `<p>Por segurança, ninguém consegue ver o seu PIN. Peça ao <b>responsável do seu pelotão</b> para <b>zerar o seu PIN</b> (na área dele: Pelotão → "Aluno esqueceu o PIN").</p>
-         <p class="sub" style="margin-top:8px">Depois, entre com o seu número e digite um <b>PIN novo</b>: ele já vira o seu PIN.</p>
-         ${pel ? `<button class="btn azul" data-act="pedirAjuda" data-v="pin">Pedir para zerar meu PIN</button><p class="sub" style="margin-top:6px">O pedido chega ao responsável do PEL${esc(pel)} e ao desenvolvedor.</p>` : '<div class="aviso" style="margin-top:10px">Digite seu número na tela de entrada para poder enviar o pedido.</div>'}`
+      ? `<p>Seu número está ligado ao celular antigo. Peça ao <b>responsável do seu pelotão</b> para <b>liberar o seu número</b>.</p>
+         <p class="sub" style="margin-top:8px">Depois, é só entrar com o seu número neste celular.</p>
+         ${pel ? `<button class="btn azul" data-act="pedirAjuda" data-v="pin">Pedir para liberar meu número</button><p class="sub" style="margin-top:6px">O pedido chega ao responsável do PEL${esc(pel)} e ao desenvolvedor.</p>` : '<div class="aviso" style="margin-top:10px">Digite seu número na tela de entrada para poder enviar o pedido.</div>'}`
       : `<p>Por segurança, a senha do responsável <b>não pode ser recuperada</b>, só trocada.</p>
          <ul class="lista-ajuda"><li><b>Quem ainda sabe a senha</b> (o responsável anterior) pode entrar e trocar em <b>Ajustes → Senha do responsável</b>.</li>
          <li>Se ninguém lembra, <b>só o desenvolvedor</b> pode criar uma senha nova: ele entra no PEL${esc(pel)} com a senha mestra e define a nova senha em Ajustes.</li></ul>
@@ -1178,17 +1229,25 @@ function htmlModal() {
          ${zap ? `<a class="btn sec peq" href="https://wa.me/${zap}?text=${encodeURIComponent('Olá! Esqueci a senha de responsável do PEL' + pel + ' no app PEL. Pode criar uma nova?')}" target="_blank" rel="noopener">Falar com o desenvolvedor</a>` : ''}
          ${REMOTO ? '' : `<div class="aviso" style="margin-top:12px">Modo teste: como os dados estão só neste celular, você pode apagar a senha de teste do PEL${esc(pel)} e criar outra.</div><button class="btn sec peq" data-act="zerarSenhaTeste" data-v="${esc(pel)}">Apagar senha de teste do PEL${esc(pel)}</button>`}`;
     return `<div class="fundo" data-act="fecharModal"><div class="caixa" role="dialog" aria-label="Ajuda">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>${m.tipo === 'esqueciPin' ? 'Esqueci meu PIN' : 'Esqueci a senha'}</h2><button class="x" data-act="fecharModal" aria-label="Fechar">×</button></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>${m.tipo === 'esqueciPin' ? 'Troquei de celular' : 'Esqueci a senha'}</h2><button class="x" data-act="fecharModal" aria-label="Fechar">×</button></div>
       <div style="margin-top:8px">${corpo}</div><button class="btn sec peq" data-act="fecharModal">Entendi</button></div></div>`;
+  }
+  if (m.tipo === 'instalarIos') {
+    return `<div class="fundo" data-act="fecharModal"><div class="caixa" role="dialog" aria-label="Instale o app">
+      <h2>📲 Instale o app primeiro</h2>
+      <p style="margin:8px 0 12px">No iPhone, entre pelo <b>app instalado</b>. Assim você não precisa digitar o número de novo.</p>
+      <ol class="ios-passos"><li>Toque em <b>Compartilhar</b> <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5v10h14V11h-1"/></svg> na barra do Safari</li>
+        <li><b>Adicionar à Tela de Início</b> → <b>Adicionar</b></li><li>Abra o <b>PEL</b> pela tela do iPhone e entre com o seu número</li></ol>
+      <button class="btn azul" data-act="fecharModal">Entendi</button></div></div>`;
   }
   if (m.tipo === 'boasVindas') {
     return `<div class="fundo" data-act="fecharModal"><div class="caixa" role="dialog" aria-label="Bem-vindo ao PEL">
       <h2>Bem-vindo ao PEL 👋</h2>
       <div class="bv-pin">
-        <div style="font-size:40px;line-height:1">🔒</div>
-        <div class="bv-t">Senha só no<br>primeiro acesso</div>
-        <p>Crie agora um PIN de 4 números, só para a sua segurança.</p>
-        <p class="bv-forte">Depois você <u>não precisa mais</u> colocar senha. Só clicar e fazer o pedido.</p>
+        <div style="font-size:40px;line-height:1">📱</div>
+        <div class="bv-t">Só o seu número</div>
+        <p>Digite o número do pelotão (ex.: 2130) e confirme.</p>
+        <p class="bv-forte">Ele fica ligado a este celular: depois é <u>só abrir</u> e fazer o pedido.</p>
       </div>
       <p class="sub" style="margin:12px 0 0;text-align:center">Peça o almoço, pague no Pix e envie o comprovante. O app confere e coloca seu nome na lista sozinho.</p>
       <button class="btn azul" data-act="fecharModal">Entendi, começar</button></div></div>`;
@@ -1197,7 +1256,7 @@ function htmlModal() {
     return `<div class="fundo" data-act="fecharModal"><div class="caixa" role="dialog" aria-label="Recadastrar número">
       <h2>Zerar o primeiro acesso do ${esc(m.numero)}?</h2>
       <div class="pin-ini" style="margin:14px 0"><span class="sub">PEL${esc(m.pel)}</span><b>${esc(m.numero)}</b></div>
-      <div class="aviso">O PIN atual deixa de valer e o celular ligado a este número fica livre. A pessoa vai entrar e <b>criar um PIN novo</b>, como no 1º acesso.</div>
+      <div class="aviso">O celular ligado a este número fica livre. A pessoa entra de novo, no mesmo celular ou em outro, <b>como no 1º acesso</b>.</div>
       <button class="btn" data-act="devRecadastrarOk">Sim, zerar</button>
       <button class="btn sec peq" data-act="fecharModal">Cancelar</button></div></div>`;
   }
@@ -1206,7 +1265,7 @@ function htmlModal() {
       <h2>Confirme o seu número</h2>
       <div class="pin-ini" style="margin:14px 0"><span class="sub">Número</span><b>${esc(m.numero)}</b><span class="sub">${m.nome ? esc(m.nome) + ' · ' : ''}PEL${esc(m.pel)}</span></div>
       ${m.mestre ? '<label class="fl" for="cMestra">Senha mestra</label><input id="cMestra" type="password" autocomplete="current-password" style="margin-bottom:10px">' : ''}
-      <div class="aviso">⚠️ Depois de confirmar, este número fica <b>vinculado a este celular</b> e <b>ninguém mais poderá escolhê-lo</b>. O PIN que você digitou passa a ser o seu PIN.</div>
+      <div class="aviso">⚠️ Depois de confirmar, este número fica <b>ligado a este celular</b> e <b>ninguém mais poderá usá-lo</b>.</div>
       <button class="btn" data-act="confirmarNumero">Sim, este é o meu número</button>
       <button class="btn sec peq" data-act="fecharModal">Não, quero corrigir</button></div></div>`;
   }
@@ -1255,24 +1314,24 @@ function telaDev() {
   if (S.devSub === 'ajuda') {
     h += `<div class="card"><h2>Pedidos de ajuda</h2>${d.ajudas.length ? '' : '<p class="sub">Nenhum pedido de ajuda.</p>'}` + d.ajudas.map(x => {
       const ab = x.status === 'aberta', zap = String(x.contato || '').replace(/\D/g, '');
-      return `<div class="adm-ped" style="${ab ? '' : 'opacity:.55'}"><div><b>PEL${esc(x.pelotao)}${x.numero ? ' · ' + esc(x.numero) : ''}</b> — ${x.tipo === 'pin' ? 'esqueceu o PIN' : 'esqueceu a senha de responsável'}
+      return `<div class="adm-ped" style="${ab ? '' : 'opacity:.55'}"><div><b>PEL${esc(x.pelotao)}${x.numero ? ' · ' + esc(x.numero) : ''}</b> — ${x.tipo === 'pin' ? 'trocou de celular' : 'esqueceu a senha de responsável'}
         <small class="sub" style="display:block">${esc(x.nome || '')}${x.contato ? ' · ' + esc(x.contato) : ''} · ${quando(x.criado_em)}${ab ? '' : ' · ' + esc(x.status) + (x.por ? ' por ' + esc(x.por) : '')}</small></div>
         ${ab ? (x.tipo === 'pin'
-          ? `<div class="acoes" style="margin:8px 0 0"><button data-act="devResolver" data-id="${x.id}" data-v="zerar_pin">Zerar PIN</button><button data-act="devResolver" data-id="${x.id}" data-v="recusar">Recusar</button></div>`
+          ? `<div class="acoes" style="margin:8px 0 0"><button data-act="devResolver" data-id="${x.id}" data-v="zerar_pin">Liberar número</button><button data-act="devResolver" data-id="${x.id}" data-v="recusar">Recusar</button></div>`
           : `<div class="linha2" style="margin-top:8px"><input id="nova${x.id}" type="text" placeholder="Nova senha (mín. 4)" autocomplete="off"><button class="btn azul peq" style="margin:0" data-act="devResolver" data-id="${x.id}" data-v="nova_senha">Criar senha</button></div>
              <div class="acoes" style="margin:8px 0 0">${zap ? `<a class="btn sec peq" style="margin:0;width:auto;padding:0 12px;min-height:36px" href="https://wa.me/55${zap.replace(/^55/, '')}" target="_blank" rel="noopener">WhatsApp</a>` : ''}<button data-act="devResolver" data-id="${x.id}" data-v="recusar">Recusar</button></div>`) : ''}</div>`;
     }).join('') + `</div>`;
   } else if (S.devSub === 'pelotoes') {
     h += `<div class="card"><h2>🔄 Zerar primeiro acesso</h2>
-      <p class="sub">Apaga o PIN e solta o celular ligado ao número. A pessoa volta a entrar <b>como se fosse a primeira vez</b>: digita o número e cria um PIN novo, no mesmo celular ou em outro.</p>
+      <p class="sub">Solta o celular ligado ao número. A pessoa volta a entrar <b>como se fosse a primeira vez</b>, no mesmo celular ou em outro.</p>
       <label class="fl" for="devNum">Número da pessoa</label><div class="linha2"><input id="devNum" inputmode="numeric" maxlength="4" autocomplete="off">
       <button class="btn azul peq" style="margin:0" data-act="devRecadastrar">Zerar</button></div></div>
       <div class="card"><h2>Pelotões</h2>${d.pelotoes.length ? '' : '<p class="sub">Nenhum pelotão liberado ainda.</p>'}` + d.pelotoes.map(g => `<div class="adm-ped">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b style="font:700 22px Barlow Condensed,sans-serif">PEL${esc(g.pelotao)}</b><button class="btn sec peq" style="margin:0;width:auto;padding:0 14px" data-act="devAbrir" data-v="${esc(g.pelotao)}">Abrir</button></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b style="font:700 22px var(--f)">PEL${esc(g.pelotao)}</b><button class="btn sec peq" style="margin:0;width:auto;padding:0 14px" data-act="devAbrir" data-v="${esc(g.pelotao)}">Abrir</button></div>
       <div class="linha2" style="margin-top:8px"><input id="resp${esc(g.pelotao)}" inputmode="numeric" maxlength="4" placeholder="Nº do responsável" value="${esc(g.resp_numero || '')}" autocomplete="off">
         <button class="btn azul peq" style="margin:0" data-act="devDefResp" data-v="${esc(g.pelotao)}">${g.resp_numero ? 'Trocar' : 'Definir'}</button></div>
       <div class="chips">${g.resp_numero ? '<span class="chip">👤 responsável: ' + esc(g.resp_numero) + '</span>' : '<span class="chip fim">responsável não definido</span>'}${g.tem_admin ? '<span class="chip">✓ senha criada</span>' : '<span class="chip fim">sem senha</span>'}
-      <span class="chip">${g.alunos} na lista · ${g.com_pin} com PIN</span>${g.cardapio ? `<span class="chip">cardápio ${diaBR(g.cardapio)}: ${g.pedidos} pedidos, ${g.pagos} pagos</span>` : ''}</div></div>`).join('') +
+      <span class="chip">${g.alunos} na lista · ${g.com_pin} entraram</span>${g.cardapio ? `<span class="chip">cardápio ${diaBR(g.cardapio)}: ${g.pedidos} pedidos, ${g.pagos} pagos</span>` : ''}</div></div>`).join('') +
       `<p class="sub" style="margin-top:10px"><b>Responsável:</b> digite o número da pessoa e toque em <b>Definir</b>. Só ela verá a "Área do responsável" no menu. A <b>senha</b> do responsável se cria em <b>Abrir</b> → <b>Ajustes</b>.</p>
       <label class="fl" for="devPel">Abrir ou liberar outro pelotão</label><div class="linha2"><select id="devPel">${Array.from({ length: PMAX - PMIN + 1 }, (_, i) => String(PMIN + i)).map(v => `<option value="${v}">${v}º Pelotão</option>`).join('')}</select>
       <button class="btn azul peq" style="margin:0" data-act="devAbrir">Abrir</button></div></div>`;
@@ -1317,7 +1376,7 @@ function render() {
   $('#nav').hidden = !S.eu;
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === S.aba));
   $('#app').innerHTML = S.aba === 'dev' ? telaDev() : S.aba === 'pedir' ? telaPedir() : S.aba === 'lista' ? telaLista() : telaAdmin();
-  ligaArquivos(); pinBolinhas();
+  ligaArquivos(); pinBolinhas(); $('#app').classList.toggle('com-barra', !!document.querySelector('.barra-pedido'));
   const n = $('#net'), on = navigator.onLine;
   n.textContent = !REMOTO ? 'modo teste' : on ? 'online' : 'offline'; n.classList.toggle('off', !REMOTO || !on);
   $('#hsub').textContent = S.cardapio ? 'Cardápio de ' + diaNome(S.cardapio.data) : 'Pedido de almoço';
@@ -1453,23 +1512,16 @@ document.addEventListener('click', async ev => {
     if (a === 'aba') { S.aba = b.dataset.v; window.scrollTo(0, 0); if (S.aba === 'dev' && S.dev) S.devSub = 'ajuda'; render(); if (S.aba === 'dev') carregaDev(); }
     else if (a === 'salvarEu') {
       if (S.entrando) return; S.entrando = true; setTimeout(() => { S.entrando = false; }, 800);
-      const numero = $('#cNum').value.replace(/\D/g, ''), pel = pelDe(numero), pin = $('#cPin').value.trim();
-      if (!pel) return toast('Número inválido. Use o número completo (pelotões do ' + PMIN + 'º ao ' + PMAX + 'º), ex.: 2116');
-      if (!/^\d{4}$/.test(pin)) return toast(pin ? 'O PIN precisa ter 4 números' : 'Digite o seu PIN de 4 números (no 1º acesso, crie o seu aqui)');
+      const numero = $('#cNum').value.replace(/\D/g, ''), pel = pelDe(numero);
+      if (!pel) return toast('Número inválido. Use o número completo (pelotões do ' + PMIN + 'º ao ' + PMAX + 'º), ex.: 2130');
       if (REMOTO && !navigator.onLine) return toast('Precisa de internet para entrar');
-      { // ainda não tem PIN pessoal? então este é o 1º acesso: confirma o número e o PIN digitado vira o PIN dele
-        const q = await API.alunoQuem(pel, numero);
-        if (q.erro === 'aparelho') return toast('Este celular já está cadastrado no número ' + q.numero_vinculado + '. Cada celular só pode cadastrar um número.');
-        if (q.dev) { S.modal = { tipo: 'confirmaNumero', pel, numero, nome: 'Desenvolvedor', pin, nomeGuerra: '', mestre: true }; render(); return; }
-        if (q.erro) { if ($('#cPin')) { $('#cPin').value = ''; pinBolinhas(); } return toast(msgErro(q.erro)); }
-        if (q.primeiro) { S.modal = { tipo: 'confirmaNumero', pel, numero, nome: q.nome, pin, nomeGuerra: '' }; render(); return; }
-      }
-      const r = await API.alunoEntrar(pel, '', numero, pin, '');
-      if (r.erro === 'aparelho') return toast('Este celular já está cadastrado no número ' + r.numero_vinculado + '. Cada celular só pode cadastrar um número.');
-      if (r.erro === 'pin_formato' && !pin) return toast('Este número já tem PIN. Digite o seu PIN (ou toque em "Esqueci meu PIN")');
-      if (r.erro) { if ($('#cPin')) { $('#cPin').value = ''; pinBolinhas(); } return toast(msgErro(r.erro)); }
-      if (r.primeiro || r.trocar) { S.primeiro = { pel, numero, nome: r.nome, inicial: r.primeiro ? r.pin_inicial : pin }; S.aviso = null; render(); return; }
-      S.eu = { numero, nome: r.nome, pelotao: pel, codigo: '', pin }; ls.set('qaj_ja_entrou', true); if (S.eu.numero === DEV_NUMERO) ls.set('qaj_dev', true); S.aviso = null; ls.set('qaj_eu', S.eu); abrePel(pel); render(); atualizar(true);
+      if (REMOTO && iosSafari()) { S.modal = { tipo: 'instalarIos' }; render(); return; }
+      const q = await API.alunoQuem(pel, numero);
+      if (q.erro === 'aparelho') return toast('Este celular já está ligado ao número ' + q.numero_vinculado + '. Cada celular só pode usar um número.');
+      if (q.dev) { S.modal = { tipo: 'confirmaNumero', pel, numero, nome: 'Desenvolvedor', mestre: true }; render(); return; }
+      if (q.erro) return toast(msgErro(q.erro));
+      if (q.primeiro) { S.modal = { tipo: 'confirmaNumero', pel, numero, nome: q.nome }; render(); return; } // 1º acesso: confirma antes de ligar ao celular
+      await entrarComo(pel, numero, null); // já é deste celular
     }
     else if (a === 'voltarEntrar') { S.pelResp = null; S.aba = 'pedir'; render(); }
     else if (a === 'abrirRespPel') { S.aba = 'admin'; render(); }
@@ -1478,13 +1530,7 @@ document.addEventListener('click', async ev => {
       const m = S.modal, mestra = m.mestre ? ($('#cMestra') || {}).value || '' : null;
       if (m.mestre && !mestra) return toast('Digite a senha mestra');
       S.modal = null; render();
-      const r = await API.alunoEntrar(m.pel, '', m.numero, '', m.nomeGuerra, mestra);
-      if (r.erro === 'aparelho') return toast('Este celular já está cadastrado no número ' + r.numero_vinculado + '. Cada celular só pode cadastrar um número.');
-      if (r.erro) return toast(msgErro(r.erro));
-      if (!r.primeiro) return toast('Este número já tem PIN. Digite o seu PIN (ou toque em "Esqueci meu PIN")');
-      const t = await API.alunoTrocarPin(m.pel, m.numero, r.pin_inicial, m.pin); if (t.erro) return toast(msgErro(t.erro));
-      S.eu = { numero: m.numero, nome: r.nome, pelotao: m.pel, codigo: '', pin: m.pin }; ls.set('qaj_ja_entrou', true); if (S.eu.numero === DEV_NUMERO) ls.set('qaj_dev', true); S.aviso = null; ls.set('qaj_eu', S.eu);
-      toast('Pronto! Seu PIN foi criado. Use ele nas próximas vezes'); abrePel(m.pel); render(); atualizar(true);
+      await entrarComo(m.pel, m.numero, mestra);
     }
     else if (a === 'salvarPinNovo') {
       const f = S.primeiro, n1 = $('#pNovo').value.trim(), n2 = $('#pConf').value.trim();
@@ -1535,10 +1581,9 @@ document.addEventListener('click', async ev => {
       toast('Pedido cancelado'); await atualizar(true);
     }
     else if (a === 'copiarPix') {
-      // copia e, na mesma hora, abre a janela do próprio celular para escolher o app (Android e iPhone)
-      prepararOCR(); const eu = meu(), cod = gerarPix(c, eu.total, txidDe(eu)), cp = copiar(cod);
-      if (navigator.share) { toast('Pix copiado! Escolha o app do seu banco'); navigator.share({ text: cod }).catch(() => {}); }
-      else toast(await cp ? 'Pix copiado! Abra o app do banco e cole' : 'Não deu para copiar. Segure o código e copie');
+      // só copia (a janela de escolher app não mostrava os bancos)
+      prepararOCR(); const eu = meu(), cod = gerarPix(c, eu.total, txidDe(eu));
+      toast(await copiar(cod) ? 'Pix copiado! Abra o app do banco e cole' : 'Não deu para copiar. Toque em "Ver código Pix" e copie');
     }
     else if (a === 'copiarLista') toast(await copiar(textoLista()) ? 'Lista final copiada. Cole no grupo do pelotão' : 'Não deu para copiar');
     else if (a === 'copiarChamada') toast(await copiar(textoChamada()) ? 'Chamada copiada' : 'Não deu para copiar');
@@ -1568,7 +1613,7 @@ document.addEventListener('click', async ev => {
       const id = Number(b.dataset.id), acao = b.dataset.v, nova = acao === 'nova_senha' ? (($('#nova' + b.dataset.id) || {}).value || '') : null;
       if (acao === 'nova_senha' && nova.length < 4) return toast('A senha precisa ter pelo menos 4 caracteres');
       const r = await API.devResolver(S.dev.senha, id, acao, nova); if (r.erro) return toast(msgErro(r.erro));
-      toast(acao === 'zerar_pin' ? 'PIN zerado' : acao === 'nova_senha' ? 'Senha criada. Avise o responsável' : 'Pedido recusado'); await carregaDev();
+      toast(acao === 'zerar_pin' ? 'Número liberado' : acao === 'nova_senha' ? 'Senha criada. Avise o responsável' : 'Pedido recusado'); await carregaDev();
     }
     else if (a === 'devAbrir') {
       if (!S.dev) return toast('Entre no painel primeiro');
@@ -1613,7 +1658,7 @@ document.addEventListener('click', async ev => {
       toast('Abrindo ' + bancoEu()[1] + '… Vá em Pix Copia e Cola e cole'); // o link encaminha para o banco
     }
     else if (a === 'fecharModal') { if (ev.target.closest('.caixa') && !b.classList.contains('x') && b.tagName !== 'BUTTON') return; const m = S.modal; S.modal = null; if (m && m.tipo === 'boasVindas') ls.set('qaj_bv', 1); render();
-      if (m && m.tipo === 'confirmaNumero' && $('#cNum')) { $('#cNum').value = m.numero; $('#cPin').value = m.pin || ''; pinBolinhas(); $('#cNum').focus(); } }
+      if (m && m.tipo === 'confirmaNumero' && $('#cNum')) { $('#cNum').value = m.numero; $('#cNum').focus(); } }
     else if (a === 'sub') { S.arq = null; S.sub = b.dataset.v; if (S.sub === 'historico') { S.hist = null; carregaHist(); } window.scrollTo(0, 0); render(); }
     else if (a === 'rmFoto') { S.aj.foto = null; render(); }
     else if (a === 'salvarPelotao') {
@@ -1630,10 +1675,10 @@ document.addEventListener('click', async ev => {
         null, j.pin || null);
       if (ok) { j.pin = ''; j.codigo = ''; toast('Ajustes salvos'); render(); }
     }
-    else if (a === 'zerarPinAjuda') { const r = await API.adminZerarPin(S.adm, b.dataset.v); toast(r.erro ? msgErro(r.erro) : 'PIN do ' + b.dataset.v + ' zerado'); await atualizar(true); }
+    else if (a === 'zerarPinAjuda') { const r = await API.adminZerarPin(S.adm, b.dataset.v); toast(r.erro ? msgErro(r.erro) : 'Número ' + b.dataset.v + ' liberado'); await atualizar(true); }
     else if (a === 'zerarPin') {
       const n = $('#zpNum').value.replace(/\D/g, ''); if (pelDe(n) !== P) return toast('Número não é do PEL' + P);
-      const r = await API.adminZerarPin(S.adm, n); toast(r.erro ? msgErro(r.erro) : 'PIN do ' + n + ' zerado'); $('#zpNum').value = '';
+      const r = await API.adminZerarPin(S.adm, n); toast(r.erro ? msgErro(r.erro) : 'Número ' + n + ' liberado'); $('#zpNum').value = '';
     }
     else if (a === 'rmItem') { S.form.previa.splice(+b.dataset.k, 1); $('#previa').innerHTML = htmlPrevia(); }
     else if (a === 'addItem') { S.form.previa.push({ nome: '', preco: 0 }); $('#previa').innerHTML = htmlPrevia(); }
