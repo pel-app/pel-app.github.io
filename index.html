@@ -83,7 +83,7 @@ textarea{min-height:130px;resize:vertical}
 .ped.eu{background:linear-gradient(90deg,transparent,var(--pebg),transparent)}
 .acoes{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .acoes button{min-height:36px;padding:0 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 14px var(--f);cursor:pointer}
-.prev{display:grid;grid-template-columns:minmax(0,1fr) 84px 44px;gap:6px;margin-top:6px}
+.prev{display:grid;grid-template-columns:minmax(0,1fr) 72px 40px;gap:6px;margin-top:6px}
 .prev button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;font-size:18px;cursor:pointer}
 nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom);z-index:5}
 nav button{flex:1;max-width:186px;background:none;border:0;color:var(--mute);font:600 13px var(--f);padding:8px 0 10px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
@@ -215,6 +215,15 @@ input:focus,textarea:focus,select:focus{border-color:var(--farda2);box-shadow:0 
 nav button.on{color:var(--farda)}
 .card{box-shadow:0 1px 2px rgba(16,32,56,.05),0 6px 18px rgba(16,32,56,.05)}
 .selo.s-pago{box-shadow:inset 0 0 0 1px rgba(23,121,74,.15)}
+.btn{text-align:center}
+button,.btn,[data-act],label.btn{touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.step button:disabled{opacity:.35;cursor:not-allowed;filter:grayscale(1)}
+.step button:disabled + .q,.step .q:has(+ button:disabled){opacity:.5}
+.prev input.falta{border-color:var(--acao);background:var(--avbg)}
+.precos-rap{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 6px}.precos-rap button{flex:1;min-width:64px;min-height:40px;border-radius:10px;border:1.5px solid var(--av);background:var(--card);color:var(--ink);font:700 15px var(--f);cursor:pointer}
+.pp-g{margin-top:12px}.pp-t{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--farda);padding-bottom:4px;margin-bottom:2px}.pp-t b{font-size:17px}.pp-t span{font-size:13px;color:var(--mute)}
+.pp-l{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:15px}.pp-l b{min-width:28px;text-align:right}.pp-l.zero{color:var(--mute)}
+.comp-tit{font-size:16px;margin:14px 0 6px;text-align:left}
 </style>
 </head>
 <body>
@@ -364,34 +373,41 @@ const limpaLinha = l => String(l).replace(/[\p{Extended_Pictographic}\u{FE0F}\u{
 const arrumaNome = n => { n = n.replace(/^[\s\-–—>)\d.º°]+/, '').replace(/[\s\-–—:;,.=]+$/, '').replace(/\s*\/\s*/g, '/').trim(); return n ? n[0].toUpperCase() + n.slice(1) : ''; };
 const numBR = t => parseFloat(String(t).replace(',', '.'));
 function lerCardapio(txt) {
-  const itens = []; let preco = null, grupo = '', fornecedor = '', data = null;
-  for (const bruta of String(txt).split(/\n/)) {
-    const l = limpaLinha(bruta); if (!l || /^pix\b|chave/i.test(l)) continue;
-    const cab = /card[aá]pio|valor|acompanha|marmitas? de|pre[cç]o/i.test(l);
+  const itens = []; let preco = null, grupo = '', fornecedor = '', data = null, naLista = false, vistas = 0;
+  const linhas = String(txt).split(/\n/);
+  for (let n = 0; n < linhas.length; n++) {
+    const bruta = linhas[n], l = limpaLinha(bruta); if (!l || /^pix\b|chave/i.test(l)) continue;
+    const primeira = vistas++ === 0;
+    // linha marcada (emoji, •, -, "* ", número) = um prato da lista ("*texto*" é só negrito do WhatsApp)
+    const marcada = /^\s*([\p{Extended_Pictographic}\u{FE0F}]|[-–—•·>]|\*\s|\d{1,2}\s*[-.)º°]\s)/u.test(bruta);
+    const cab = /card[aá]pio|valor|acompanha|marmitas?\b|pre[cç]o|op[cç][oõ]es|hoje temos/i.test(l);
     const mp = l.match(/R\s?\$\s*(\d{1,3}(?:[.,]\d{1,2})?)/i) || l.match(/(\d{1,3}(?:[.,]\d{1,2})?)\s*(?:reais|real)\b/i) || l.match(/valor\s*(?:de\s*)?(\d{1,3}(?:[.,]\d{1,2})?)/i);
     const fim = l.match(/^(.*?[a-zà-ú].*?)[\s\-–—:=]+(?:R\s?\$\s*)?(\d{1,3}(?:[.,]\d{1,2})?)\s*(?:reais)?$/i);
     if (cab && mp) { // cabeçalho de um grupo de preço
-      preco = numBR(mp[1]);
+      preco = numBR(mp[1]); naLista = true;
       const ac = l.match(/acompanha\w*\s*:?\s*\(?([^)]*)\)?/i);
       grupo = ac && ac[1].trim() ? 'Acompanha ' + ac[1].trim().toLowerCase() : ''; continue;
     }
     if (/^acompanha/i.test(l)) { grupo = 'Acompanha ' + l.replace(/^acompanha\w*\s*:?\s*/i, '').replace(/[()]/g, '').trim().toLowerCase(); continue; }
-    if (fim || (mp && !cab)) { // item com o preço na mesma linha
+    if (cab && !marcada && l.split(' ').length <= 4) { naLista = true; continue; } // "Cardápio", "Opções de hoje"…
+    if (!primeira && (fim || (mp && !cab))) { // item com o preço na mesma linha
       const nome = arrumaNome(fim ? fim[1] : l.replace(mp[0], '')), v = numBR(fim ? fim[2] : mp[1]);
-      if (nome && v > 0 && v < 500) itens.push({ nome, preco: v }); continue;
+      if (nome && v >= 5 && v < 500) { itens.push({ nome, preco: v }); naLista = true; continue; }
     }
-    if (preco == null) { // antes do primeiro preço: nome do fornecedor e data
-      const d = l.match(/(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?/);
+    if (!naLista && !marcada && !itens.length && (primeira || /\d{1,2}\/\d{1,2}/.test(l))) { // topo: nome do fornecedor e data
+      const d = l.match(/(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?/) || (primeira ? l.match(/(?:^|\s)(\d{1,2})$/) : null);
       if (d && !data) {
-        const hoje = new Date(); let ano = d[3] ? +(d[3].length === 2 ? '20' + d[3] : d[3]) : hoje.getFullYear();
-        if (!d[3] && +d[2] < hoje.getMonth() + 1 - 6) ano++;
-        data = ano + '-' + pad(d[2]) + '-' + pad(d[1]);
+        const hoje = new Date(); let mes = d[2] ? +d[2] : hoje.getMonth() + 1, ano = d[3] ? +(d[3].length === 2 ? '20' + d[3] : d[3]) : hoje.getFullYear();
+        if (!d[2] && +d[1] < hoje.getDate() - 7) { mes++; if (mes > 12) { mes = 1; ano++; } } // só o dia: deste mês (ou do próximo)
+        if (!d[3] && d[2] && +d[2] < hoje.getMonth() + 1 - 6) ano++;
+        if (+d[1] >= 1 && +d[1] <= 31) data = ano + '-' + pad(mes) + '-' + pad(d[1]);
       }
-      const nome = arrumaNome(l.replace(/\d{1,2}\/\d{1,2}(\/\d{2,4})?/, ''));
+      const nome = arrumaNome(l.replace(/\d{1,2}\/\d{1,2}(\/\d{2,4})?/, '').replace(/\s\d{1,2}$/, ''));
       if (!fornecedor && /[a-zà-ú]{3}/i.test(nome)) fornecedor = nome.toLowerCase().replace(/(^|\s)\S/g, x => x.toUpperCase());
       continue;
     }
-    const nome = arrumaNome(l); if (nome && /[a-zà-ú]{3}/i.test(nome)) itens.push({ nome, preco, grupo });
+    const nome = arrumaNome(l.replace(/\s*\(\s*/g, ' (').replace(/\s*\)/g, ')'));
+    if (nome && /[a-zà-ú]{3}/i.test(nome)) { itens.push({ nome, preco: preco || 0, grupo }); naLista = true; } // sem preço: o responsável escolhe
   }
   lerCardapio.info = { fornecedor, data }; return itens;
 }
@@ -539,7 +555,7 @@ function analisar(texto, ped, c) {
 /* ---------- dados: Supabase ou modo teste ---------- */
 const ERROS = {
   codigo: 'Código do pelotão incorreto', pin: 'PIN incorreto', bloqueado: 'Muitas tentativas erradas. Aguarde 15 minutos',
-  sem_codigo: 'Este pelotão ainda não foi liberado. Fale com o responsável', fora_da_lista: 'Seu número não está na lista do pelotão', sem_resp: 'O desenvolvedor ainda não definiu o responsável deste pelotão', nao_responsavel: 'Só o responsável definido pelo desenvolvedor pode entrar aqui', reservado: 'Este número não está disponível', sem_lista: 'Este pelotão ainda não tem lista de frequência. Fale com o responsável',
+  sem_codigo: 'Este pelotão ainda não foi liberado. Fale com o responsável', fora_da_lista: 'Seu número não está na lista do pelotão', sem_resp: 'O desenvolvedor ainda não definiu o responsável deste pelotão', nao_responsavel: 'Só o responsável definido pelo desenvolvedor pode entrar aqui', reservado: 'Este número não está disponível', encerrado: 'Os pedidos já foram encerrados', sem_pedido: 'Pedido não encontrado', item: 'Prato não encontrado no cardápio', troca_valor: 'Só dá para trocar por marmita do mesmo valor', troca_qtd: 'A troca precisa ter a mesma quantidade de marmitas', troca_menor: 'Não dá para trocar por uma marmita mais barata', troca_aguarde: 'Espere o pagamento ser confirmado para trocar por uma mais cara', sem_troca: 'Não há troca pendente', sem_lista: 'Este pelotão ainda não tem lista de frequência. Fale com o responsável',
   numero: 'Número inválido para este pelotão', pin_formato: 'O PIN precisa ter 4 números',
   sem_responsavel: 'Este pelotão ainda não foi liberado pelo desenvolvedor', senha: 'Senha incorreta',
   travado: 'Pedido já pago: para mudar, fale com o responsável', sem_cardapio: 'O cardápio mudou. Atualize a tela',
@@ -565,7 +581,7 @@ const API = {
   },
   // ----- modo teste: imita o banco, guardando tudo neste aparelho -----
   db() { return ls.get('qaj_db2', { cfg: {}, seg: {}, pins: {}, cardapios: [], pedidos: [], imgs: {} }); },
-  grava(db) { ls.set('qaj_db2', db); },
+  grava(db) { if (db.imgs && Object.keys(db.imgs).length) db.imgs = {}; ls.set('qaj_db2', db); },
   ultimo(db, pel) { return db.cardapios.filter(x => x.pelotao === pel).sort((a, b) => b.data.localeCompare(a.data))[0] || null; },
   alunoOk(db, cr) { return !!cr.pin && (db.aparelhos || {})[cr.pin] === cr.pelotao + '|' + cr.numero; },
   admOk(db, ad) { const sg = db.seg[ad.pel] || {}; return (!!sg.admin && sg.admin === ad.senha) || (!!db.dev && db.dev === ad.senha); },
@@ -640,6 +656,53 @@ const API = {
     else if (st === 'conferir' && (!at || at.status !== 'conferir')) this.ev(db, cr.pelotao, cr.numero, 'comprovante foi para conferência', 'app', ((p.comprovante || {}).motivos || [])[0] || '');
     if (i >= 0) db.pedidos[i] = novo; else db.pedidos.push(novo); this.grava(db); return { ok: true };
   },
+  async alunoTrocar(cr, data, itens) {
+    if (REMOTO) return this.rpc('aluno_trocar_itens', { ...a4(cr), p_data: data, p_itens: itens });
+    const db = this.db(); if (!this.alunoOk(db, cr)) return { erro: 'pin' };
+    const c = db.cardapios.find(x => x.pelotao === cr.pelotao && x.data === data); if (!c) return { erro: 'sem_cardapio' };
+    if ((c.prazo && Date.now() > new Date(c.prazo).getTime()) || data < isoDia()) return { erro: 'encerrado' };
+    const p = db.pedidos.find(x => x.pelotao === cr.pelotao && x.data === data && x.numero === cr.numero); if (!p) return { erro: 'sem_pedido' };
+    if (!itens.length || itens.some(n => !(n.qtd >= 1) || !c.itens.some(i => i.nome === n.nome && i.preco === n.preco))) return { erro: 'item' };
+    const un = l => l.reduce((s, x) => s + x.qtd, 0), tot = itens.reduce((s, x) => s + x.qtd * x.preco, 0);
+    if (un(itens) !== un(p.itens)) return { erro: 'troca_qtd' };
+    if (tot < p.total - 0.001) return { erro: 'troca_menor' };
+    const antes = itensTxt(p);
+    if (Math.abs(tot - p.total) < 0.001) { p.itens = itens; p.troca = null; p.atualizado_em = new Date().toISOString(); this.ev(db, cr.pelotao, cr.numero, 'trocou a marmita', 'aluno', antes + '  →  ' + itensTxt(p)); this.grava(db); return { ok: true }; }
+    if (p.status !== 'pago') return { erro: 'troca_aguarde' };
+    p.troca = { itens, total: tot, diferenca: Math.round((tot - p.total) * 100) / 100, status: 'pendente', criado_em: new Date().toISOString() }; p.atualizado_em = new Date().toISOString();
+    this.ev(db, cr.pelotao, cr.numero, 'pediu troca por marmita mais cara', 'aluno'); this.grava(db); return { ok: true, diferenca: p.troca.diferenca };
+  },
+  async alunoTrocaComp(cr, data, status, info) {
+    if (REMOTO) return this.rpc('aluno_troca_comprovante', { ...a4(cr), p_data: data, p_status: status, p_info: info });
+    const db = this.db(); if (!this.alunoOk(db, cr)) return { erro: 'pin' };
+    const p = db.pedidos.find(x => x.pelotao === cr.pelotao && x.data === data && x.numero === cr.numero); if (!p || !p.troca) return { erro: 'sem_troca' };
+    if (status === 'pago') { p.comprovante = { ...(p.comprovante || {}), troca: { ...info, diferenca: p.troca.diferenca } }; p.itens = p.troca.itens; p.total = p.troca.total; p.troca = null; this.ev(db, cr.pelotao, cr.numero, 'pagou a diferença e trocou a marmita', 'app'); }
+    else p.troca = { ...p.troca, ...info, status };
+    p.atualizado_em = new Date().toISOString(); this.grava(db); return { ok: true, status };
+  },
+  async alunoCancelarTroca(cr, data) {
+    if (REMOTO) return this.rpc('aluno_cancelar_troca', { ...a4(cr), p_data: data });
+    const db = this.db(); if (!this.alunoOk(db, cr)) return { erro: 'pin' };
+    const p = db.pedidos.find(x => x.pelotao === cr.pelotao && x.data === data && x.numero === cr.numero); if (p && p.troca) { p.troca = null; this.ev(db, cr.pelotao, cr.numero, 'desistiu da troca', 'aluno'); }
+    this.grava(db); return { ok: true };
+  },
+  async alunoVerImgTroca(cr, data) {
+    if (REMOTO) return this.rpc('aluno_ver_img_troca', { ...a4(cr), p_data: data });
+    const db = this.db(); if (!this.alunoOk(db, cr)) return { erro: 'pin' };
+    return { img: (await idb.get('img|' + cr.pelotao + '|' + data + '|' + cr.numero + '+d')) || null };
+  },
+  async alunoImgTroca(cr, data, img) {
+    if (REMOTO) return this.rpc('aluno_salvar_img_troca', { ...a4(cr), p_data: data, p_img: img });
+    const db = this.db(); if (!this.alunoOk(db, cr)) return { erro: 'pin' };
+    await idb.put('img|' + cr.pelotao + '|' + data + '|' + cr.numero + '+d', img); return { ok: true };
+  },
+  async adminTroca(ad, data, numero, acao) {
+    if (REMOTO) return this.rpc('admin_troca', { ...a2(ad), p_data: data, p_numero: numero, p_acao: acao });
+    const db = this.db(); if (!this.admOk(db, ad)) return { erro: 'senha' };
+    const p = db.pedidos.find(x => x.pelotao === ad.pel && x.data === data && x.numero === numero); if (!p || !p.troca) return { erro: 'sem_troca' };
+    if (acao === 'aprovar') { const { itens, ...resto } = p.troca; p.comprovante = { ...(p.comprovante || {}), troca: resto }; p.itens = p.troca.itens; p.total = p.troca.total; } p.troca = null; p.atualizado_em = new Date().toISOString();
+    this.ev(db, ad.pel, numero, acao === 'aprovar' ? 'troca aprovada (diferença paga)' : 'troca recusada', 'responsável'); this.grava(db); return { ok: true };
+  },
   async alunoCancelar(cr, data) {
     if (REMOTO) return this.rpc('aluno_cancelar', { ...a4(cr), p_data: data });
     const db = this.db(); if (!this.alunoOk(db, cr)) return { erro: 'pin' };
@@ -651,12 +714,12 @@ const API = {
   async alunoVerImg(cr, data) {
     if (REMOTO) return this.rpc('aluno_ver_img', { ...a4(cr), p_data: data });
     const db = this.db(); if (!this.alunoOk(db, cr)) return { erro: 'pin' };
-    return { img: db.imgs[cr.pelotao + '|' + data + '|' + cr.numero] || null };
+    return { img: (await idb.get('img|' + cr.pelotao + '|' + data + '|' + cr.numero)) || null };
   },
   async alunoImg(cr, data, img) {
     if (REMOTO) return this.rpc('aluno_salvar_img', { ...a4(cr), p_data: data, p_img: img });
     const db = this.db(); if (!this.alunoOk(db, cr)) return { erro: 'pin' };
-    db.imgs[cr.pelotao + '|' + data + '|' + cr.numero] = img; this.grava(db); return { ok: true };
+    await idb.put('img|' + cr.pelotao + '|' + data + '|' + cr.numero, img); return { ok: true };
   },
 
   // ----- responsável (ou desenvolvedor com a senha mestra) -----
@@ -714,13 +777,13 @@ const API = {
   async adminApagar(ad, data, numero) {
     if (REMOTO) return this.rpc('admin_apagar', { ...a2(ad), p_data: data, p_numero: numero });
     const db = this.db(); if (!this.admOk(db, ad)) return { erro: 'senha' };
-    db.pedidos = db.pedidos.filter(q => !(q.pelotao === ad.pel && q.data === data && q.numero === numero)); delete db.imgs[ad.pel + '|' + data + '|' + numero];
+    db.pedidos = db.pedidos.filter(q => !(q.pelotao === ad.pel && q.data === data && q.numero === numero)); idb.del('img|' + ad.pel + '|' + data + '|' + numero);
     this.ev(db, ad.pel, numero, 'pedido excluído', db.dev === ad.senha ? 'desenvolvedor' : 'responsável'); this.grava(db); return { ok: true };
   },
   async adminImg(ad, data, numero) {
     if (REMOTO) return this.rpc('admin_img', { ...a2(ad), p_data: data, p_numero: numero });
     const db = this.db(); if (!this.admOk(db, ad)) return { erro: 'senha' };
-    return { img: db.imgs[ad.pel + '|' + data + '|' + numero] || null };
+    return { img: (await idb.get('img|' + ad.pel + '|' + data + '|' + numero)) || null };
   },
   // ----- pedidos de ajuda e painel do desenvolvedor -----
   ev(db, pel, numero, tipo, quem, detalhe) { db.eventos = db.eventos || []; db.eventos.unshift({ id: Date.now() + Math.random(), pelotao: pel, numero, tipo, quem, detalhe: detalhe || null, criado_em: new Date().toISOString() }); db.eventos = db.eventos.slice(0, 400); },
@@ -878,6 +941,47 @@ async function entrarComo(pel, numero, mestra) {
   S.aviso = null; if (r.primeiro) toast('Pronto! Este celular agora é do ' + numero);
   abrePel(pel); render(); atualizar(true);
 }
+// troca de marmita: cada unidade pode virar outro prato do MESMO valor
+const opcoesTroca = preco => (S.cardapio ? S.cardapio.itens : []).filter(i => i.preco >= preco).sort((a, b) => a.preco - b.preco);
+const podeTrocar = p => !!p && !p.troca && (p.itens || []).some(i => opcoesTroca(i.preco).length > 1);
+function cardTroca(eu, c) {
+  const t = eu.troca, dif = Number(t.diferenca || 0), st = t.status || 'pendente';
+  return `<div class="card"><h2>🔄 Troca pendente</h2>
+    <p class="sub">Novo pedido: <b>${esc(itensTxt({ itens: t.itens }))}</b></p>
+    <div class="valor"><span class="num">${brl(dif)}</span></div><p class="sub" style="text-align:center;margin-top:-4px">diferença a pagar</p>
+    ${st === 'enviado' ? '<div class="aviso">Lendo o comprovante da diferença…</div>' : st === 'conferir' ? '<div class="aviso">O responsável vai conferir o comprovante da diferença.</div>' : ''}
+    ${st !== 'enviado' ? `<ol class="passos">
+      <li><b>Copie o Pix da diferença</b><button class="btn azul" data-act="copiarPixDif">Copiar Pix de ${brl(dif)}</button></li>
+      <li><b>Pague no app do banco</b><span class="sub">Pix → Pix Copia e Cola → cole e confirme.</span></li>
+      <li><b>Envie o comprovante</b><label class="btn">Enviar comprovante da diferença<input type="file" id="compDif" accept="image/*,application/pdf" hidden></label></li></ol>` : ''}
+    <p class="sub" style="margin-top:8px">Até pagar, continua valendo o pedido atual.</p>
+    <button class="link" data-act="cancelarTroca" style="margin-top:6px">Desistir da troca</button></div>`;
+}
+const txidDif = eu => (txidDe(eu).slice(0, 23) + 'DF').slice(0, 25);
+async function lerComprovanteDif(file) {
+  const eu = meu(); if (!eu || !eu.troca || !file) return;
+  const dif = Number(eu.troca.diferenca || 0);
+  await API.alunoTrocaComp(S.eu, eu.data, 'enviado', { arquivo: file.name, enviado_em: new Date().toISOString() });
+  toast('Comprovante enviado. Conferindo…'); atualizar(true);
+  try { const img = await comTempo(miniatura(file), 20000); if (img) await API.alunoImgTroca(S.eu, eu.data, img); } catch (e) {}
+  let r;
+  try {
+    const ehPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name || '');
+    const texto = await comTempo(ehPdf ? extrairTexto(file) : ocr(file), 30000);
+    r = analisar(texto, { ...eu, total: dif }, pixDe(S.cardapio && S.cardapio.data === eu.data ? S.cardapio : eu));
+    if (r.e2e && (visiveis().some(x => x.e2e === r.e2e || (x.comprovante && x.comprovante.troca && x.comprovante.troca.e2e === r.e2e)))) { r.ok = false; r.motivos.push('Este comprovante já foi usado em outro pedido'); }
+  } catch (e) { r = { ok: false, e2e: null, valor: null, motivos: ['O app não conseguiu ler o comprovante. O responsável vai conferir.'] }; }
+  const rs = await API.alunoTrocaComp(S.eu, eu.data, r.ok ? 'pago' : 'conferir', { e2e: r.e2e || null, valor: r.valor || null, motivos: r.motivos || [], lido_em: new Date().toISOString() });
+  if (rs && rs.status === 'pago') { som.festa(); toast('Diferença paga! Marmita trocada ✓'); } else toast('O responsável vai conferir o comprovante da diferença');
+  await atualizar(true);
+}
+function htmlTroca() {
+  const u = S.troca || [];
+  return u.map((x, k) => { const ops = opcoesTroca(x.preco);
+    const grupos = [...new Set(ops.map(o => o.preco))];
+    return `<label class="fl" for="tr${k}">Marmita ${k + 1} · ${curto(x.preco)}</label><select id="tr${k}" data-troca="${k}" data-orig="${x.preco}">${grupos.map(g => `<optgroup label="Marmitas de ${curto(g)}${g > x.preco ? ' (pagar +' + curto(g - x.preco) + ')' : ''}">${ops.filter(o => o.preco === g).map(o => `<option value="${esc(o.nome + '|' + o.preco)}" ${o.nome === x.nome && o.preco === x.preco ? 'selected' : ''}>${esc(nomeItem(o))} — ${curto(o.preco)}</option>`).join('')}</optgroup>`).join('')}</select>`; }).join('') +
+      `<p class="sub" id="trDif" style="margin-top:10px"></p>`;
+}
 function telaCadastro() {
   if (S.primeiro) return telaPrimeiro();
   return `${avisoInstalar()}${S.aviso ? `<div class="aviso">${esc(S.aviso)}</div>` : ''}<div class="card entrar"><h2>Entrar</h2>
@@ -888,7 +992,10 @@ function telaCadastro() {
   <button class="btn azul" data-act="salvarEu">Entrar</button>
   <p class="rodape" style="margin-top:12px"><button data-act="esqueciPin">Troquei de celular</button></p></div>`;
 }
-async function confereNumero(pel, n) {
+async function confereNumero(pel, n) { // guarda o resultado para a atualização automática não apagar a mensagem
+  await confereNumero0(pel, n); const q = $('#quem'); if (q && $('#cNum') && $('#cNum').value === n) S.quem = { n, t: q.textContent, err: q.classList.contains('erro-num') };
+}
+async function confereNumero0(pel, n) {
   const q = $('#quem'), vai = () => { const c = document.querySelector('[data-act=salvarEu]'); if (c) c.focus(); };
   if (REMOTO && !navigator.onLine) return vai(); // sem internet: deixa seguir
   q.textContent = 'PEL' + pel + ' · conferindo na lista…'; S.confNum = n;
@@ -913,6 +1020,7 @@ function pinBolinhas() { // acende uma bolinha por número digitado
     x.parentNode.querySelectorAll('i').forEach((b, i) => b.classList.toggle('on', i < v.length));
   });
 }
+document.addEventListener('input', e => { if (e.target && e.target.id && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) e.target.dataset.sujo = '1'; });
 document.addEventListener('input', e => {
   if (!(e.target.closest && e.target.closest('.pin4'))) return; pinBolinhas();
   if (e.target.id === 'cPin' && e.target.value.length === 4 && pelDe(($('#cNum') || {}).value || '') && !S.entrando) { // entra sozinho
@@ -947,12 +1055,15 @@ function telaPedir() {
   const prazo = c.prazo ? new Date(c.prazo) : null;
   const minA = minutosAte(c);
   if (!feito(eu) && minA != null && minA > 0 && minA <= 30) h += `<div class="aviso urg">⏰ Faltam <b>${minA} min</b> para encerrar os pedidos (até ${horaDe(c.prazo)}).${eu ? ' Falta enviar o seu comprovante.' : ''}</div>`;
+  if (fim && !eu) h += `<div class="aviso">🔒 <b>Pedidos encerrados</b> para ${diaNome(c.data)}. Quando o responsável publicar o próximo cardápio, ele aparece aqui.</div>`;
   const info = `<div class="chips">${c.fornecedor ? `<span class="chip">🍽️ ${esc(c.fornecedor)}</span>` : ''}<span class="chip ${fim ? 'fim' : ''}">${fim ? 'Pedidos encerrados' : prazo ? '⏰ Pedidos até ' + horaDe(c.prazo) : 'Pedidos abertos'}</span></div>`;
   // ---- pedido concluído ----
   if (feito(eu)) {
+    if (eu.troca) h += cardTroca(eu, c);
     h += `<div class="card feito"><div class="ok">✓</div><h2>Pedido feito!</h2>
       <p style="margin:10px 0 4px;font-size:18px"><b>${esc(itensTxt(eu))}</b></p><p class="sub">${brl(eu.total)} · comprovante enviado${eu._fila ? ' (será enviado quando houver internet)' : ''}</p>
-      <p class="sub" style="margin-top:10px">Pode fechar o app. Para mudar o pedido, fale com o responsável.</p>
+      <p class="sub" style="margin-top:10px">Pode fechar o app.${fim ? ' Para mudar o pedido, fale com o responsável.' : ''}</p>
+      ${!fim && podeTrocar(eu) ? '<button class="btn azul peq" data-act="abrirTroca">🔄 Trocar marmita</button><p class="sub" style="margin-top:4px">Mesmo valor: sem custo. Mais cara: paga só a diferença. Até o horário limite.</p>' : ''}
       <button class="btn sec peq" data-act="verMeuComp">Ver meu comprovante</button></div>`;
     return h + rodape();
   }
@@ -995,7 +1106,9 @@ function resumo() {
 function textoLista() {
   const c = S.cardapio, r = resumo();
   // só entram os pedidos com pagamento confirmado
-  return 'Marmitas confirmadas – ' + diaBR(c.data) + '\n\n' + r.pagos.map(p => p.numero + ' - ' + itensTxt(p) + ' ✅').join('\n');
+  const l = r.pagos.slice().sort((a, b) => a.total - b.total || a.numero.localeCompare(b.numero));
+  return 'Marmitas confirmadas – ' + diaBR(c.data) + '\n\n' + l.map(p => p.numero + ' - ' + itensTxt(p) + ' (' + curto(p.total) + ') ✅').join('\n')
+    + '\n\nTotal: ' + l.length + ' pedido' + (l.length === 1 ? '' : 's');
 }
 // nome do prato; o preço só aparece quando o mesmo prato existe em dois preços (ex.: Frango guisado de 10 e de 15)
 function nomeItem(i) {
@@ -1004,7 +1117,9 @@ function nomeItem(i) {
 }
 // minutos até o fim dos pedidos (null se não houver horário)
 const minutosAte = c => c && c.prazo ? Math.round((new Date(c.prazo).getTime() - Date.now()) / 60000) : null;
-const horaDe = iso => { const d = new Date(iso); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+const horaDe = iso => { const d = new Date(iso); return d.getHours() === 0 && d.getMinutes() === 0 ? 'meia-noite' : pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+// horário limite: se a hora já passou hoje (ex.: 00:00), vale a próxima vez que ela chegar (meia-noite = fim do dia de hoje)
+const prazoISO = hhmm => { if (!hhmm) return null; let d = new Date(isoDia() + 'T' + hhmm + ':00'); if (d.getTime() <= Date.now()) d = new Date(d.getTime() + 86400000); return d.toISOString(); };
 function textoChamada() {
   const c = S.cardapio, r = resumo(), fl = faltam(), semComp = r.ps.filter(p => p.status === 'pendente'), min = minutosAte(c);
   let t = '⏰ *PEL' + P + ' – Pedido do almoço (' + diaNome(c.data) + ')*\n';
@@ -1025,6 +1140,15 @@ function textoResumo() {
     '\n\nQuantidade de cada:\n' + Object.entries(cont).map(([n, q]) => q + 'x ' + n).join('\n') +
     '\n\nTotal: ' + brl(tot) + '\nPedidos: ' + r.pagos.length;
 }
+// pratos do cardápio publicado, separados por valor, com a quantidade pedida (só pedidos feitos/pagos)
+function htmlPorPrato(ps) {
+  const c = S.cardapio; if (!c) return '';
+  const q = {}; ps.forEach(p => (p.itens || []).forEach(i => { const k = i.nome + '|' + i.preco; q[k] = (q[k] || 0) + (i.qtd || 1); }));
+  const precos = [...new Set(c.itens.map(i => i.preco))].sort((a, b) => a - b);
+  return precos.map(pr => { const l = c.itens.filter(i => i.preco === pr), tot = l.reduce((s, i) => s + (q[i.nome + '|' + i.preco] || 0), 0);
+    return `<div class="pp-g"><div class="pp-t"><b>Marmitas de ${curto(pr)}</b><span>${tot} ${tot === 1 ? 'pedida' : 'pedidas'}</span></div>` +
+      l.map(i => { const n = q[i.nome + '|' + i.preco] || 0; return `<div class="pp-l ${n ? '' : 'zero'}"><span>${esc(nomeItem(i))}</span><b>${n}</b></div>`; }).join('') + '</div>'; }).join('');
+}
 function telaLista() {
   if (!P) return telaCadastro();
   const c = S.cardapio;
@@ -1033,7 +1157,7 @@ function telaLista() {
   return `${S.erro ? `<div class="aviso">${esc(S.erro)}</div>` : ''}<div class="card"><h2>Marmitas para ${esc(diaNome(c.data))}</h2>
     <div class="stats"><div><b class="num">${r.ps.length}</b><span>pedidos</span></div><div><b class="num" style="color:var(--ok)">${nf}</b><span>feitos</span></div>
     <div><b class="num">${r.ps.length - nf}</b><span>pendentes</span></div></div>
-    ${r.ps.length ? `<div class="tabela">${r.ps.map(p => `<div class="lin ${S.eu && p.numero === S.eu.numero ? 'eu' : ''}"><span class="nr">${esc(p.numero)}</span><span class="tx">${esc(itensTxt(p))}</span>${feito(p) ? '<span class="selo s-pago">✓ Feito</span>' : '<span class="selo s-pendente">Pendente</span>'}</div>`).join('')}</div>` : '<p class="sub" style="margin-top:12px">Ninguém pediu ainda.</p>'}</div>`;
+    ${r.ps.length ? `<div class="tabela">${r.ps.map(p => `<div class="lin ${S.eu && p.numero === S.eu.numero ? 'eu' : ''}"><span class="nr">${esc(p.numero)}</span><span class="tx">${esc(itensTxt(p))}<small class="sub" style="display:block">${brl(p.total)}</small></span>${feito(p) ? '<span class="selo s-pago">✓ Feito</span>' : '<span class="selo s-pendente">Pendente</span>'}</div>`).join('')}</div>` : '<p class="sub" style="margin-top:12px">Ninguém pediu ainda.</p>'}</div>`;
 }
 const pixCfg = () => S.cfg.pix || {};
 const alunos = () => S.cfg.alunos || [];
@@ -1066,7 +1190,15 @@ function aplicaInfo() {
   if (inf.data && inf.data >= isoDia()) { S.form.data = inf.data; const e = $('#fData'); if (e) e.value = inf.data; }
   if (inf.fornecedor) { S.form.fornecedor = inf.fornecedor; const e = $('#fForn'); if (e) e.value = inf.fornecedor; }
 }
-const htmlPrevia = () => S.form.previa.length ? S.form.previa.map((i, k) => `<div class="prev"><input data-pi="${k}" data-pk="nome" value="${esc(i.nome)}" aria-label="Prato"><input data-pi="${k}" data-pk="preco" inputmode="decimal" value="${String(i.preco).replace('.', ',')}" aria-label="Preço"><button data-act="rmItem" data-k="${k}" aria-label="Remover">×</button></div>`).join('') + `<p class="sub" style="margin-top:6px">${S.form.previa.length} itens</p>` : '<p class="sub">Cole o cardápio acima. Cada linha com um preço vira um item.</p>';
+const htmlPrevia = () => {
+  const l = S.form.previa; if (!l.length) return '<p class="sub">Cole o cardápio acima (ou carregue a foto). Cada prato vira um item para o pelotão escolher.</p>';
+  const sem = l.filter(i => !(i.preco > 0)).length;
+  return (sem ? `<div class="aviso" style="margin:6px 0 8px"><b>${sem} ${sem === 1 ? 'prato está' : 'pratos estão'} sem preço.</b> Toque para colocar o mesmo preço em todos que faltam:
+      <div class="precos-rap"><button data-act="precoTodos" data-v="10">R$ 10</button><button data-act="precoTodos" data-v="15">R$ 15</button><button data-act="precoTodos" data-v="12">R$ 12</button><button data-act="precoTodos" data-v="20">R$ 20</button></div>
+      <span class="sub">Depois dá para trocar o preço de um prato só, no campo ao lado dele.</span></div>` : '') +
+    l.map((i, k) => `<div class="prev"><input data-pi="${k}" data-pk="nome" value="${esc(i.nome)}" aria-label="Prato"><input data-pi="${k}" data-pk="preco" inputmode="decimal" placeholder="R$" class="${i.preco > 0 ? '' : 'falta'}" value="${i.preco > 0 ? String(i.preco).replace('.', ',') : ''}" aria-label="Preço"><button data-act="rmItem" data-k="${k}" aria-label="Remover">×</button></div>`).join('') +
+    `<p class="sub" style="margin-top:6px">${l.length} itens</p>`;
+};
 const htmlAlunos = () => { const l = lerAlunos(S.aj.alunosTxt); return `${lerAlunos.fora ? `<div class="aviso" style="margin:10px 0 0">${lerAlunos.fora} número${lerAlunos.fora === 1 ? '' : 's'} de outro pelotão ${lerAlunos.fora === 1 ? 'foi ignorado' : 'foram ignorados'}.</div>` : ''}<p class="sub" style="margin-top:8px"><b>${l.length}</b> aluno${l.length === 1 ? '' : 's'} reconhecido${l.length === 1 ? '' : 's'}</p><div class="alunos">${l.map(a => `<span><b>${esc(a.numero)}</b> ${esc(a.nome)}</span>`).join('')}</div>`; };
 const htmlFoto = () => S.aj.foto ? `<img class="fotoPrev" src="${S.aj.foto}" alt="Foto do app">` : `<img class="fotoPrev" src="icon-192.png" alt="Ícone padrão">`;
 const msgArq = alvo => S.arq && S.arq.alvo === alvo ? `<div class="aviso" style="margin:12px 0 0;${S.arq.ok ? 'background:var(--okbg);color:var(--ok)' : ''}">${esc(S.arq.msg)}${S.arq.lendo ? '<div class="barra"><i id="barraArq"></i></div>' : ''}</div>` : '';
@@ -1090,22 +1222,26 @@ function adminPedidos() {
     ${r.ps.map(p => `<div class="adm-ped">
       <div class="lin" style="border:0;padding:0"><span class="nr">${esc(p.numero)}</span><span class="tx">${esc(itensTxt(p))}<small class="sub" style="display:block">${esc((p.nome || '').split(' ').slice(0, 3).join(' '))} · ${brl(p.total)}</small></span>${SELO_ADM[p.status] || SELO_ADM.pendente}</div>
       ${p.status === 'enviado' ? '<p class="sub" style="margin:4px 0 0 62px;font-size:13px">Lendo o comprovante no celular do aluno…</p>' : ''}
+      ${p.troca ? `<div class="aviso" style="margin:8px 0 0 62px">🔄 <b>Troca pedida:</b> ${esc(itensTxt({ itens: p.troca.itens }))} · diferença <b>${brl(p.troca.diferenca)}</b> — ${p.troca.status === 'conferir' ? 'conferir comprovante' : p.troca.status === 'enviado' ? 'comprovante enviado' : 'aguardando o Pix'}
+        <div class="acoes">${p.troca.status !== 'pendente' ? `<button data-act="verCompDif" data-n="${esc(p.numero)}">🧾 Comprovante da diferença</button>` : ''}<button data-act="trocaAdm" data-n="${esc(p.numero)}" data-v="aprovar">✓ Aprovar troca</button><button data-act="trocaAdm" data-n="${esc(p.numero)}" data-v="recusar">Recusar</button></div></div>` : ''}
       ${p.comprovante?.motivos?.length && p.status !== 'pago' ? '<ul class="motivos" style="margin-left:62px">' + p.comprovante.motivos.map(m => '<li>' + esc(m) + '</li>').join('') + '</ul>' : ''}
       <div class="acoes">${feito(p) || p.comprovante ? `<button data-act="verComp" data-n="${esc(p.numero)}">🧾 Comprovante</button>` : ''}${p.status !== 'pago' ? `<button data-act="status" data-n="${esc(p.numero)}" data-v="pago">✓ Marcar pago</button>` : `<button data-act="status" data-n="${esc(p.numero)}" data-v="pendente">Desmarcar</button>`}<button data-act="apagar" data-n="${esc(p.numero)}">Excluir</button></div></div>`).join('')}</div>`;
 }
 function adminCardapio() {
   const f = S.form, c = S.cardapio, px = pixCfg();
   return `${!px.chave ? '<div class="aviso">Antes de publicar, preencha a chave Pix na aba <b>Ajustes</b>.</div>' : ''}
+  ${c && c.data >= isoDia() && c.prazo && Date.now() > new Date(c.prazo).getTime() ? '<div class="aviso urg">⚠️ <b>Os pedidos deste cardápio estão encerrados</b>: o horário de "Pedidos até" já passou. Confira o horário abaixo e toque em <b>Publicar de novo</b> para reabrir.</div>' : ''}
   <div class="card"><h2>${c && c.data >= isoDia() ? 'Editar cardápio' : 'Publicar cardápio'}</h2>
     <div class="linha2"><div><label class="fl" for="fData">Marmitas para o dia</label><input type="date" id="fData" data-f="data" value="${esc(f.data)}"></div>
-    <div><label class="fl" for="fPrazo">Pedidos até (hoje)</label><input type="time" id="fPrazo" data-f="prazo" value="${esc(f.prazo)}"></div></div>
+    <div><label class="fl" for="fPrazo">Pedidos até</label><input type="time" id="fPrazo" data-f="prazo" value="${esc(f.prazo)}"></div></div>
+    <p class="sub" style="margin-top:4px">Ex.: 22:00 ou 00:00 (meia-noite). Se a hora já passou hoje, vale a de hoje para amanhã.</p>
     <label class="fl" for="fForn">Fornecedor</label><input id="fForn" data-f="fornecedor" placeholder="Ex.: Paladar Nutry" value="${esc(f.fornecedor || '')}">
     <label class="fl" for="fTexto">Cole o cardápio como ele chega no WhatsApp</label><textarea id="fTexto" data-f="texto" placeholder="PALADAR NUTRY 21/11&#10;Cardápio valor 10 reais&#10;Fit de frango&#10;Fígado acebolado&#10;Cardápio R$15,00 Acompanha (batata frita, salada)&#10;Carne assada a cavalo">${esc(f.texto)}</textarea>
     <label class="btn sec peq">Carregar PDF ou foto do cardápio<input type="file" id="cdArq" accept="application/pdf,.pdf,image/*" hidden></label>
     ${msgArq('cardapio')}<label class="fl">Itens reconhecidos (dá para corrigir)</label><div id="previa">${htmlPrevia()}</div>
     <button class="btn sec peq" data-act="addItem">+ Adicionar item</button>
     ${px.chave ? `<p class="sub" style="margin-top:12px">Pix: ${esc(px.chave)} · ${esc(px.recebedor)}</p>` : ''}
-    <button class="btn" data-act="publicar">Publicar para o pelotão</button></div>`;
+    <button class="btn" data-act="publicar">${c && c.data >= isoDia() ? 'Publicar de novo (atualizar)' : 'Publicar para o pelotão'}</button></div>`;
 }
 function adminPelotao() {
   return `<div class="card"><h2>Lista do pelotão</h2>
@@ -1232,6 +1368,23 @@ function htmlModal() {
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>${m.tipo === 'esqueciPin' ? 'Troquei de celular' : 'Esqueci a senha'}</h2><button class="x" data-act="fecharModal" aria-label="Fechar">×</button></div>
       <div style="margin-top:8px">${corpo}</div><button class="btn sec peq" data-act="fecharModal">Entendi</button></div></div>`;
   }
+  if (m.tipo === 'compDif') {
+    const p = visiveis().find(x => x.numero === m.numero); if (!p || !p.troca) return '';
+    return `<div class="fundo" data-act="fecharModal"><div class="caixa" role="dialog" aria-label="Comprovante da diferença">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>${esc(p.numero)} · diferença</h2><button class="x" data-act="fecharModal" aria-label="Fechar">×</button></div>
+      <p class="sub">Troca para <b>${esc(itensTxt({ itens: p.troca.itens }))}</b> · diferença <b>${brl(p.troca.diferenca)}</b></p>
+      ${(p.troca.motivos || []).length ? '<ul class="motivos">' + p.troca.motivos.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>' : ''}
+      <div style="margin-top:12px">${m.carregando ? '<p class="sub">Carregando imagem…</p>' : m.img ? `<img class="comp" src="${m.img}" alt="Comprovante da diferença">` : '<div class="aviso">A imagem ainda não chegou.</div>'}</div>
+      <button class="btn" data-act="trocaAdm" data-n="${esc(p.numero)}" data-v="aprovar">Aprovar troca</button>
+      <button class="btn sec peq" data-act="trocaAdm" data-n="${esc(p.numero)}" data-v="recusar">Recusar troca</button></div></div>`;
+  }
+  if (m.tipo === 'troca') {
+    return `<div class="fundo" data-act="fecharModal"><div class="caixa" role="dialog" aria-label="Trocar marmita">
+      <h2>🔄 Trocar marmita</h2><p class="sub" style="margin:4px 0 6px">Troque por outro prato do <b>mesmo valor</b> (sem pagar nada) ou por um <b>mais caro</b> (você paga só a diferença no Pix).</p>
+      ${htmlTroca()}
+      <button class="btn" data-act="confirmarTroca">Confirmar troca</button>
+      <button class="btn sec peq" data-act="fecharModal">Cancelar</button></div></div>`;
+  }
   if (m.tipo === 'instalarIos') {
     return `<div class="fundo" data-act="fecharModal"><div class="caixa" role="dialog" aria-label="Instale o app">
       <h2>📲 Instale o app primeiro</h2>
@@ -1272,9 +1425,12 @@ function htmlModal() {
   if (m.tipo === 'meu') {
     const eu = meu();
     return `<div class="fundo" data-act="fecharModal"><div class="caixa" role="dialog" aria-label="Meu comprovante">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>Meu comprovante</h2><button class="x" data-act="fecharModal" aria-label="Fechar">×</button></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>${m.temDif ? 'Meus comprovantes' : 'Meu comprovante'}</h2><button class="x" data-act="fecharModal" aria-label="Fechar">×</button></div>
       ${eu ? `<p class="sub">${esc(itensTxt(eu))} · <b>${brl(eu.total)}</b></p>` : ''}
+      ${m.temDif ? '<h3 class="comp-tit">Comprovante do pedido</h3>' : ''}
       <div style="margin-top:12px">${m.carregando ? '<p class="sub">Carregando…</p>' : m.img ? `<img class="comp" src="${m.img}" alt="Meu comprovante">` : '<div class="aviso">A imagem ainda não chegou ao servidor ou já foi apagada (guardamos por 3 dias).</div>'}</div>
+      ${m.temDif ? `<h3 class="comp-tit">Comprovante da diferença${eu && eu.comprovante && eu.comprovante.troca ? ' · ' + brl(eu.comprovante.troca.diferenca) : eu && eu.troca ? ' · ' + brl(eu.troca.diferenca) : ''}</h3>
+        ${m.img2 ? `<img class="comp" src="${m.img2}" alt="Comprovante da diferença">` : '<div class="aviso">A imagem da diferença ainda não chegou.</div>'}` : ''}
       <button class="btn sec peq" data-act="fecharModal">Fechar</button></div></div>`;
   }
   if (m.tipo === 'bancos') {
@@ -1294,7 +1450,9 @@ function htmlModal() {
     ${cp.lido_em ? `<p class="sub">Nome do aluno no comprovante: <b>${cp.nomeOk ? 'encontrado ✓' : 'não encontrado'}</b> · valor ${cp.valor != null ? brl(cp.valor) : '—'} · data ${cp.data ? diaBR(cp.data) : '—'} · ID ${cp.e2e ? esc(cp.e2e.slice(-10)) : '—'}</p>` : '<p class="sub">A leitura automática ainda não terminou.</p>'}
     ${cp.motivos?.length && p.status !== 'pago' ? '<ul class="motivos">' + cp.motivos.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>' : ''}
     ${cp.texto || cp.erroLeitura ? `<details style="margin-top:8px"><summary class="sub" style="cursor:pointer">O que o app leu no comprovante</summary><p class="sub" style="font-size:13px">${esc(cp.texto || '(nada)')}${cp.erroLeitura ? '<br><b>Erro:</b> ' + esc(cp.erroLeitura) : ''}</p><p class="sub" style="font-size:13px">Nome procurado: <b>${esc(p.nome || '')}</b></p></details>` : ''}
+    ${cp.troca ? '<h3 class="comp-tit">Comprovante do pedido</h3>' : ''}
     <div style="margin-top:12px">${m.carregando ? '<p class="sub">Carregando imagem…</p>' : m.img ? `<img class="comp" src="${m.img}" alt="Comprovante de ${esc(p.numero)}">` : '<div class="aviso">A imagem ainda não chegou (o aluno pode estar sem internet) ou já foi apagada (guardamos por 3 dias).</div>'}</div>
+    ${cp.troca ? `<h3 class="comp-tit">Comprovante da diferença da troca · ${brl(cp.troca.diferenca)}</h3>${m.img2 ? `<img class="comp" src="${m.img2}" alt="Comprovante da diferença">` : '<div class="aviso">A imagem da diferença não chegou.</div>'}` : ''}
     ${p.status !== 'pago' ? `<button class="btn" data-act="status" data-n="${esc(p.numero)}" data-v="pago">Confirmar pagamento</button>` : `<button class="btn sec peq" data-act="status" data-n="${esc(p.numero)}" data-v="pendente">Desmarcar pago</button>`}
     <button class="btn sec peq" data-act="fecharModal">Fechar</button></div></div>`;
 }
@@ -1368,6 +1526,10 @@ window.addEventListener('popstate', ev => {
   } finally { nav.voltando = false; }
 });
 function render() {
+  // guarda o que a pessoa está digitando: a atualização automática não pode apagar o campo nem fechar o teclado
+  const ativo = document.activeElement, guarda = {};
+  document.querySelectorAll('#app input[data-sujo], #app textarea[data-sujo], #modal input[data-sujo], #modal select[data-sujo]').forEach(x => { if (x.id) guarda[x.id] = x.value; });
+  const foco = ativo && ativo.id && ($('#app').contains(ativo) || $('#modal').contains(ativo)) ? { id: ativo.id, ini: ativo.selectionStart, fim: ativo.selectionEnd } : null;
   { const md = $('#menuDev'); if (md) md.hidden = !(S.eu && S.eu.numero === DEV_NUMERO); }
   { const bs = $('#btSom'); if (bs) { bs.innerHTML = som.on ? SOM_ON : SOM_OFF; bs.setAttribute('aria-label', som.on ? 'Som ligado' : 'Som desligado'); bs.classList.toggle('mudo', !som.on); } }
   { const mr = $('#menuResp'); if (mr) mr.hidden = !(S.souResp || S.adm || (!REMOTO && !S.eu)); } // só o responsável escolhido vê // só para quem está logado como o desenvolvedor
@@ -1376,6 +1538,9 @@ function render() {
   $('#nav').hidden = !S.eu;
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === S.aba));
   $('#app').innerHTML = S.aba === 'dev' ? telaDev() : S.aba === 'pedir' ? telaPedir() : S.aba === 'lista' ? telaLista() : telaAdmin();
+  for (const id in guarda) { const x = document.getElementById(id); if (x && x.type !== 'file') { x.value = guarda[id]; x.dataset.sujo = '1'; } }
+  { const q = $('#quem'), c = $('#cNum'); if (q && c && S.quem && c.value === S.quem.n) { q.textContent = S.quem.t; q.classList.toggle('erro-num', S.quem.err); if (S.quem.n === DEV_NUMERO && /desenvolvedor/.test(S.quem.t)) { const da = $('#devAtalho'); if (da) da.hidden = false; } } }
+  if (foco) { const x = document.getElementById(foco.id); if (x) { try { x.focus({ preventScroll: true }); if (foco.ini != null && x.setSelectionRange) x.setSelectionRange(foco.ini, foco.fim); } catch (e) {} } }
   ligaArquivos(); pinBolinhas(); $('#app').classList.toggle('com-barra', !!document.querySelector('.barra-pedido'));
   const n = $('#net'), on = navigator.onLine;
   n.textContent = !REMOTO ? 'modo teste' : on ? 'online' : 'offline'; n.classList.toggle('off', !REMOTO || !on);
@@ -1643,13 +1808,16 @@ document.addEventListener('click', async ev => {
       S.modal = { tipo: 'meu', carregando: true }; render();
       let img = null; try { const ri = await API.alunoVerImg(S.eu, eu.data); img = ri && ri.img; } catch (e) {}
       if (!img) { const v = await idb.get(chaveArq(eu)); if (v && v.img) img = v.img; } // ainda no celular, se não subiu
-      if (S.modal && S.modal.tipo === 'meu') { S.modal = { tipo: 'meu', img }; render(); }
+      let img2 = null; const temDif = (eu.comprovante && eu.comprovante.troca) || (eu.troca && eu.troca.status && eu.troca.status !== 'pendente');
+      if (temDif) { try { const r2 = await API.alunoVerImgTroca(S.eu, eu.data); img2 = r2 && r2.img; } catch (e) {} }
+      if (S.modal && S.modal.tipo === 'meu') { S.modal = { tipo: 'meu', img, img2, temDif }; render(); }
     }
     else if (a === 'verComp') {
       const p = visiveis().find(x => x.numero === b.dataset.n); if (!p) return;
       S.modal = { numero: p.numero, carregando: true }; render();
-      let img = null; try { const ri = await API.adminImg(S.adm, p.data, p.numero); img = ri && ri.img; } catch (e) {}
-      if (S.modal && S.modal.numero === p.numero) { S.modal = { numero: p.numero, img }; render(); }
+      let img = null, img2 = null; try { const ri = await API.adminImg(S.adm, p.data, p.numero); img = ri && ri.img; } catch (e) {}
+      if (p.comprovante && p.comprovante.troca) { try { const r2 = await API.adminImg(S.adm, p.data, p.numero + '+d'); img2 = r2 && r2.img; } catch (e) {} }
+      if (S.modal && S.modal.numero === p.numero) { S.modal = { numero: p.numero, img, img2 }; render(); }
     }
     else if (a === 'trocarBanco') { const eu = meu(); S.modal = { tipo: 'bancos', pix: gerarPix(c, eu.total, txidDe(eu)) }; render(); }
     else if (a === 'compartilharPix') { S.modal = null; render(); try { await navigator.share({ text: b.dataset.pix || '' }); } catch (e) {} }
@@ -1667,7 +1835,7 @@ document.addEventListener('click', async ev => {
       if (await salvarCfg({ alunos: l })) { S.aj.alunosTxt = l.map(x => x.numero + (x.nome ? ' - ' + x.nome : '')).join('\n'); toast(l.length + ' alunos salvos'); render(); }
     }
     else if (a === 'salvarAjustes') {
-      const j = S.aj;
+      const j = S.aj; { const e = $('#aPrazo'); if (e) j.prazo = e.value; }
       if (j.chave.trim() && !j.recebedor.trim()) return toast('Preencha o nome do recebedor');
       if (j.pin && j.pin.length < 4) return toast('A senha precisa ter pelo menos 4 caracteres');
       const ok = await salvarCfg({ titulo: j.titulo.trim(), prazo: j.prazo, foto: j.foto,
@@ -1680,19 +1848,48 @@ document.addEventListener('click', async ev => {
       const n = $('#zpNum').value.replace(/\D/g, ''); if (pelDe(n) !== P) return toast('Número não é do PEL' + P);
       const r = await API.adminZerarPin(S.adm, n); toast(r.erro ? msgErro(r.erro) : 'Número ' + n + ' liberado'); $('#zpNum').value = '';
     }
+    else if (a === 'copiarPixDif') { const eu = meu(); if (!eu || !eu.troca) return; toast(await copiar(gerarPix(c, Number(eu.troca.diferenca), txidDif(eu))) ? 'Pix da diferença copiado! Abra o app do banco e cole' : 'Não deu para copiar'); }
+    else if (a === 'cancelarTroca') { const eu = meu(); if (!eu) return; const r = await API.alunoCancelarTroca(S.eu, eu.data); toast(r.erro ? msgErro(r.erro) : 'Troca cancelada. Seu pedido continua o mesmo'); await atualizar(true); }
+    else if (a === 'trocaAdm') { const p = visiveis().find(x => x.numero === b.dataset.n); if (!p) return; const r = await API.adminTroca(S.adm, p.data, p.numero, b.dataset.v); S.modal = null; toast(r.erro ? msgErro(r.erro) : b.dataset.v === 'aprovar' ? 'Troca aprovada' : 'Troca recusada'); await atualizar(true); }
+    else if (a === 'verCompDif') {
+      const p = visiveis().find(x => x.numero === b.dataset.n); if (!p) return;
+      S.modal = { tipo: 'compDif', numero: p.numero, carregando: true }; render();
+      let img = null; try { const ri = await API.adminImg(S.adm, p.data, p.numero + '+d'); img = ri && ri.img; } catch (e) {}
+      if (S.modal && S.modal.tipo === 'compDif') { S.modal = { tipo: 'compDif', numero: p.numero, img }; render(); }
+    }
+    else if (a === 'abrirTroca') {
+      const eu = meu(); if (!eu) return; if (encerrado()) return toast('Os pedidos já foram encerrados');
+      S.troca = []; (eu.itens || []).forEach(i => { for (let q = 0; q < (i.qtd || 1); q++) S.troca.push({ nome: i.nome, preco: i.preco }); });
+      S.modal = { tipo: 'troca' }; render();
+    }
+    else if (a === 'confirmarTroca') {
+      const eu = meu(); if (!eu || !S.troca) return;
+      document.querySelectorAll('[data-troca]').forEach(sel => { const [n, pr] = sel.value.split('|'); S.troca[+sel.dataset.troca].nome = n; S.troca[+sel.dataset.troca].preco = +pr; });
+      const junta = {}; S.troca.forEach(x => { const k = x.nome + '|' + x.preco; junta[k] = junta[k] || { nome: x.nome, preco: x.preco, qtd: 0 }; junta[k].qtd++; });
+      const itens = Object.values(junta);
+      if (itensTxt({ itens }) === itensTxt(eu)) { S.modal = null; render(); return toast('Nada foi trocado'); }
+      if (REMOTO && !navigator.onLine) return toast('Precisa de internet para trocar');
+      const r = await API.alunoTrocar(S.eu, eu.data, itens); if (r.erro) return toast(msgErro(r.erro));
+      S.modal = null; S.troca = null;
+      toast(r.diferenca ? 'Troca pedida! Pague a diferença de ' + brl(r.diferenca) + ' no Pix' : 'Marmita trocada! Agora: ' + itensTxt({ itens })); await atualizar(true);
+    }
+    else if (a === 'precoTodos') { const v = +b.dataset.v; S.form.previa.forEach(i => { if (!(i.preco > 0)) i.preco = v; }); $('#previa').innerHTML = htmlPrevia(); toast('Preço de R$ ' + v + ' colocado nos pratos sem preço'); }
     else if (a === 'rmItem') { S.form.previa.splice(+b.dataset.k, 1); $('#previa').innerHTML = htmlPrevia(); }
     else if (a === 'addItem') { S.form.previa.push({ nome: '', preco: 0 }); $('#previa').innerHTML = htmlPrevia(); }
     else if (a === 'publicar') {
       const f = S.form, itens = f.previa.filter(i => i.nome.trim() && i.preco > 0).map(i => ({ nome: i.nome.trim(), preco: Math.round(i.preco * 100) / 100, ...('grupo' in i ? { grupo: i.grupo || '' } : {}) }))
         .sort((x, y) => ('grupo' in x ? x.preco : 1e9) - ('grupo' in y ? y.preco : 1e9));
+      if (f.previa.some(i => i.nome.trim() && !(i.preco > 0))) return toast('Tem prato sem preço. Coloque o preço antes de publicar');
       if (!itens.length) return toast('Nenhum item com preço');
       const px = pixCfg();
       if (!px.chave || !px.recebedor) { S.sub = 'ajustes'; render(); return toast('Preencha o Pix em Ajustes'); }
       if (REMOTO && !navigator.onLine) return toast('Precisa de internet para publicar');
-      const prazo = f.prazo ? new Date(isoDia() + 'T' + f.prazo + ':00').toISOString() : null;
+      const vv = id => { const e = document.getElementById(id); return e ? e.value : null; };
+      if (vv('fPrazo') != null) f.prazo = vv('fPrazo'); if (vv('fData')) f.data = vv('fData'); if (vv('fForn') != null) f.fornecedor = vv('fForn');
+      const prazo = prazoISO(f.prazo);
       const rp = await API.adminPublicar(S.adm, { pelotao: P, data: f.data, fornecedor: (f.fornecedor || '').trim(), itens, chave: px.chave, tipo_chave: px.tipo_chave, recebedor: px.recebedor, cidade: px.cidade, prazo });
       if (rp.erro) return toast(msgErro(rp.erro));
-      toast('Cardápio publicado'); S.form = null; await atualizar(true);
+      toast(prazo ? 'Cardápio publicado. Pedidos até ' + horaDe(prazo) : 'Cardápio publicado'); S.form = null; await atualizar(true);
     }
     else if (a === 'status' || a === 'apagar') {
       const p = visiveis().find(x => x.numero === b.dataset.n); if (!p) return;
@@ -1702,11 +1899,13 @@ document.addEventListener('click', async ev => {
     }
   } catch (e) { toast(e.status ? 'Erro do servidor' : 'Sem conexão'); console.error(e); }
 });
-document.addEventListener('input', ev => {
-  const t = ev.target;
+// 'input' e também 'change': no Android o seletor de hora/data só avisa no 'change'
+const aoDigitar = ev => {
+  const t = ev.target; if (!t || !t.dataset || t.type === 'file') return;
+  if (t.dataset.troca != null) { let d = 0; document.querySelectorAll('[data-troca]').forEach(x => { d += +x.value.split('|')[1] - +x.dataset.orig; }); const e = $('#trDif'); if (e) e.innerHTML = d > 0 ? '💸 Você vai pagar a diferença de <b>' + brl(d) + '</b> no Pix.' : 'Sem custo: mesmo valor.'; }
   if (t.dataset.f && S.form) {
     S.form[t.dataset.f] = t.value;
-    if (t.dataset.f === 'texto') { const it = lerCardapio(t.value); if (it.length) { S.form.previa = it; aplicaInfo(); $('#previa').innerHTML = htmlPrevia(); } }
+    if (t.dataset.f === 'texto' && t.value !== S.form._lido) { S.form._lido = t.value; const it = lerCardapio(t.value); if (it.length) { S.form.previa = it; aplicaInfo(); $('#previa').innerHTML = htmlPrevia(); } } // só relê se o texto mudou (o 'change' ao sair do campo não pode apagar os preços)
   } else if (t.id === 'banco') {
     S.banco = t.value; ls.set('qaj_banco', S.banco); render();
   } else if (t.dataset.a && S.aj) {
@@ -1727,9 +1926,11 @@ document.addEventListener('input', ev => {
     const da = $('#devAtalho'); if (da) da.hidden = !(ls.get('qaj_dev') && n === DEV_NUMERO); // depois de escolhido, só no celular do desenvolvedor
   } else if (t.dataset.pi != null && S.form) {
     const i = S.form.previa[+t.dataset.pi]; if (!i) return;
-    i[t.dataset.pk] = t.dataset.pk === 'preco' ? (parseFloat(t.value.replace(',', '.')) || 0) : t.value;
+    i[t.dataset.pk] = t.dataset.pk === 'preco' ? (parseFloat(t.value.replace(',', '.')) || 0) : t.value; if (t.dataset.pk === 'preco') t.classList.toggle('falta', !(i.preco > 0));
   }
-});
+};
+document.addEventListener('input', aoDigitar);
+document.addEventListener('change', aoDigitar);
 // ferramenta de diagnóstico: mostra cada etapa da leitura e o tempo de cada uma
 async function diagLeitura(file) {
   const t0 = performance.now(), linhas = [];
@@ -1757,6 +1958,7 @@ async function diagLeitura(file) {
 async function aoEscolher(t) {
   S.escolhendo = 0; const f = t.files && t.files[0]; if (!f) return;
   if (t.id === 'comp') { lerComprovante(f); t.value = ''; }
+  else if (t.id === 'compDif') { t.value = ''; lerComprovanteDif(f); }
   else if (t.id === 'diagArq') { t.value = ''; diagLeitura(f); }
   else if (t.id === 'foto' && f) { try { S.aj.foto = await processaFoto(f); render(); toast('Foto escolhida. Toque em Salvar ajustes'); } catch (e) { toast('Não consegui abrir essa imagem'); } t.value = ''; }
   else if ((t.id === 'alArq' || t.id === 'cdArq') && f) {
