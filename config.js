@@ -1,15 +1,11 @@
 // =====================================================================
-//  Configuração do PEL
-//  Preencha UMA VEZ e envie para o GitHub junto com os outros arquivos.
-//  Nas próximas atualizações do app, NÃO substitua este arquivo.
-//
-//  SUPABASE_URL e SUPABASE_KEY: Supabase > Project Settings > API Keys
-//  (Project URL e a chave "publishable" ou "anon public").
-//  Deixe em branco para o MODO TESTE (dados só no aparelho).
+//  Configuração do PEL — preencha UMA VEZ. Nas atualizações, NÃO substitua.
 // =====================================================================
 window.QAJ_CONFIG = {
-  SUPABASE_URL: "",
-  SUPABASE_KEY: "",
+  SUPABASE_URL: "https://crzhtbihwlkbmlqtxhlh.supabase.co",
+  SUPABASE_KEY: "sb_publishable_iYxIHe8ZJXxqGCsy5hLMTw_UMsEXmta",
+  CONTATO_DEV: "99992038160",
+  DEV_NUMERO: "2116",
   PRIMEIRO_PELOTAO: 6,
   ULTIMO_PELOTAO: 30
 };
